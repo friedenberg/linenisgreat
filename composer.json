@@ -1,0 +1,13 @@
+{
+    "name": "friedenberg/isittimetostopworkingyet",
+    "type": "project",
+    "require": {
+        "mustache/mustache": "^2.13"
+    },
+    "authors": [
+        {
+            "name": "Sasha Friedenberg",
+            "email": "sashafriedenberg@gmail.com"
+        }
+    ]
+}
