@@ -1,41 +1,39 @@
-<div class="card">
-  <table>
-    <colgroup>
-      <col class="tdleft">
-      <col class="tdright">
-    </colgroup> 
-    <tbody>
-      <thead>
-        <tr>
-          <th colspan="2">
-            <div class="title">{{name}}</div>
-            <div class="i">{{kind}}</div>
-          </th>
-        </tr>
-      </thead>
-      <tr class="hidden">
-        <td class="tdleft small-caps">{{{proportions}}}</td>
-        <td class="tdright">{{{ingredients}}}</td>
-      </tr>
-      {{#glass}}
+<table>
+  <colgroup>
+    <col class="tdleft">
+    <col class="tdright">
+  </colgroup> 
+  <tbody>
+    <thead>
       <tr>
-        <td class="tdleft i">glass</td>
-        <td class="tdright">{{glass}}</td>
+        <th colspan="2">
+          <div class="title uppercase">{{name}}</div>
+          <div class="i">{{kind}}</div>
+        </th>
       </tr>
-      {{/glass}}
-      {{#garnish}}
-      <tr>
-        <td class="tdleft i">garnish</td>
-        <td class="tdright">{{.}}</td>
-      </tr>
-      {{/garnish}}
-      {{#prep}}
-      <tr>
-        <td class="tdleft i">prep</td>
-        <td class="tdright">{{.}}</td>
-      </tr>
-      {{/prep}}
-    </tbody>
-  </table> 
-  <div class="icon"></div>
-</div>
+    </thead>
+    <tr>
+      <td class="tdleft small-caps">{{{proportions}}}</td>
+      <td class="tdright">{{{ingredients}}}</td>
+    </tr>
+    {{#glass}}
+    <tr>
+      <td class="tdleft">glass</td>
+      <td class="tdright">{{glass}}</td>
+    </tr>
+    {{/glass}}
+    {{#garnish}}
+    <tr>
+      <td class="tdleft">garnish</td>
+      <td class="tdright">{{.}}</td>
+    </tr>
+    {{/garnish}}
+    {{#prep}}
+    <tr>
+      <td class="tdleft">prep</td>
+      <td class="tdright">{{.}}</td>
+    </tr>
+    {{/prep}}
+  </tbody>
+</table> 
+<div class="icon"></div>

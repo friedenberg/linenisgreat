@@ -1,12 +1,8 @@
-
-@font-face {
-  font-family: "Termina";
-  src: url(/assets/Termina-Black.woff2) format("woff2");
-}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,900;1,900&family=Spectral+SC:ital,wght@0,300;0,800;1,500&family=Spectral:wght@200;400;500&display=swap');
 
 h1 {
   font-size: xxx-large;
-  font-family: "Termina", sans-serif;
+  font-family: "Montserrat", sans-serif;
   text-transform: Uppercase;
   text-align: center;
 }
@@ -14,6 +10,8 @@ h1 {
 body {
   margin: 0;
   user-select: none;
+  font-family: Spectral;
+  font-size: 20px;
 }
 
 .parent {
@@ -39,11 +37,6 @@ body {
 
 .card {
   width: 300px;
-  font-family: Georgia;
-  font-size: 20px;
-  text-align: center;
-  color: black;
-  background-color: white;
   border: solid 2px black;
   border-radius: 7px;
   padding: 8px;
@@ -68,10 +61,6 @@ table {
   border-spacing: 8px;
 }
 
-tr, td {
-  vertical-align: baseline;
-}
-
 th {
   padding-bottom: 8px;
   border-bottom: solid 2px black;
@@ -79,9 +68,6 @@ th {
 
 .title {
   display: inline-block;
-  text-align: center;
-  text-transform: capitalize;
-  margin-bottom: 10px;
   font-size: 24px;
 }
 
@@ -89,7 +75,12 @@ th {
   border-color: white;
 }
 
+.uppercase {
+  text-transform: uppercase;
+}
+
 .small-caps {
+  font-family: "Spectral SC";
   font-variant: small-caps;
 }
 
@@ -109,7 +100,6 @@ th {
 }
 
 .icon {
-  margin-top: 8px;
   width: 60px;
   height: 60px;
   margin-left: auto;
