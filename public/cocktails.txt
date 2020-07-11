@@ -1,0 +1,31 @@
+hemingway daiquiri	sour	cocktail	<div>light rum<br></div><div>grapefruit juice</div><div>lime juice</div><div>Maraschino</div><div>simple syrup</div>	6 parts<div>2 parts</div><div>2 parts</div><div>1 part</div><div>1 part</div>	lime wheel	
+martinez	martini	cocktail	gin<div>sweet vermouth</div><div>Maraschino</div><div>Angostura</div>	6 parts<div>6 parts</div><div>1 part</div><div>2 dashes</div>	Orange twist	<div><br></div>
+last word	sour		gin<div>lime juice</div><div>Maraschino</div><div>Green Chartreuse</div>	1 part<div>1 part</div><div>1 part</div><div>1 part</div>		shaker with ice<div>strain</div>
+manhattan	manhattan	Coupe	<div>rye or bourbon</div><div>sweet vermouth</div><div>angostura bitters</div>	5 parts<div>3 parts</div><div>4 dashes</div>	cherry or citrus twist	
+moscow mule	buck	copper mug	<div>ginger beer<br></div>vodka<div>lime juice</div><div>simple syrup</div>	8 parts<div>4 parts</div><div>1 part</div><div>1 part</div>	Lime wedge, candied ginger, or mint	
+whiskey sour	sour	rocks	whiskey<div>lemon juice</div><div>simple syrup</div><div>egg white (optional)</div>	3 parts<div>2 parts</div><div>1 part</div><div>1</div>	orange slice and / or cherry	
+martini	martini	frozen	gin or vodka<div>dry vermouth</div>	3 parts<div>1 part<br></div>	lemon twist or olive	
+painkiller	tiki	highball	pineapple juice<div>rum</div><div>cream of coconut</div><div>orange juice</div><div>lime juice</div>	6 parts<div>4 parts</div><div>2 parts</div><div>1 part</div><div>1 part</div>	Nutmeg	
+margarita	sour	rocks	blanco tequila<div>triple sec<br><div>lime juice</div></div>	10 parts<div>4 parts</div><div>3 parts</div>	salt and lime wedge	
+old fashioned	eponymous	rocks	whiskey<div>white or raw sugar<br><div>Angostura bitters</div></div>	12 parts<div>1 part</div><div>2–6 dashes</div>	citrus peel	
+greyhound	sour	coupe	grapefruit juice<div>gin or vodka</div>	4 parts<div>1 part<br></div>	sugared rim	
+gimlet	sour	coupe	gin or vodka<div>lime juice</div><div>simple syrup</div>	8 parts<div>3 parts</div><div>3 parts</div>		
+Americano	fizz	Rocks	Bitter Campari<div>Sweet vermouth</div><div>Soda water</div>	1 part<div>1 part</div><div>1 splash</div>	Half orange slice and lemon zest	Mix directly into glass and stir gently
+Aviation	sour	Cocktail	Gin<div>Maraschino</div><div>Lemon juice</div><div>Crème de Violette</div>	3 parts<div>1 part</div><div>1 part</div><div>1 spoon</div>	Maraschino cherry	
+Between the sheets	sour	cocktail	white rum<div>Cognac</div><div>triple Sec</div><div>lemon juice</div>	3 parts<div>3 parts</div><div>2 parts</div><div>2 parts</div>		
+Boulevardier	on the rocks	Cocktail	Whiskey<div>Bitter Campari</div><div>Sweet red vermouth</div>	3 parts<div>2 parts</div><div>2 parts</div>	Orange or lemon zest	
+casino	sour	rocks	gin<div>maraschino</div><div>lemon juice</div><div>orange bitters</div>	4 parts<div>1 part</div><div>1 part</div><div>2 dashes</div>	lemon zest and maraschino cherry	
+clover club	sour	cocktail	gin<div>raspberry syrup</div><div>lemon juice</div><div>egg white</div>	3 parts<div>1 part</div><div>1 part</div><div>2 drops</div>	raspberry	
+daiquiri	sour	cocktail	white rum<div>lime juice</div><div>sugar</div>	3 parts<div>1 part</div><div>2 spoons</div>		
+dry martini	martini	chilled cocktail	gin<div>dry vermouth</div>	6 parts<div>1 part</div>	lemon peel or green olives	
+gin fizz	fizz	highball	gin<div>lemon juice</div><div>simple syrup</div><div>soda</div>	9 parts<div>6 parts</div><div>1 part</div><div>splash of</div>	lemon slice or zest	
+Lucien Gaudin	on the rocks	Rocks	Gin<div>Campari</div><div>Cointreau</div><div>Dry vermouth</div>	2 parts<div>1 part</div><div>1 part</div><div>1 part</div>	Orange peel	Stirred
+Navigation	sour	Coupe	Gin<div>Elderflower liquor</div><div>Lemon juice</div><div>Creme de Violette</div><div>Cane syrup</div>	8 parts<div>3 parts</div><div>2 parts</div><div>1 part</div><div>Bar spoon</div>	Cherry	Shaken
+Gin bijou		<div>Coupe</div>	Gin<div>Sweet Vermouth</div><div>Green chartreuse</div><div>Orange bitters</div>	3 parts<div>1 part</div><div>1 part</div><div>1 dash</div>	Orange twist and maraschino cherry	
+Amaro Negroni	on the rocks	Rocks	Amaro<div>Gin<br> <div>Sweet vermouth</div> <div>Angostura bitters</div></div>	<div>2 parts<br></div><div>1 part</div><div>1 part</div><div>2 dashes</div>	Orange twist	
+Corpse reviver no. 2	sour	Coupe	Gin<div>Cointreau</div><div>Lillet blanc</div><div>Lemon juice</div><div>Absinthe</div>	1 part<div>1 part</div><div>1 part</div><div>1 part</div><div>1 dash</div>	Orange peel	Shaken
+Basil Smash	sour	Rocks	gin<div>lemon juice</div><div>simple syrup</div><div>basil</div>	8 parts<div>3 parts</div><div>3 parts</div><div>2-3 sprigs</div>	basil leaf	
+Candy nipple		margerita	rum<div>triplesec</div>	1 part<div>1 part</div>	pineapple and rock candy	
+Vodka blush	sour	champagne flute	Vodka<div>Lime juice</div><div>Grenadine</div>	10 parts<div>3 parts</div><div>1 dash</div>		
+Mary Pickford		martini	White rum<div>Pineapple juice</div><div>Grenadine</div><div>Maraschino</div>	6 parts<div>6 parts</div><div>1 part</div><div>1 part</div>	maraschino cherry	
+Monkey Gland		Martini	gin<div>orange juice</div><div>absinthe</div><div>grenadine</div>	5 parts<div>3 parts</div><div>2 dashes</div><div>2 dashes</div>		

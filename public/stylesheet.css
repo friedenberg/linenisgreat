@@ -1,0 +1,123 @@
+
+@font-face {
+  font-family: "Termina";
+  src: url(/assets/Termina-Black.woff2) format("woff2");
+}
+
+h1 {
+  font-size: xxx-large;
+  font-family: "Termina", sans-serif;
+  text-transform: Uppercase;
+  text-align: center;
+}
+
+body {
+  margin: 0;
+  user-select: none;
+}
+
+.parent {
+  position: absolute;
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.child {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.child > * {
+  margin: auto;
+}
+
+.instructions {
+  font-style: italic;
+  text-align: center;
+}
+
+.card {
+  width: 300px;
+  font-family: Georgia;
+  font-size: 20px;
+  text-align: center;
+  color: black;
+  background-color: white;
+  border: solid 2px black;
+  border-radius: 7px;
+  padding: 8px;
+}
+
+.icon-stroke {
+  stroke: black;
+  stroke-width: 35px;
+  stroke-linecap: round;
+}
+
+.card.nightMode {
+  border-color: white;
+}
+
+.nightMode .icon-stroke {
+  stroke: white;
+}
+
+table {
+  width: 100%;
+  border-spacing: 8px;
+}
+
+tr, td {
+  vertical-align: baseline;
+}
+
+th {
+  padding-bottom: 8px;
+  border-bottom: solid 2px black;
+}
+
+.title {
+  display: inline-block;
+  text-align: center;
+  text-transform: capitalize;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.nightMode th {
+  border-color: white;
+}
+
+.small-caps {
+  font-variant: small-caps;
+}
+
+.i {
+  font-style: italic;
+}
+
+.tdleft {
+  min-width: 4em;
+  text-align: right;
+}
+
+.tdright {
+  //width: 70%;
+  text-align: left;
+  //padding-left: 2.5%;
+}
+
+.icon {
+  margin-top: 8px;
+  width: 60px;
+  height: 60px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: black;
+  -webkit-mask-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3Csvg viewBox='50 50 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 175 400 L 325 400 Z M 400 100 L 250 250 Z M 250 250 L 100 100 Z M 250 250 L 250 400 Z M 100 100 L 400 100 Z' class='icon-stroke' style='stroke-width: 30px; stroke-linecap: round; stroke: rgb(0, 0, 0); stroke-linejoin: round;'/%3E%3C/svg%3E");
+}
+
+.nightMode .icon {
+  background-color: white;
+}
