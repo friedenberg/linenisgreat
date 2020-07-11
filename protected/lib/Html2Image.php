@@ -6,7 +6,7 @@ class Html2Image {
     $this->css = $css;
   }
 
-  function getImage() string {
+  function getImage() {
     $data = array(
       'html' => $this->html,
       'css' => $this->css
@@ -35,7 +35,8 @@ class Html2Image {
 
     curl_close ($ch);
     $res = json_decode($result,true);
+    $url = $res['url'];
 
-    echo $res['url'];
+    return $url;
   }
 }

@@ -1,21 +1,30 @@
 <?php declare(strict_types=1);
 
+require __DIR__ . '/Cocktail.php';
+
 class CocktailParser {
-  function __construct($path) {
+  function __construct($mustache, $path) {
+    $this->mustache = $mustache;
     $this->file = file_get_contents($path);
   }
 
-  function parse() array {
+  function parse() {
     $lines = explode("\n", $this->file);
 
     return array_map(
       function ($line) {
-        $cocktail = [];
         $tabs = explode("\t", $line);
-        $cocktail['name'] = $tabs[0];
-        $cocktail['kind'] = $tabs[1];
-        $cocktail['ingredients'] = $tabs[2];
-        $cocktail['proportions'] = $tabs[3];
+
+        $cocktail = new Cocktail(
+          $this->mustache,
+          $tabs[0],
+          $tabs[1],
+          $tabs[3],
+          $tabs[4],
+          $tabs[2],
+          null
+        );
+
         return $cocktail;
       },
       $lines

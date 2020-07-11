@@ -1,3 +1,6 @@
 #! /bin/sh
 
-rsync -r public protected isittimetostopworkingyet.com:../
+rsync -r conf protected public isittimetostopworkingyet.com:../
+ssh isittimetostopworkingyet.com \
+  'cd ../protected && php composer.phar install'
+#add clear tmp
