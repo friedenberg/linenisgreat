@@ -8,6 +8,10 @@ $m = new Mustache_Engine(array(
 ));
 
 $cocktails = new Cocktails($m);
-$today_cocktail = $cocktails->getTodayCocktail();
+$selected = $cocktails->getTodayCocktail();
 
-echo $m->render('index', $today_cocktail);
+if (!empty($_GET)) {
+  $selected = $cocktails->getRandomCocktail();
+}
+
+echo $m->render('index', $selected);

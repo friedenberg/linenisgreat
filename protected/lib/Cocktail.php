@@ -17,14 +17,34 @@ class Cocktail {
     $this->garnish = $garnish;
   }
 
+  function image_id() {
+    return $this->getId();
+  }
+
   function getHtml() {
-    return $this->mustache->render('cocktail_card', $this);
+    if (!isset($this->html)) {
+      $this->html = $this->mustache->render('cocktail_card', $this);
+    }
+
+    return $this->html;
+  }
+
+  function getCss() {
+    if (!isset($this->css)) {
+      $this->css = file_get_contents(__DIR__ . '/../../public/stylesheet.css');
+    }
+
+    return $this->css;
+  }
+
+  function getId() {
+    return md5($this->getHtml() . $this->getCss());
   }
 
   function getImageUrl() {
     $html = $this->getHtml();
-    $css = file_get_contents(__DIR__ . '/../../public/stylesheet.css');
-    $md5 = md5($html . $css);
+    $css = $this->getCss();
+    $md5 = $this->getId();
 
     $path = __DIR__ . "/../../tmp/cocktail-image-$md5";
 

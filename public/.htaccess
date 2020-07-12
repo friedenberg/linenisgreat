@@ -1,4 +1,4 @@
 Options +FollowSymLinks
 RewriteEngine On
 
-RewriteRule "^/i/today$" "today.php"
+RewriteRule ^i/(.*)$ image.php?id=$1

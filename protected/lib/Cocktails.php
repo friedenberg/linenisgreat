@@ -15,6 +15,22 @@ class Cocktails {
     return $this->cocktails;
   }
 
+  function getCocktailWithId($id) {
+    $path = __DIR__ . "/../../tmp/cocktail-$id";
+
+    if (file_exists($path)) {
+      return Cocktail::fromPath($this->mustache, $path);
+    }
+
+    return null;
+  }
+
+  function getRandomCocktail() {
+    $cocktails = $this->getCocktails();
+    $selected = $cocktails[rand(0, count($cocktails) - 1)];
+    return $selected;
+  }
+
   function getTodayCocktail() {
     $date = date("Y-m-d");
     $path = __DIR__ . "/../../tmp/cocktail-$date";
@@ -23,9 +39,10 @@ class Cocktails {
       return Cocktail::fromPath($this->mustache, $path);
     }
 
-    $cocktails = $this->getCocktails();
-    $selected = $cocktails[rand(0, count($cocktails) - 1)];
-    $selected->writeToPath($path);
+    $selected = $this->getRandomCocktail();
+    $other_path = __DIR__ . "/../../tmp/cocktail-{$selected->getId()}";
+    $selected->writeToPath($other_path);
+    symlink($other_path, $path);
     return $selected;
   }
 }

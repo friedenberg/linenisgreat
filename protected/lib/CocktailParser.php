@@ -1,7 +1,5 @@
 <?php declare(strict_types=1);
 
-require __DIR__ . '/Cocktail.php';
-
 class CocktailParser {
   function __construct($mustache, $path) {
     $this->mustache = $mustache;

@@ -9,7 +9,13 @@ $m = new Mustache_Engine(array(
 
 $cocktails = new Cocktails($m);
 
-$today_cocktail = $cocktails->getTodayCocktail();
+$today_cocktail = $cocktails->getCocktailWithId($_GET['id']);
+
+if (is_null($today_cocktail)) {
+  http_response_code(404);
+  exit;
+}
+
 $url = $today_cocktail->getImageUrl();
 
 header("Location: $url", true, 302);
