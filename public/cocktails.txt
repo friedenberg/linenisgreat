@@ -21,7 +21,7 @@ dry martini	martini	chilled cocktail	gin<div>dry vermouth</div>	6 parts<div>1 pa
 gin fizz	fizz	highball	gin<div>lemon juice</div><div>simple syrup</div><div>soda</div>	9 parts<div>6 parts</div><div>1 part</div><div>splash of</div>	lemon slice or zest	
 Lucien Gaudin	on the rocks	Rocks	Gin<div>Campari</div><div>Cointreau</div><div>Dry vermouth</div>	2 parts<div>1 part</div><div>1 part</div><div>1 part</div>	Orange peel	Stirred
 Navigation	sour	Coupe	Gin<div>Elderflower liquor</div><div>Lemon juice</div><div>Creme de Violette</div><div>Cane syrup</div>	8 parts<div>3 parts</div><div>2 parts</div><div>1 part</div><div>Bar spoon</div>	Cherry	Shaken
-Gin bijou		<div>Coupe</div>	Gin<div>Sweet Vermouth</div><div>Green chartreuse</div><div>Orange bitters</div>	3 parts<div>1 part</div><div>1 part</div><div>1 dash</div>	Orange twist and maraschino cherry	
+Gin bijou		Coupe	Gin<div>Sweet Vermouth</div><div>Green chartreuse</div><div>Orange bitters</div>	3 parts<div>1 part</div><div>1 part</div><div>1 dash</div>	Orange twist and maraschino cherry	
 Amaro Negroni	on the rocks	Rocks	Amaro<div>Gin<br> <div>Sweet vermouth</div> <div>Angostura bitters</div></div>	<div>2 parts<br></div><div>1 part</div><div>1 part</div><div>2 dashes</div>	Orange twist	
 Corpse reviver no. 2	sour	Coupe	Gin<div>Cointreau</div><div>Lillet blanc</div><div>Lemon juice</div><div>Absinthe</div>	1 part<div>1 part</div><div>1 part</div><div>1 part</div><div>1 dash</div>	Orange peel	Shaken
 Basil Smash	sour	Rocks	gin<div>lemon juice</div><div>simple syrup</div><div>basil</div>	8 parts<div>3 parts</div><div>3 parts</div><div>2-3 sprigs</div>	basil leaf	
