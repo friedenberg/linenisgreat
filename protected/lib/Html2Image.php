@@ -21,7 +21,7 @@ class Html2Image {
 
     curl_setopt($ch, CURLOPT_POST, 1);
 
-    curl_setopt($ch, CURLOPT_USERPWD, "61360bc1-1914-49a9-949a-c6b55eb54217" . ":" . "a8628cd1-3e2d-457c-ba95-7e52ab22da36");
+    curl_setopt($ch, CURLOPT_USERPWD, Html2ImageApiKey::KEY);
 
     $headers = array();
     $headers[] = "Content-Type: application/x-www-form-urlencoded";
