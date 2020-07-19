@@ -11,7 +11,9 @@ $cocktails = new Cocktails($m);
 $selected = $cocktails->getTodayCocktail();
 
 if (!empty($_GET)) {
-  $selected = $cocktails->getRandomCocktail();
+  $filtered = $cocktails->getCocktailForQuery($_GET['q']);
+  echo $m->render('filter', ['cocktails' => $filtered]);
+  exit;
 }
 
 echo $m->render('index', $selected);

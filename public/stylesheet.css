@@ -35,6 +35,10 @@ body {
   text-align: center;
 }
 
+.card-grid > .card {
+  display: inline-table;
+}
+
 .card {
   width: 300px;
   border: solid 2px black;

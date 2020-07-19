@@ -9,12 +9,18 @@ class Cocktail {
 
   function __construct($mustache, $name, $kind, $ingredients, $proportions, $glass, $garnish) {
     $this->mustache = $mustache;
+    $this->search_array = preg_split("/[\W]+/", strtolower($ingredients . " $name $kind"));
+    $this->search_array = array_combine($this->search_array, $this->search_array);
     $this->name = $name;
     $this->kind = $kind;
     $this->ingredients = $ingredients;
     $this->proportions = $proportions;
     $this->glass = $glass;
     $this->garnish = $garnish;
+  }
+
+  function matches($query) {
+    return count(array_intersect($query, $this->search_array)) > 0;
   }
 
   function image_id() {

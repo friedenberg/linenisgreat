@@ -15,6 +15,20 @@ class Cocktails {
     return $this->cocktails;
   }
 
+  function getCocktailForQuery($query) {
+    $matches = explode(",", $query);
+    $matches = array_combine($matches, $matches);
+
+    return array_values(
+          array_filter(
+            $this->getCocktails(),
+            function ($c) use ($matches) {
+              return $c->matches($matches);
+            }
+        )
+    );
+  }
+
   function getCocktailWithId($id) {
     $path = __DIR__ . "/../../tmp/cocktail-$id";
 

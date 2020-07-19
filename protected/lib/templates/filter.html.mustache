@@ -1,0 +1,23 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="stylesheet.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+
+    <title>Is It Time to Stop Working Yet?</title>
+  </head>
+
+  <body>
+    <div class="card-grid">
+      {{#cocktails}}
+      <div class="card">
+        {{> cocktail_card}}
+      </div>
+      {{/cocktails}}
+    </div>
+  </body>
+</html>
+
