@@ -17,6 +17,4 @@ else
   cd "$HOME../protected"
   php composer.phar install
 
-  cd "$HOME../"
-  find tmp -mindepth 1 -delete
 fi
