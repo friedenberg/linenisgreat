@@ -11,7 +11,14 @@ $cocktails = new Cocktails($m);
 $selected = $cocktails->getTodayCocktail();
 
 if (!empty($_GET)) {
-  $filtered = $cocktails->getCocktailForQuery($_GET['q']);
+  $filtered = [];
+
+  if (isset($_GET["a"])) {
+    $filtered = $cocktails->getCocktails();
+  } else {
+    $filtered = $cocktails->getCocktailForQuery($_GET['q']);
+  }
+
   echo $m->render('filter', ['cocktails' => $filtered]);
   exit;
 }
