@@ -8,6 +8,7 @@ class CocktailParser {
 
   function parse() {
     $lines = explode("\n", $this->file);
+    $lines = array_slice($lines, 0, count($lines) - 2);
 
     return array_map(
       function ($line) {
