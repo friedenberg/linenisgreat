@@ -11,12 +11,14 @@
   </head>
 
   <body>
-    <div class="card-grid">
-      {{#cocktails}}
-      <div class="card">
-        {{> cocktail_card}}
+    <div class="container">
+      <div class="card-grid">
+        {{#cocktails}}
+        <div class="card">
+          {{> cocktail_card}}
+        </div>
+        {{/cocktails}}
       </div>
-      {{/cocktails}}
     </div>
   </body>
 </html>
