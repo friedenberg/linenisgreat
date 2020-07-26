@@ -8,6 +8,7 @@ h1 {
 }
 
 body {
+  --padding: 8px;
   margin: 0;
   user-select: none;
   font-family: Spectral;
@@ -43,7 +44,7 @@ body {
   width: 300px;
   border: solid 2px black;
   border-radius: 7px;
-  padding: 8px;
+  padding: var(--padding);
 }
 
 .icon-stroke {
@@ -66,7 +67,7 @@ table {
 }
 
 th {
-  padding-bottom: 8px;
+  padding-bottom: var(--padding);
   border-bottom: solid 2px black;
 }
 
