@@ -12,6 +12,7 @@ class Cocktails {
 
     $cocktail_parser = new CocktailParser($this->mustache, __DIR__ . '/../../public/cocktails.txt');
     $this->cocktails = $cocktail_parser->parse();
+    shuffle($this->cocktails);
     return $this->cocktails;
   }
 

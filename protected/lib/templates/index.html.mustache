@@ -14,16 +14,20 @@
     <link rel="icon" type="image/png" href="assets/favicon.png">
 
     <title>Is It Time to Stop Working Yet?</title>
+    <style title="search">body {}</style>
   </head>
 
   <body>
-    <div class="parent">
-      <div class="child">
-        <h1>yes</h1>
-        <div class="instructions">now it's time to make a cocktail</div>
-        <div class="card">
-        {{> cocktail_card}}
+    <script async src="javascript.js"></script>
+    <div class="container">
+      <input type="search" id="search-box"
+                           oninput="this.setAttribute('value', this.value); updateResults();" />
+      <div class="card-grid">
+        {{#cocktails}}
+        <div data-match="{{search_string}}" class="card">
+          {{> cocktail_card}}
         </div>
+        {{/cocktails}}
       </div>
     </div>
   </body>

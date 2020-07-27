@@ -145,6 +145,10 @@ th {
   font-style: italic;
 }
 
+.tdleft, .tdright {
+  white-space: nowrap;
+}
+
 .tdleft {
   min-width: 4em;
   text-align: right;

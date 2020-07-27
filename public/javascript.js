@@ -4,7 +4,7 @@ function updateResults() {
   let searchBox = document.getElementById("search-box");
 
   let query = searchBox.value;
-  let rule = `#search-box[value="${query}"i] ~ .card-grid > .card:not([data-match*="${query}"i]) { display: none; }`;
+  let rule = `#search-box[value=${query}] ~ .card-grid > .card:not([data-match*=${query}]) { display: none; }`;
 
   for (let i = 0; i < stylesheet.rules; i++) {
     stylesheet.deleteRule(0);
