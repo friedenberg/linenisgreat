@@ -82,8 +82,6 @@ input#search-box {
   width: calc(var(--content-width) + var(--padding-width));
   margin: auto;
   padding-bottom: var(--padding);
-  column-gap: 8px;
-  column-fill: auto;
 }
 
 .card-grid > .card {
