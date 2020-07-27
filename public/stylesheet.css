@@ -21,22 +21,6 @@ input#search-box {
   display: block;
 }
 
-.parent {
-  position: absolute;
-  display: table;
-  width: 100%;
-  height: 100%;
-}
-
-.child {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.child > * {
-  margin: auto;
-}
-
 .instructions {
   font-style: italic;
   text-align: center;
