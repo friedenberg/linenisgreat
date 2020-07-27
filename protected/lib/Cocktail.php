@@ -9,7 +9,8 @@ class Cocktail {
 
   function __construct($mustache, $name, $kind, $ingredients, $proportions, $glass, $garnish) {
     $this->mustache = $mustache;
-    $this->search_array = preg_split("/[\W]+/", strtolower($ingredients . " $name $kind"));
+    $this->search_string = strtolower($ingredients . " $name $kind");
+    $this->search_array = preg_split("/[\W]+/", $this->search_string);
     $this->search_array = array_combine($this->search_array, $this->search_array);
     $this->name = $name;
     $this->kind = $kind;

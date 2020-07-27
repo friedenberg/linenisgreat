@@ -5,16 +5,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="stylesheet.css" rel="stylesheet">
+    <link href="stylesheet.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="assets/favicon.png">
 
     <title>Is It Time to Stop Working Yet?</title>
+    <style title="search"></style>
   </head>
 
   <body>
+    <script async src="javascript.js"></script>
     <div class="container">
+      <input type="search" id="search-box"
+                           oninput="this.setAttribute('value', this.value); updateResults();" />
       <div class="card-grid">
         {{#cocktails}}
-        <div class="card">
+        <div data-match="{{search_string}}" class="card">
           {{> cocktail_card}}
         </div>
         {{/cocktails}}
