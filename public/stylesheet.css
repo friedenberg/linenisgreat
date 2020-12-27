@@ -50,6 +50,13 @@ input#search-box {
   }
 }
 
+@supports (-webkit-touch-callout: none) {
+  .card-grid {
+    --column-count: 1;
+    overflow-x: scroll;
+  }
+}
+
 .container {
   position: absolute;
   width: 100%;

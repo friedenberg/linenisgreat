@@ -3,7 +3,7 @@ function updateResults() {
   let stylesheet = document.styleSheets[1];
   let searchBox = document.getElementById("search-box");
 
-  let value = searchBox.value;
+  let value = searchBox.value.toLowerCase();
   var rule = null;
 
   if (value !== "") {

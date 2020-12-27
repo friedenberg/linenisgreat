@@ -18,9 +18,9 @@ class CocktailParser {
           $this->mustache,
           $tabs[0],
           $tabs[1],
-          $tabs[3],
           $tabs[4],
-          $tabs[2],
+          $tabs[5],
+          $tabs[3],
           null
         );
 

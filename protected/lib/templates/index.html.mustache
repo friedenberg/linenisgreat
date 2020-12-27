@@ -19,7 +19,7 @@
     <link rel="icon" type="image/png" href="assets/favicon.png">
 
     <link rel="alternate" hreflang="en-us"
-    href="http://www.isittimetostopworkingyet.com" />
+                          href="http://www.isittimetostopworkingyet.com" />
 
     <title>Is It Time to Stop Working Yet?</title>
     <style title="search">body {}</style>
@@ -28,7 +28,7 @@
   <body>
     <script async src="javascript.js"></script>
     <div class="container">
-      <input type="search" id="search-box"
+      <input autocapitalize="off" type="search" id="search-box"
                            oninput="this.setAttribute('value', this.value); updateResults();" />
       <div class="card-grid">
         {{#cocktails}}
