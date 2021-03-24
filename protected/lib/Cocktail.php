@@ -49,6 +49,10 @@ class Cocktail {
     return md5($this->getHtml() . $this->getCss());
   }
 
+  function getLocalPath() {
+    return __DIR__ . "/../../tmp/cocktail-{$this->getId()}";
+  }
+
   function getImageUrl() {
     $html = $this->getHtml();
     $css = $this->getCss();

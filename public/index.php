@@ -8,5 +8,22 @@ $m = new Mustache_Engine(array(
 ));
 
 $cocktails = new Cocktails($m);
+$cocktails_list = $cocktails->getCocktails();
 
-echo $m->render('index', ['cocktails' => $cocktails->getCocktails()]);
+$query_elements = explode(',', $_GET['query'] ?? '');
+$cocktail_for_image = $cocktails_list[0];
+
+if (!empty($query_elements)) {
+  foreach ($cocktails_list as $cocktail) {
+    if ($cocktail->matches($query_elements)) {
+      $cocktail_for_image = $cocktail;
+      break;
+    }
+  }
+}
+
+echo $m->render('index', [
+  'cocktails' => $cocktails_list,
+  'image_id' => $cocktail_for_image->getId(),
+  'query' => implode(' ', $query_elements),
+]);

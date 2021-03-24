@@ -1,6 +1,11 @@
 
 function updateResults() {
   let stylesheet = document.styleSheets[1];
+
+  if (stylesheet === undefined) {
+    return;
+  }
+
   let searchBox = document.getElementById("search-box");
 
   let value = searchBox.value.toLowerCase();
@@ -20,4 +25,13 @@ function updateResults() {
   if (rule !== null) {
     stylesheet.insertRule(rule, 0);
   }
+
+  if (window.history.replaceState) {
+    const joined = value.trim().split(" ").sort().join(",");
+    window.history.replaceState(window.history.statedata, window.title, `https://www.isittimetostopworkingyet.com/${joined}`);
+  }
 }
+
+window.addEventListener("load", function() {
+  updateResults();
+});

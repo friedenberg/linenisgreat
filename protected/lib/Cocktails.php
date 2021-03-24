@@ -12,6 +12,17 @@ class Cocktails {
 
     $cocktail_parser = new CocktailParser($this->mustache, __DIR__ . '/../../public/cocktails.txt');
     $this->cocktails = $cocktail_parser->parse();
+
+    foreach ($this->cocktails as $someCocktail) {
+      $path = $someCocktail->getLocalPath();
+
+      if (file_exists($path)) {
+        continue;
+      }
+
+      $someCocktail->writeToPath($path);
+    }
+
     shuffle($this->cocktails);
     return $this->cocktails;
   }
@@ -55,8 +66,7 @@ class Cocktails {
     }
 
     $selected = $this->getRandomCocktail();
-    $other_path = __DIR__ . "/../../tmp/cocktail-{$selected->getId()}";
-    $selected->writeToPath($other_path);
+    $selected->writeToPath($selected->getLocalPath());
     symlink($other_path, $path);
     return $selected;
   }

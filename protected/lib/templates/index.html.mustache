@@ -29,7 +29,8 @@
     <script async src="javascript.js"></script>
     <div class="container">
       <input autocapitalize="off" type="search" id="search-box"
-                           oninput="this.setAttribute('value', this.value); updateResults();" />
+                           oninput="this.setAttribute('value', this.value); updateResults();"
+                           value="{{query}}" />
       <div class="card-grid">
         {{#cocktails}}
         <div data-match="{{search_string}}" class="card">
