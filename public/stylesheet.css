@@ -106,7 +106,7 @@ input#search-box {
 
 table {
   width: 100%;
-  border-spacing: 8px;
+  border-spacing: 8px 0px;
 }
 
 th {

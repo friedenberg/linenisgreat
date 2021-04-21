@@ -15,8 +15,29 @@ class Cocktail {
     $this->search_array = array_combine($this->search_array, $this->search_array);
     $this->name = $name;
     $this->kind = $kind;
-    $this->ingredients = $ingredients;
-    $this->proportions = $proportions;
+
+    $splitter = function($dirty_string_list) {
+      $elements_with_empties = preg_split("/<div>|<\/div>|<br>/", $dirty_string_list);
+
+      return array_filter(
+        $elements_with_empties,
+        function($element) {
+          return !empty($element);
+        }
+      );
+    };
+
+    $this->proportions = $splitter($proportions);
+    $this->ingredients = $splitter($ingredients);
+
+    $this->ingredients_and_proportions = array_map(
+      function ($p, $i) {
+        return ['proportion' => $p, 'ingredient' => $i];
+      },
+      $this->proportions,
+      $this->ingredients
+    );
+
     $this->glass = $glass;
     $this->garnish = $garnish;
   }

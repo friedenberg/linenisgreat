@@ -12,10 +12,12 @@
         </th>
       </tr>
     </thead>
+    {{#ingredients_and_proportions}}
     <tr>
-      <td class="tdleft small-caps">{{{proportions}}}</td>
-      <td class="tdright">{{{ingredients}}}</td>
+      <td class="tdleft small-caps">{{proportion}}</td>
+      <td class="tdright">{{ingredient}}</td>
     </tr>
+    {{/ingredients_and_proportions}}
     {{#glass}}
     <tr>
       <td class="tdleft">glass</td>
