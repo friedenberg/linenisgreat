@@ -15,6 +15,6 @@ if [ -z "$SSH_CLIENT" ]; then
 
 else
   cd "$HOME../protected"
-  php composer.phar install
+  php composer.phar install --no-dev
 
 fi
