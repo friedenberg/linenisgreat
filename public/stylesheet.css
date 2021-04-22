@@ -114,6 +114,14 @@ th {
   border-bottom: var(--stroke);
 }
 
+tr:first-child td {
+    padding-top: var(--padding);
+}
+
+tr:last-child td {
+    padding-bottom: var(--padding);
+}
+
 .title {
   display: inline-block;
   font-size: 24px;
