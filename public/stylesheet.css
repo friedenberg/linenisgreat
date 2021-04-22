@@ -145,7 +145,7 @@ tr:last-child td {
 }
 
 .tdleft, .tdright {
-  white-space: nowrap;
+  vertical-align: top;
 }
 
 .tdleft {
