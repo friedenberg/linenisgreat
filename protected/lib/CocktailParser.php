@@ -7,26 +7,15 @@ class CocktailParser {
   }
 
   function parse() {
-    $lines = explode("\n", $this->file);
-    $lines = array_slice($lines, 0, count($lines) - 2);
+    $raw_cocktails = json_decode($this->file, true);
 
     return array_map(
-      function ($line) {
-        $tabs = explode("\t", $line);
-
-        $cocktail = new Cocktail(
-          $this->mustache,
-          $tabs[0],
-          $tabs[1],
-          $tabs[4],
-          $tabs[5],
-          $tabs[3],
-          null
-        );
+      function ($c) {
+        $cocktail = new Cocktail($this->mustache, $c);
 
         return $cocktail;
       },
-      $lines
+      $raw_cocktails
     );
   }
 }

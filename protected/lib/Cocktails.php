@@ -10,7 +10,7 @@ class Cocktails {
       return $this->cocktails;
     }
 
-    $cocktail_parser = new CocktailParser($this->mustache, __DIR__ . '/../../public/cocktails.txt');
+    $cocktail_parser = new CocktailParser($this->mustache, __DIR__ . '/../../public/cocktails.json');
     $this->cocktails = $cocktail_parser->parse();
 
     foreach ($this->cocktails as $someCocktail) {

@@ -7,39 +7,28 @@ class Cocktail {
     return $c;
   }
 
-  function __construct($mustache, $name, $kind, $ingredients, $proportions, $glass, $garnish) {
+  function __construct($mustache, $j) {
     $this->mustache = $mustache;
-    $this->search_string = strtolower($ingredients . " $name $kind");
+
+    $this->name = $j['name'];
+    $this->kind = $j['kind'];
+    $this->glass = $j['glass'];
+    $this->garnish = $j['garnish'];
+
+    $this->recipe = $j['recipe'];
+
+    $this->ingredients = array_map(
+      function ($i_and_p) {
+        return $i_and_p['ingredient'];
+      },
+      $this->recipe
+    );
+
+    $this->search_string = strtolower(implode(" ", $this->ingredients) . " $this->name $this->kind $this->aka");
+    $this->search_string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->search_string);
     $this->search_string = trim(preg_replace("/<.*?>/", " ", $this->search_string));
     $this->search_array = preg_split("/[\W]+/", $this->search_string);
     $this->search_array = array_combine($this->search_array, $this->search_array);
-    $this->name = $name;
-    $this->kind = $kind;
-
-    $splitter = function($dirty_string_list) {
-      $elements_with_empties = preg_split("/<div>|<\/div>|<br>/", $dirty_string_list);
-
-      return array_filter(
-        $elements_with_empties,
-        function($element) {
-          return !empty($element);
-        }
-      );
-    };
-
-    $this->proportions = $splitter($proportions);
-    $this->ingredients = $splitter($ingredients);
-
-    $this->ingredients_and_proportions = array_map(
-      function ($p, $i) {
-        return ['proportion' => $p, 'ingredient' => $i];
-      },
-      $this->proportions,
-      $this->ingredients
-    );
-
-    $this->glass = $glass;
-    $this->garnish = $garnish;
   }
 
   function matches($query) {
