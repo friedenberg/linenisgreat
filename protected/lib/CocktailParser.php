@@ -1,6 +1,9 @@
 <?php declare(strict_types=1);
 
 class CocktailParser {
+  public $mustache;
+  public $file;
+
   function __construct($mustache, $path) {
     $this->mustache = $mustache;
     $this->file = file_get_contents($path);

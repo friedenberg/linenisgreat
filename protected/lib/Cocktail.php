@@ -7,13 +7,26 @@ class Cocktail {
     return $c;
   }
 
+  public $mustache;
+  public $name;
+  public $kind;
+  public $glass;
+  public $garnish;
+  public $recipe;
+  public $aka;
+  public $ingredients;
+  public $search_string;
+  public $search_array;
+  public $html;
+  public $css;
+
   function __construct($mustache, $j) {
     $this->mustache = $mustache;
 
     $this->name = $j['name'];
-    $this->kind = $j['kind'];
-    $this->glass = $j['glass'];
-    $this->garnish = $j['garnish'];
+    $this->kind = $j['kind'] ?? "";
+    $this->glass = $j['glass'] ?? "";
+    $this->garnish = $j['garnish'] ?? "";
 
     $this->recipe = $j['recipe'];
 

@@ -1,6 +1,9 @@
 <?php declare(strict_types=1);
 
 class Cocktails {
+  public $mustache;
+  public $cocktails;
+
   function __construct($mustache) {
     $this->mustache = $mustache;
   }
