@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-class Cocktail {
+class Zettel {
   static function fromPath($mustache, $path) {
     $c = unserialize(file_get_contents($path));
     $c->mustache = $mustache;
@@ -30,7 +30,7 @@ class Cocktail {
     $this->glass = $j['glass'] ?? "";
     $this->garnish = $j['garnish'] ?? "";
 
-    $this->recipe = $j['recipe'];
+    $this->recipe = $j['recipe'] ?? [];
 
     $this->ingredients = array_map(
       function ($i_and_p) {

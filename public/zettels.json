@@ -1,0 +1,1103 @@
+[
+  {
+    "description": "last word",
+    "identifier": "megaera/ninetales",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "maraschino",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "green chartreuse",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "manhattan",
+    "garnish": "cherry or citrus twist",
+    "glass": "coupe",
+    "identifier": "carbon/rattata",
+    "recipe": [
+      {
+        "ingredient": "rye or bourbon",
+        "proportion": "5 parts"
+      },
+      {
+        "ingredient": "sweet vermouth",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "angostura",
+        "proportion": "4 dashes"
+      }
+    ]
+  },
+  {
+    "description": "stone fox",
+    "garnish": "pine cone or twig",
+    "glass": "nick & nora",
+    "identifier": "scandium/koffing",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "4 parts"
+      },
+      {
+        "ingredient": "stone pine liqueur",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "great gatsby",
+    "garnish": "orange",
+    "identifier": "mercury/sandslash",
+    "recipe": [
+      {
+        "ingredient": "grapefruit juice",
+        "proportion": "5 parts"
+      },
+      {
+        "ingredient": "vodka",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "lillet blanc",
+        "proportion": "2 parts"
+      }
+    ]
+  },
+  {
+    "description": "painkiller",
+    "garnish": "nutmeg",
+    "glass": "highball",
+    "identifier": "krypton/parasect",
+    "recipe": [
+      {
+        "ingredient": "pineapple juice",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "rum",
+        "proportion": "4 parts"
+      },
+      {
+        "ingredient": "cream of coconut",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "orange juice",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "gin bijou",
+    "garnish": "orange twist and maraschino cherry",
+    "glass": "coupe",
+    "identifier": "titanium/rapidash",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "sweet vermouth",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "green chartreuse",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "orange bitters",
+        "proportion": "1 dash"
+      }
+    ]
+  },
+  {
+    "description": "martini",
+    "garnish": "lemon twist or olive",
+    "glass": "frozen",
+    "identifier": "rhodium/oddish",
+    "recipe": [
+      {
+        "ingredient": "gin or vodka",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "dry vermouth",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "jungle boogie",
+    "garnish": "dehyrdated blood orange with metal straw",
+    "glass": "tiki",
+    "identifier": "americium/growlithe",
+    "recipe": [
+      {
+        "ingredient": "lime juice",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "grapefruit juice",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "cinnamon syrup",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "stone pine liqueur",
+        "proportion": "8 parts"
+      }
+    ]
+  },
+  {
+    "description": "vodka blush",
+    "glass": "champagne flute",
+    "identifier": "palladium/rattata",
+    "recipe": [
+      {
+        "ingredient": "vodka",
+        "proportion": "10 parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "grenadine",
+        "proportion": "1 dash"
+      }
+    ]
+  },
+  {
+    "description": "between the sheets",
+    "glass": "cocktail",
+    "identifier": "zagreus/seel",
+    "recipe": [
+      {
+        "ingredient": "white rum",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "cognac",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "triple sec",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "2 parts"
+      }
+    ]
+  },
+  {
+    "description": "aviation",
+    "garnish": "maraschino cherry",
+    "glass": "cocktail",
+    "identifier": "berkelium/venusaur",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "maraschino",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "creme de violette",
+        "proportion": "bar spoon"
+      }
+    ]
+  },
+  {
+    "description": "whiskey sour",
+    "garnish": "orange slice, and / or cherry",
+    "glass": "rocks",
+    "identifier": "cobalt/fearow",
+    "recipe": [
+      {
+        "ingredient": "whiskey",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "simple syrup",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "egg white"
+      }
+    ]
+  },
+  {
+    "description": "abraço negroni bianco",
+    "identifier": "hydrogen/weezing",
+    "recipe": [
+      {
+        "ingredient": "contratto bianco",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "lustau blanco",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "portabello london dry gin",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "alaska cocktail",
+    "garnish": "lemon peel",
+    "glass": "coupe",
+    "identifier": "chaos/scyther",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "5 parts"
+      },
+      {
+        "ingredient": "yellow chartreuse",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "orange bitters",
+        "proportion": "1 dash"
+      }
+    ]
+  },
+  {
+    "description": "vesper",
+    "garnish": "lemon twist",
+    "glass": "nick and nora",
+    "identifier": "einsteinium/seaking",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "vodka",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "cocchi americano",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "gimlet",
+    "glass": "coupe",
+    "identifier": "argon/arcanine",
+    "recipe": [
+      {
+        "ingredient": "gin or vodka",
+        "proportion": "8 parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "simple syrup",
+        "proportion": "3 parts"
+      }
+    ]
+  },
+  {
+    "description": "gin fizz",
+    "garnish": "lemon slice or zest",
+    "glass": "highball",
+    "identifier": "manganese/kadabra",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "9 parts"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "simple syrup",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "soda",
+        "proportion": "top with"
+      }
+    ]
+  },
+  {
+    "description": "monkey gland",
+    "glass": "martini",
+    "identifier": "manganese/arcanine",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "5 parts"
+      },
+      {
+        "ingredient": "orange juice",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "absinthe",
+        "proportion": "2 dashes"
+      },
+      {
+        "ingredient": "grenadine",
+        "proportion": "2 dashes"
+      }
+    ]
+  },
+  {
+    "description": "clover club",
+    "garnish": "raspberry",
+    "glass": "cocktail",
+    "identifier": "persephone/rapidash",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "raspberry syrup",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "egg white"
+      }
+    ]
+  },
+  {
+    "description": "margarita",
+    "garnish": "salt and lime wedge",
+    "glass": "rocks",
+    "identifier": "theseus/tentacool",
+    "recipe": [
+      {
+        "ingredient": "tequila blanco",
+        "proportion": "10 parts"
+      },
+      {
+        "ingredient": "cointreau (triple sec)",
+        "proportion": "4 parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "3 parts"
+      }
+    ]
+  },
+  {
+    "description": "lucien gaudin",
+    "garnish": "orange peel",
+    "glass": "rocks",
+    "identifier": "orpheus/graveler",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "campari",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "cointreau",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "dry vermouth",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "basil smash",
+    "garnish": "basil leaf",
+    "glass": "rocks",
+    "identifier": "dysprosium/spearow",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "8 parts"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "simple syrup",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "basil",
+        "proportion": "2–3 sprigs"
+      }
+    ]
+  },
+  {
+    "description": "corpse reviver №2",
+    "garnish": "orange peel",
+    "glass": "coupe",
+    "identifier": "sisyphus/persian",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "cointreau",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "lillet blanc",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "lemon juice blanc",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "absinthe",
+        "proportion": "1 dash"
+      }
+    ]
+  },
+  {
+    "description": "casino",
+    "garnish": "lemon zest and maraschino cherry",
+    "glass": "rocks",
+    "identifier": "cadmium/clefairy",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "4 parts"
+      },
+      {
+        "ingredient": "maraschino",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "orange bitters",
+        "proportion": "2 dashes"
+      }
+    ]
+  },
+  {
+    "description": "rusty nail",
+    "garnish": "lemon twist",
+    "glass": "old fashioned",
+    "identifier": "cadmium/vileplume",
+    "recipe": [
+      {
+        "ingredient": "scotch",
+        "proportion": "9 parts"
+      },
+      {
+        "ingredient": "drambuie",
+        "proportion": "5 parts",
+        "steps": [
+          "mix directly in serving glass"
+        ]
+      }
+    ]
+  },
+  {
+    "description": "greyhound",
+    "garnish": "sugared rim",
+    "glass": "coupe",
+    "identifier": "thorium/bulbasaur",
+    "recipe": [
+      {
+        "ingredient": "grapefruit juice",
+        "proportion": "4 parts"
+      },
+      {
+        "ingredient": "gin or vodka",
+        "proportion": "1 parts"
+      }
+    ]
+  },
+  {
+    "description": "dry martini",
+    "garnish": "lemon peel or green olives",
+    "glass": "frozen cocktail",
+    "identifier": "krypton/beedrill",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "dry vermouth",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "camp council",
+    "garnish": "mint sprig",
+    "glass": "highball",
+    "identifier": "nihonium/pidgey",
+    "recipe": [
+      {
+        "ingredient": "reposado tequila",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "stone pine liqueur",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "yellow chartreuse",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "pineapple juice",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "aka": "vodka cranberry",
+    "description": "cape codder",
+    "garnish": "lime wedge",
+    "glass": "cocktail",
+    "identifier": "dionysus/cloyster",
+    "recipe": [
+      {
+        "ingredient": "cranberry juice",
+        "proportion": "4 parts"
+      },
+      {
+        "ingredient": "vodka",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "cosmopolitan",
+    "garnish": "lime slice",
+    "glass": "cocktail",
+    "identifier": "bromine/weedle",
+    "recipe": [
+      {
+        "ingredient": "vodka citron",
+        "proportion": "8 parts"
+      },
+      {
+        "ingredient": "cranberry juice",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "cointreau",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "3 parts"
+      }
+    ]
+  },
+  {
+    "description": "navigation",
+    "garnish": "cherry",
+    "glass": "coupe",
+    "identifier": "oxygen/hypno",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "8 parts"
+      },
+      {
+        "ingredient": "elderflower liquer",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "creme de violette",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "cane syrup",
+        "proportion": "bar spoon"
+      }
+    ]
+  },
+  {
+    "description": "mary pickford",
+    "garnish": "maraschino cherry",
+    "glass": "martini",
+    "identifier": "zagreus/alakazam",
+    "recipe": [
+      {
+        "ingredient": "white rum",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "pineapple juice",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "grenadine",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "maraschino",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "daiquiri",
+    "garnish": "lime wheel",
+    "glass": "cocktail",
+    "identifier": "thanatos/magneton",
+    "recipe": [
+      {
+        "ingredient": "white rum",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "sugar",
+        "proportion": "2 spoons"
+      }
+    ]
+  },
+  {
+    "description": "old fashioned",
+    "garnish": "citrus peel",
+    "glass": "rocks",
+    "identifier": "magnesium/vileplume",
+    "recipe": [
+      {
+        "ingredient": "whiskey",
+        "proportion": "12 parts"
+      },
+      {
+        "ingredient": "white or raw sugar",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "angostura",
+        "proportion": "2–6 dashes"
+      }
+    ]
+  },
+  {
+    "description": "tb cocktail",
+    "garnish": "sprig of rosemary or hemlock",
+    "glass": "old fashioned",
+    "identifier": "hafnium/kakuna",
+    "recipe": [
+      {
+        "ingredient": "ginger beer",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "bourbon",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "stone pine liqueur",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "maple syrup",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "nor'easter",
+    "garnish": "lime",
+    "glass": "rocks",
+    "identifier": "yttrium/mankey",
+    "recipe": [
+      {
+        "ingredient": "bourbon",
+        "proportion": "4 parts"
+      },
+      {
+        "ingredient": "ginger beer",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "maple syrup",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "madras",
+    "garnish": "lime wedge",
+    "glass": "highball",
+    "identifier": "antimony/pidgeot",
+    "recipe": [
+      {
+        "ingredient": "cranberry juice",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "vodka",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "orange juice",
+        "proportion": "2 parts"
+      }
+    ]
+  },
+  {
+    "description": "martinez",
+    "garnish": "orange twist",
+    "identifier": "palladium/butterfree",
+    "kind": "martini",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "sweet vermouth",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "maraschino",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "angostura",
+        "proportion": "2 dashes"
+      }
+    ]
+  },
+  {
+    "description": "new york sour",
+    "glass": "rocks",
+    "identifier": "demeter/shellder",
+    "recipe": [
+      {
+        "ingredient": "whiskey",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "lemon juice",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "simple syrup",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "sweet red wine",
+        "proportion": "1.5 parts"
+      },
+      {
+        "ingredient": "egg white"
+      }
+    ]
+  },
+  {
+    "aka": "papa doble",
+    "description": "hemingway special",
+    "garnish": "lime wheel",
+    "identifier": "zeus/voltorb",
+    "kind": "sour",
+    "recipe": [
+      {
+        "ingredient": "rum",
+        "proportion": "12 parts"
+      },
+      {
+        "ingredient": "grapefruit juice",
+        "proportion": "8 parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "maraschino",
+        "proportion": "3 parts"
+      }
+    ]
+  },
+  {
+    "description": "americano",
+    "glass": "rocks",
+    "identifier": "thulium/vulpix",
+    "recipe": [
+      {
+        "ingredient": "campari",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "sweet vermouth",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "soda water",
+        "proportion": "top with"
+      }
+    ]
+  },
+  {
+    "description": "amaro negroi",
+    "garnish": "orange twist",
+    "glass": "rocks",
+    "identifier": "sulfur/oddish",
+    "recipe": [
+      {
+        "ingredient": "amaro",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "gin",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "sweet vermouth",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "angostura",
+        "proportion": "2 dashes"
+      }
+    ]
+  },
+  {
+    "description": "boulevardier",
+    "garnish": "orange or lemon zest",
+    "glass": "cocktail",
+    "identifier": "sisyphus/vileplume",
+    "recipe": [
+      {
+        "ingredient": "whiskey",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "campari",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "sweet vermouth",
+        "proportion": "2 parts"
+      }
+    ]
+  },
+  {
+    "description": "cosmopolitan",
+    "garnish": "flamed lime zest",
+    "glass": "cocktail",
+    "identifier": "yttrium/arbok",
+    "recipe": [
+      {
+        "ingredient": "vodka citron",
+        "proportion": "8 parts"
+      },
+      {
+        "ingredient": "cranberry juice",
+        "proportion": "6 parts"
+      },
+      {
+        "ingredient": "cointreau",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "3 parts"
+      }
+    ]
+  },
+  {
+    "description": "alpine hippie juice",
+    "garnish": "dried or live flower bud",
+    "glass": "nick & nora",
+    "identifier": "protactinium/poliwhirl",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "5 parts"
+      },
+      {
+        "ingredient": "cognac",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "stone pine liqueur",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "2 parts"
+      },
+      {
+        "ingredient": "grapefruit juice",
+        "proportion": "2 parts"
+      }
+    ]
+  },
+  {
+    "description": "green & black manhattan",
+    "garnish": "grapefruit peel twist",
+    "glass": "rocks",
+    "identifier": "scandium/poliwhirl",
+    "recipe": [
+      {
+        "ingredient": "rye whiskey",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "sweet vermouth",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "stone pine liqueur",
+        "proportion": "1 bar spoon"
+      }
+    ]
+  },
+  {
+    "description": "candy nipple",
+    "garnish": "pineapple and rock candy",
+    "glass": "margerita",
+    "identifier": "hydrogen/victreebel",
+    "recipe": [
+      {
+        "ingredient": "rum",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "triple sec",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "pegu club",
+    "glass": "cocktail",
+    "identifier": "tellurium/charmander",
+    "recipe": [
+      {
+        "ingredient": "gin",
+        "proportion": "9 parts"
+      },
+      {
+        "ingredient": "orange curaçao",
+        "proportion": "4½ parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "orange bitters",
+        "proportion": "1 dash"
+      }
+    ]
+  },
+  {
+    "description": "GTL",
+    "garnish": "thyme sprigs",
+    "identifier": "praseodymium/fearow",
+    "recipe": [
+      {
+        "ingredient": "grapefruit juice",
+        "proportion": "4 parts"
+      },
+      {
+        "ingredient": "lillet blanc",
+        "proportion": "3 parts"
+      },
+      {
+        "ingredient": "dry gin",
+        "proportion": "1 part"
+      },
+      {
+        "ingredient": "thyme syrup",
+        "proportion": "1 part"
+      }
+    ]
+  },
+  {
+    "description": "moscow mule",
+    "garnish": "lime wedge, candied ginger, or mint",
+    "glass": "copper mug",
+    "identifier": "krypton/clefairy",
+    "recipe": [
+      {
+        "ingredient": "ginger beer",
+        "proportion": "8 parts"
+      },
+      {
+        "ingredient": "vodka",
+        "proportion": "4 parts"
+      },
+      {
+        "ingredient": "lime juice",
+        "proportion": "1 parts"
+      },
+      {
+        "ingredient": "simple syrup",
+        "proportion": "1 parts"
+      }
+    ]
+  }
+]

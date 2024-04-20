@@ -10,7 +10,7 @@
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <link href="stylesheet.css" rel="stylesheet">
-    <link href="zettels.css" rel="stylesheet">
+    <link href="resume.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{meta.favicon}}">
 
     <meta property="og:url" content="{{meta.url}}"/>
@@ -36,14 +36,7 @@
     <script async src="javascript.js"></script>
     <div class="container">
       {{> nav}}
-      <input autocapitalize="off" type="search" id="search-box"
-                                                oninput="this.setAttribute('value', this.value); updateResults();"
-                                                value="{{query}}" />
-      <div class="card-grid">
-        {{#zettels}}
-        {{> cocktail_card}}
-        {{/zettels}}
-      </div>
+      {{{resume}}}
     </div>
   </body>
 </html>

@@ -7,23 +7,24 @@ $m = new Mustache_Engine(array(
     'entity_flags' => ENT_QUOTES,
 ));
 
-$cocktails = new Cocktails($m);
-$cocktails_list = $cocktails->getCocktails();
+$zettels = new Zettels($m);
+$zettels_list = $zettels->getZettels();
 
-$query_elements = explode(',', $_GET['query'] ?? '');
-$cocktail_for_image = $cocktails_list[0];
+/* $query_elements = explode(',', $_GET['query'] ?? ''); */
+/* $cocktail_for_image = $zettels_list[0]; */
 
-if (!empty($query_elements)) {
-  foreach ($cocktails_list as $cocktail) {
-    if ($cocktail->matches($query_elements)) {
-      $cocktail_for_image = $cocktail;
-      break;
-    }
-  }
-}
+/* if (!empty($query_elements)) { */
+/*   foreach ($zettels_list as $cocktail) { */
+/*     if ($cocktail->matches($query_elements)) { */
+/*       $cocktail_for_image = $cocktail; */
+/*       break; */
+/*     } */
+/*   } */
+/* } */
 
 echo $m->render('index', [
-  'cocktails' => $cocktails_list,
-  'image_id' => $cocktail_for_image->getId(),
-  'query' => implode(' ', $query_elements),
+  'meta' => $zettels->getMeta(),
+  'zettels' => $zettels_list,
+  /* 'image_id' => $cocktail_for_image->getId(), */
+  /* 'query' => implode(' ', $query_elements), */
 ]);

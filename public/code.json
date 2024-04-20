@@ -1,0 +1,20 @@
+{
+  "zit": {
+    "description": "zit",
+    "meta": {
+      "template": "code_go_import",
+      "name": "code.linenisgreat.com/zit",
+      "url": "https://www.github.com/friedenberg/zit/go/zit"
+    },
+    "identifier": "zit"
+  },
+  "chrest": {
+    "description": "chrest",
+    "meta": {
+      "template": "code_go_import",
+      "name": "code.linenisgreat.com/chrest",
+      "url": "https://www.github.com/friedenberg/chrest"
+    },
+    "identifier": "chrest"
+  }
+}

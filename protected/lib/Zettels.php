@@ -1,0 +1,155 @@
+<?php declare(strict_types=1);
+
+class Zettels {
+  public $mustache;
+  public $path;
+  public $zettels;
+  public $parser;
+
+  function __construct($mustache) {
+    $this->mustache = $mustache;
+    $this->path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $this->parser = new ZettelParser(
+      $this->mustache,
+      __DIR__ . "/../../public/{$this->getSiteData()['file']}",
+    );
+  }
+
+  function getSite() : string {
+    $site = $_ENV["SERVER_NAME"] ?? $_SERVER["SERVER_NAME"];
+
+    if (empty($site)) {
+      $site = "linenisgreat.com";
+    }
+
+    return $site;
+  }
+
+  function getSiteData() : array {
+    switch ($this->getSite()) {
+    case "sashafriedenberg.com":
+      return [
+        "title" => "Sasha Friedenberg",
+        "url" => "https://www.sashafriedenberg.com",
+        "file" => "cocktails.json",
+        "favicon" => "assets/favicon.png",
+      ];
+
+    case "isittimetostopworkingyet.com":
+      return [
+        "title" => "Is It Time to Stop Working Yet?",
+        "url" => "https://www.isittimetostopworkingyet.com",
+        "file" => "cocktails.json",
+        "favicon" => "assets/favicon.png",
+      ];
+
+    case "code.linenisgreat.com":
+      return [
+        "title" => "Linen is Great: Code",
+        "url" => "https://www.linenisgreat.com",
+        "file" => "code.json",
+        "favicon" => "assets/favicon.png",
+      ];
+
+    default:
+      return [
+        "title" => "Linen is Great",
+        "url" => "https://www.linenisgreat.com",
+        "file" => "zettels.json",
+        "favicon" => "assets/favicon.png",
+      ];
+    }
+  }
+
+  function getCodeMetaRaw() : string {
+    if (strcmp($this->getSite(), "code.linenisgreat.com") != 0) {
+      return "";
+    }
+
+    if (empty($this->path) || strcmp($this->path, "/") == 0) {
+      return "";
+    }
+
+    $zettel = $this->parser->getRaw()[substr($this->path, 1)] ?? [];
+
+    if (empty($zettel)) {
+      // TODO 404
+    }
+
+    $code = $zettel['meta'];
+
+    return $this->mustache->render($code['template'], $code);
+  }
+
+  function getMeta() : array {
+    $meta = $this->getSiteData();
+    $meta['raw'] = $this->getCodeMetaRaw();
+
+    return $meta;
+  }
+
+  function getZettels() {
+    if (isset($this->zettels)) {
+      return $this->zettels;
+    }
+
+    $this->zettels = $this->parser->parse();
+
+    foreach ($this->zettels as $someCocktail) {
+      $path = $someCocktail->getLocalPath();
+
+      if (file_exists($path)) {
+        continue;
+      }
+
+      $someCocktail->writeToPath($path);
+    }
+
+    shuffle($this->zettels);
+    return $this->zettels;
+  }
+
+  function getCocktailForQuery($query) {
+    $matches = explode(",", $query);
+    $matches = array_combine($matches, $matches);
+
+    return array_values(
+      array_filter(
+        $this->getZettels(),
+        function ($c) use ($matches) {
+          return $c->matches($matches);
+        }
+    )
+    );
+  }
+
+  function getCocktailWithId($id) {
+    $path = __DIR__ . "/../../tmp/cocktail-$id";
+
+    if (file_exists($path)) {
+      return Cocktail::fromPath($this->mustache, $path);
+    }
+
+    return null;
+  }
+
+  function getRandomCocktail() {
+    $zettels = $this->getZettels();
+    $selected = $zettels[rand(0, count($zettels) - 1)];
+    return $selected;
+  }
+
+  function getTodayCocktail() {
+    $date = date("Y-m-d");
+    $path = __DIR__ . "/../../tmp/cocktail-$date";
+
+    if (file_exists($path)) {
+      return Cocktail::fromPath($this->mustache, $path);
+    }
+
+    $selected = $this->getRandomCocktail();
+    $selected->writeToPath($selected->getLocalPath());
+    symlink($other_path, $path);
+    return $selected;
+  }
+}

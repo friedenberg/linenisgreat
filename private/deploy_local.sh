@@ -7,5 +7,5 @@ php composer.phar install
 
 cd "../"
 
-php -S localhost:2222 -c conf/php.ini -t public/
+SERVER_NAME="${1:-linenisgreat.com}" php -S localhost:2222 -c conf/php.ini -t public/
 
