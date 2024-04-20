@@ -16,16 +16,6 @@ body {
   font-size: 20px;
 }
 
-input#search-box {
-  margin: var(--padding) auto;
-  display: block;
-}
-
-.instructions {
-  font-style: italic;
-  text-align: center;
-}
-
 @media screen and (min-width: 1280px) {
   .card-grid {
     --column-count: 4;
@@ -63,6 +53,69 @@ input#search-box {
   height: 100%;
   padding: var(--padding);
   box-sizing: border-box;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
+
+/*  _   _             */
+/* | \ | | __ ___   __*/
+/* |  \| |/ _` \ \ / /*/
+/* | |\  | (_| |\ V / */
+/* |_| \_|\__,_| \_/  */
+/*                    */
+
+nav {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  width: 66ch;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+nav li {
+  float: left;
+}
+
+nav li a {
+  display: block;
+  color: black;
+  text-align: center;
+  padding: var(--padding);
+  text-decoration: underline;
+}
+
+nav li a:hover {
+  /* background-color: #111111; */
+}
+
+/*  ____                      _     */
+/* / ___|  ___  __ _ _ __ ___| |__  */
+/* \___ \ / _ \/ _` | '__/ __| '_ \ */
+/*  ___) |  __/ (_| | | | (__| | | |*/
+/* |____/ \___|\__,_|_|  \___|_| |_|*/
+/*                                  */
+
+input#search-box {
+  margin: var(--padding) auto;
+  display: block;
+}
+
+/*   ____              _     */
+/*  / ___|__ _ _ __ __| |___ */
+/* | |   / _` | '__/ _` / __|*/
+/* | |__| (_| | | | (_| \__ \*/
+/*  \____\__,_|_|  \__,_|___/*/
+/*                           */
+
+.instructions {
+  font-style: italic;
+  text-align: center;
 }
 
 .card-grid {
@@ -79,7 +132,30 @@ input#search-box {
   margin-bottom: 8px;
 }
 
+.card:hover {
+  box-shadow: 0px 1px 3px black;
+  transform: scale(1.02);
+}
+
+.card:not(:target) {
+  z-index: 0;
+}
+
+.card:target {
+  z-index: 1;
+  box-shadow: 0px 1px 3px black;
+  transform: scale(1.5);
+  position: absolute;
+  margin: 0;
+}
+
+.card a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 .card {
+  position: relative;
   --border-stroke-width: 2px;
   --stroke: solid var(--border-stroke-width) black;
   --actual-card-width: calc(var(--card-width) - calc(var(--padding) * 2) - calc(var(--border-stroke-width) * 2));
@@ -88,6 +164,7 @@ input#search-box {
   border-radius: 7px;
   padding: var(--padding);
   break-inside: avoid;
+  background-color: white;
 }
 
 .icon-stroke {
@@ -115,11 +192,11 @@ th {
 }
 
 tr:first-child td {
-    padding-top: var(--padding);
+  padding-top: var(--padding);
 }
 
 tr:last-child td {
-    padding-bottom: var(--padding);
+  padding-bottom: var(--padding);
 }
 
 .title {

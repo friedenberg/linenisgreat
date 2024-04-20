@@ -1,6 +1,6 @@
 #! /bin/sh -xe
 
-git secret reveal -f
+# git secret reveal -f
 
 cd "protected"
 php composer.phar install

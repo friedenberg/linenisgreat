@@ -28,14 +28,13 @@
   <body>
     <script async src="javascript.js"></script>
     <div class="container">
+      {{> nav}}
       <input autocapitalize="off" type="search" id="search-box"
-                           oninput="this.setAttribute('value', this.value); updateResults();"
-                           value="{{query}}" />
+                                                oninput="this.setAttribute('value', this.value); updateResults();"
+                                                value="{{query}}" />
       <div class="card-grid">
         {{#cocktails}}
-        <div data-match="{{search_string}}" class="card">
-          {{> cocktail_card}}
-        </div>
+        {{> cocktail_card}}
         {{/cocktails}}
       </div>
     </div>

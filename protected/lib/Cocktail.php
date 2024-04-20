@@ -9,6 +9,7 @@ class Cocktail {
 
   public $mustache;
   public $name;
+  public $identifier;
   public $kind;
   public $glass;
   public $garnish;
@@ -23,6 +24,7 @@ class Cocktail {
   function __construct($mustache, $j) {
     $this->mustache = $mustache;
 
+    $this->identifier = $j['identifier'];
     $this->name = $j['description'];
     $this->kind = $j['kind'] ?? "";
     $this->glass = $j['glass'] ?? "";
