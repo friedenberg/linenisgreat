@@ -36,9 +36,12 @@
     <script async src="javascript.js"></script>
     <div class="container">
       {{> nav}}
-      <input autocapitalize="off" type="search" id="search-box"
-                                                oninput="this.setAttribute('value', this.value); updateResults();"
-                                                value="{{query}}" />
+
+      <div class="center">
+        <input autocapitalize="off" type="search" id="search-box"
+                                                  oninput="this.setAttribute('value', this.value); updateResults();"
+                                                  value="{{query}}" />
+      </div>
       <div class="card-grid">
         {{#zettels}}
         {{> cocktail_card}}

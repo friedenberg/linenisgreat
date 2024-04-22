@@ -1,32 +1,59 @@
 <?php declare(strict_types=1);
 
 class Zettels {
-  public $mustache;
-  public $path;
-  public $zettels;
-  public $parser;
+  private $mustache;
+  private $path;
+  private $zettels;
+  private $parser;
+  private $site;
 
   function __construct($mustache) {
-    $this->mustache = $mustache;
     $this->path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $this->site = $site ?? $_ENV["SERVER_NAME"] ?? $_SERVER["SERVER_NAME"];
+
+    if (empty($this->site)) {
+      $this->site = "linenisgreat.com";
+    }
+
+    $prefix = 'www.';
+
+    if (substr($this->site, 0, strlen($prefix)) == $prefix) {
+      $this->site = substr($this->site, strlen($prefix));
+    }
+
+    $this->setResumeIfNecessary();
+
+    $this->mustache = $mustache;
     $this->parser = new ZettelParser(
       $this->mustache,
       __DIR__ . "/../../public/{$this->getSiteData()['file']}",
     );
   }
 
-  function getSite() : string {
-    $site = $_ENV["SERVER_NAME"] ?? $_SERVER["SERVER_NAME"];
+  function isResume() : bool {
+    return strcmp($this->site, "sashafriedenberg.com/resume") == 0;
+  }
 
-    if (empty($site)) {
-      $site = "linenisgreat.com";
+  function setResumeIfNecessary() : void {
+    if (strcmp($this->site, "sashafriedenberg.com") != 0) {
+      return;
     }
 
-    return $site;
+    if (strcmp($this->path, "/resume") != 0) {
+      return;
+    }
+
+    $this->site = "sashafriedenberg.com/resume";
+  }
+
+  function getSite() : string {
+    return $this->site;
   }
 
   function getSiteData() : array {
     switch ($this->getSite()) {
+    case "sashafriedenberg.com/resume":
+
     case "sashafriedenberg.com":
       return [
         "title" => "Sasha Friedenberg",

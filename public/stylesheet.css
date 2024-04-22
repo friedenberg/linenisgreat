@@ -68,7 +68,6 @@ nav {
   display: flex;
   justify-content: center;
   margin: auto;
-  width: 66ch;
 }
 
 nav ul {
@@ -91,7 +90,10 @@ nav li a {
 }
 
 nav li a:hover {
-  /* background-color: #111111; */
+  background-color: #ADD8E6;
+}
+nav li a.active {
+  background-color: #ADD8E6;
 }
 
 /*  ____                      _     */
@@ -101,9 +103,16 @@ nav li a:hover {
 /* |____/ \___|\__,_|_|  \___|_| |_|*/
 /*                                  */
 
+div.center {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  margin-block-start: 10px;
+  margin-block-end: 10px;
+}
+
 input#search-box {
-  margin: var(--padding) auto;
-  display: block;
+  margin: var(--padding);
 }
 
 /*   ____              _     */

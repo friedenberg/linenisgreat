@@ -1,6 +1,5 @@
 Options +FollowSymLinks
 RewriteEngine On
 
-RewriteRule ^resume$   resume.php
 RewriteRule ^([\w,]+)$ index.php?query=$1
 RewriteRule ^i/(.*)$   image.php?id=$1
