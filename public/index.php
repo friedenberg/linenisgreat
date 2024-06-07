@@ -30,7 +30,11 @@ $nav = array_map(
 $template = 'index';
 $template_args = [
   'nav' => array_values($nav),
-  'meta' => $zettels->getMeta(),
+  'meta' => $zettels->getMeta($m),
+  'stylesheets' => [
+    "stylesheet",
+    "zettels",
+  ],
 ];
 
 if ($zettels->isResume()) {
@@ -38,8 +42,14 @@ if ($zettels->isResume()) {
   $template_args["resume"] = file_get_contents(
     __DIR__ . "/resume.html",
   );
+  array_push($template_args["stylesheets"], "resume");
 } else {
-  $template_args["zettels"] = $zettels->getZettels();
+  $template_args["zettels"] = array_map(
+    function ($zettel) {
+      return $zettel->html;
+    },
+    $zettels->getZettels($m),
+  );
 
   /* $query_elements = explode(',', $_GET['query'] ?? ''); */
   /* $cocktail_for_image = $zettels_list[0]; */
@@ -54,4 +64,5 @@ if ($zettels->isResume()) {
   /* } */
 }
 
+$template_args['query'] = substr($_SERVER['REQUEST_URI'], 1);
 echo $m->render($template, $template_args);

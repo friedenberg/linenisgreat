@@ -2,11 +2,9 @@
 
 class ZettelParser {
   public $raw;
-  public $mustache;
   public $file;
 
-  function __construct($mustache, $path) {
-    $this->mustache = $mustache;
+  function __construct($path) {
     $this->file = file_get_contents($path);
   }
 
@@ -20,14 +18,14 @@ class ZettelParser {
     return $this->raw;
   }
 
-  function parse() : array{
+  function parse() : array {
     return array_map(
       function ($c) {
-        $cocktail = new Zettel($this->mustache, $c);
+        $cocktail = new Zettel($c);
 
         return $cocktail;
       },
-      $this->getRaw()
+      $this->getRaw(),
     );
   }
 }

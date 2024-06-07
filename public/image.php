@@ -16,7 +16,7 @@ if (is_null($today_cocktail)) {
   exit;
 }
 
-$url = $today_cocktail->getImageUrl();
+$url = $today_cocktail->getImageUrl($m);
 
 header("Location: $url", true, 302);
 //todo set cache control

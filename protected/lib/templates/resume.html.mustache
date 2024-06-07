@@ -1,39 +1,9 @@
 <!doctype html>
-
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-
-    <meta name="google" content="notranslate">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    <link href="stylesheet.css" rel="stylesheet">
-    <link href="resume.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="{{meta.favicon}}">
-
-    <meta property="og:url" content="{{meta.url}}"/>
-    <meta property="og:title" content="{{meta.title}}"/>
-
-    {{#meta.image}}
-    <meta property="og:image"
-          content="{{meta.url}}/i/{{image_id}}"/>
-    {{/meta.image}}
-
-    <meta property="og:site_name" content="{{meta.title}}"/>
-
-    <link rel="alternate" hreflang="en-us"
-                          href="{{meta.url}}" />
-
-    <title>{{meta.title}}</title>
-    <style title="search">body {}</style>
-
-    {{{meta.raw}}}
-  </head>
+  {{> head}}
 
   <body>
-    <script async src="javascript.js"></script>
+    <script async src="/assets/javascript.js"></script>
     <div class="container">
       {{> nav}}
       {{{resume}}}

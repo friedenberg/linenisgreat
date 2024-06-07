@@ -1,5 +1,9 @@
 Options +FollowSymLinks
 RewriteEngine On
 
-RewriteRule ^([\w,]+)$ index.php?query=$1
-RewriteRule ^i/(.*)$   image.php?id=$1
+# Rewrite only if the URI does not starts with assets
+RewriteCond %{REQUEST_URI} !^/assets
+
+RewriteRule ^(.*)$      index.php?query=$1
+# RewriteRule ^assets/(\w+.(css|js))$      $1
+RewriteRule ^i/(.*)$    image.php?id=$1

@@ -1,13 +1,12 @@
 <?php declare(strict_types=1);
 
 class Zettels {
-  private $mustache;
   private $path;
   private $zettels;
   private $parser;
   private $site;
 
-  function __construct($mustache) {
+  function __construct() {
     $this->path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     $this->site = $site ?? $_ENV["SERVER_NAME"] ?? $_SERVER["SERVER_NAME"];
 
@@ -23,9 +22,7 @@ class Zettels {
 
     $this->setResumeIfNecessary();
 
-    $this->mustache = $mustache;
     $this->parser = new ZettelParser(
-      $this->mustache,
       __DIR__ . "/../../public/{$this->getSiteData()['file']}",
     );
   }
@@ -88,7 +85,7 @@ class Zettels {
     }
   }
 
-  function getCodeMetaRaw() : string {
+  function getCodeMetaRaw($mustache) : string {
     if (strcmp($this->getSite(), "code.linenisgreat.com") != 0) {
       return "";
     }
@@ -105,17 +102,27 @@ class Zettels {
 
     $code = $zettel['meta'];
 
-    return $this->mustache->render($code['template'], $code);
+    return $mustache->render($code['template'], $code);
   }
 
-  function getMeta() : array {
+  function getMeta($mustache) : array {
     $meta = $this->getSiteData();
-    $meta['raw'] = $this->getCodeMetaRaw();
+    $meta['raw'] = $this->getCodeMetaRaw($mustache);
 
     return $meta;
   }
 
-  function getZettels() {
+  function getCardTemplate() : string{
+    switch ($this->getSite()) {
+    case "code.linenisgreat.com":
+      return "card_code_project";
+
+    default:
+      return "cocktail_card";
+    }
+  }
+
+  function getZettels($mustache) : array {
     if (isset($this->zettels)) {
       return $this->zettels;
     }
@@ -123,7 +130,7 @@ class Zettels {
     $this->zettels = $this->parser->parse();
 
     foreach ($this->zettels as $someCocktail) {
-      $path = $someCocktail->getLocalPath();
+      $path = $someCocktail->getLocalPath($mustache);
 
       if (file_exists($path)) {
         continue;
@@ -132,7 +139,8 @@ class Zettels {
       $someCocktail->writeToPath($path);
     }
 
-    shuffle($this->zettels);
+    $this->zettels = array_values($this->zettels);
+
     return $this->zettels;
   }
 
@@ -154,7 +162,7 @@ class Zettels {
     $path = __DIR__ . "/../../tmp/cocktail-$id";
 
     if (file_exists($path)) {
-      return Cocktail::fromPath($this->mustache, $path);
+      return Cocktail::fromPath($path);
     }
 
     return null;
@@ -171,7 +179,7 @@ class Zettels {
     $path = __DIR__ . "/../../tmp/cocktail-$date";
 
     if (file_exists($path)) {
-      return Cocktail::fromPath($this->mustache, $path);
+      return Cocktail::fromPath($path);
     }
 
     $selected = $this->getRandomCocktail();

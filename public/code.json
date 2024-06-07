@@ -1,20 +1,39 @@
-{
-  "zit": {
-    "description": "zit",
-    "meta": {
-      "template": "code_go_import",
-      "name": "code.linenisgreat.com/zit",
-      "url": "https://www.github.com/friedenberg/zit/go/zit"
-    },
-    "identifier": "zit"
+[
+  {
+    "akte-sha": "b1312f2a629246d8126cb827572e5b02944fef33fddfa7325ed83ce15e81975a",
+    "bezeichnung": "manage Chrome via REST & CLI",
+    "etiketten": [
+      "area-career",
+      "priority-2_want"
+    ],
+    "kennung": "project-24q1-chrest",
+    "typ": "toml-project-code",
+    "tai": "2096469063.397732",
+    "akte": {
+      "kennung": "chrest",
+      "meta": {
+        "name": "code.linenisgreat.com/chrest",
+        "template": "code_go_import",
+        "url": "https://www.github.com/friedenberg/chrest/"
+      }
+    }
   },
-  "chrest": {
-    "description": "chrest",
-    "meta": {
-      "template": "code_go_import",
-      "name": "code.linenisgreat.com/chrest",
-      "url": "https://www.github.com/friedenberg/chrest"
-    },
-    "identifier": "chrest"
+  {
+    "akte-sha": "677368970f61fa8e745d34c4666b1345ca760c10026cb97327a94beedfd3dc4c",
+    "bezeichnung": "store, organize, query, and edit files via git and Zettelkasten-like repos",
+    "etiketten": [
+      "area-career"
+    ],
+    "kennung": "project-2021-zit",
+    "typ": "toml-project-code",
+    "tai": "2096469063.396499",
+    "akte": {
+      "kennung": "zit",
+      "meta": {
+        "name": "code.linenisgreat.com/zit",
+        "template": "code_go_import",
+        "url": "https://www.github.com/friedenberg/zit/"
+      }
+    }
   }
-}
+]

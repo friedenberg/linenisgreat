@@ -1,4 +1,3 @@
-
 function tokenizeQuery(query) {
   let query_array = query.trim().split(/\s+/);
   return query_array;
@@ -18,7 +17,7 @@ const noOpGenerator = new NoOpGenerator();
 
 class StringGenerator {
   constructor(value) {
-    this.value = value
+    this.value = value;
   }
 
   get negatedSelector() {
@@ -32,8 +31,8 @@ class StringGenerator {
 
 class OrGenerator {
   constructor(left, right) {
-    this.left = left
-    this.right = right
+    this.left = left;
+    this.right = right;
   }
 
   get leftSelector() {
@@ -101,9 +100,15 @@ function parseQueryTokens(tokens) {
       const lastGenerator = selectorGenerators[selectorGenerators.length - 1];
       const newGenerator = new StringGenerator(token);
 
-      if (lastGenerator instanceof OrGenerator && lastGenerator.right === null) {
-        lastGenerator.right = newGenerator
-      } else if (lastGenerator instanceof NotGenerator && lastGenerator.value === null) {
+      if (
+        lastGenerator instanceof OrGenerator &&
+        lastGenerator.right === null
+      ) {
+        lastGenerator.right = newGenerator;
+      } else if (
+        lastGenerator instanceof NotGenerator &&
+        lastGenerator.value === null
+      ) {
         lastGenerator.value = newGenerator;
       } else {
         selectorGenerators.push(newGenerator);
@@ -128,7 +133,9 @@ function updateResults() {
 
   if (value !== "") {
     let generators = parseQueryTokens(tokenizeQuery(value));
-    let attrSelector = generators.map(x => `.card-grid > ${x.selector}`).join(", ");
+    let attrSelector = generators
+      .map((x) => `.card-grid > ${x.selector}`)
+      .join(", ");
     rule = `${attrSelector} { display: none; }`;
   }
 
@@ -142,10 +149,14 @@ function updateResults() {
 
   if (window.history.replaceState) {
     const joined = value.trim().split(" ").join(",");
-    window.history.replaceState(window.history.statedata, window.title, `https://www.isittimetostopworkingyet.com/${joined}`);
+    window.history.replaceState(
+      window.history.statedata,
+      window.title,
+      `${window.origin}/${joined}`
+    );
   }
 }
 
-window.addEventListener("load", function() {
+window.addEventListener("load", function () {
   updateResults();
 });
