@@ -32,7 +32,7 @@
       "meta": {
         "name": "code.linenisgreat.com/zit",
         "template": "code_go_import",
-        "url": "https://www.github.com/friedenberg/zit/"
+        "url": "https://github.com/friedenberg/zit.git"
       }
     }
   }

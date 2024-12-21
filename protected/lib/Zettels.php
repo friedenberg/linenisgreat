@@ -47,6 +47,9 @@ class Zettels {
     return $this->site;
   }
 
+  /**
+   * @return array<string,string>
+   */
   function getSiteData() : array {
     switch ($this->getSite()) {
     case "sashafriedenberg.com/resume":
@@ -75,6 +78,15 @@ class Zettels {
         "favicon" => "assets/favicon.png",
       ];
 
+    case "linenisgreat.com/writing":
+      return [
+        "title" => "Linen is Great: Writing",
+        "url" => "https://www.linenisgreat.com/writing",
+        "file" => "writing.json",
+        "favicon" => "assets/favicon.png",
+      ];
+
+
     default:
       return [
         "title" => "Linen is Great",
@@ -84,7 +96,9 @@ class Zettels {
       ];
     }
   }
-
+  /**
+   * @param mixed $mustache
+   */
   function getCodeMetaRaw($mustache) : string {
     if (strcmp($this->getSite(), "code.linenisgreat.com") != 0) {
       return "";
@@ -94,17 +108,35 @@ class Zettels {
       return "";
     }
 
-    $zettel = $this->parser->getRaw()[substr($this->path, 1)] ?? [];
+    $elements = explode("/", $this->path);
+    $key = $elements[1];
+    $raw = $this->parser->getRaw();
+    $zettel = [];
+
+    foreach ($raw as $someZettel) {
+      if (strcmp($someZettel['akte']['kennung'], $key) === 0 ) {
+        $zettel = $someZettel;
+        break;
+      }
+    }
+
+    /* $zettel = $raw[$key] ?? []; */
 
     if (empty($zettel)) {
       // TODO 404
     }
 
-    $code = $zettel['meta'];
+    $code = $zettel['akte']['meta'];
+    /* $remainder = implode("/", array_slice($elements, 2)); */
+    /* $code['name'] = $code['name'] . '/' . $remainder; */
+    /* $code['url'] = $code['url'] . $remainder; */
 
     return $mustache->render($code['template'], $code);
   }
-
+  /**
+   * @param mixed $mustache
+   * @return array<string,string>
+   */
   function getMeta($mustache) : array {
     $meta = $this->getSiteData();
     $meta['raw'] = $this->getCodeMetaRaw($mustache);
@@ -121,7 +153,9 @@ class Zettels {
       return "cocktail_card";
     }
   }
-
+  /**
+   * @return <missing>|array@param mixed $mustache
+   */
   function getZettels($mustache) : array {
     if (isset($this->zettels)) {
       return $this->zettels;
@@ -143,21 +177,25 @@ class Zettels {
 
     return $this->zettels;
   }
-
-  function getCocktailForQuery($query) {
+  /**
+   * @param mixed $query
+   */
+  function getCocktailForQuery($query): array {
     $matches = explode(",", $query);
     $matches = array_combine($matches, $matches);
 
-    return array_values(
-      array_filter(
-        $this->getZettels(),
-        function ($c) use ($matches) {
-          return $c->matches($matches);
-        }
-    )
-    );
+    return array_values(array_filter(
+      $this->getZettels(),
+      function ($c) use ($matches) {
+        return $c->matches($matches);
+      }
+    ));
   }
 
+  /**
+   * @param mixed $id
+   * @return <missing>|null
+   */
   function getCocktailWithId($id) {
     $path = __DIR__ . "/../../tmp/cocktail-$id";
 

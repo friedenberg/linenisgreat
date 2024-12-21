@@ -33,6 +33,10 @@ class Zettel {
 
     $data = $j['akte'];
 
+    if (is_string($data)) {
+      $this->description = $data;
+    }
+
     if (!empty($data['kennung'])) {
       $this->identifier = $data['kennung'];
     }
@@ -59,6 +63,10 @@ class Zettel {
 
     switch ($this->typ) {
     case "toml-project-code":
+      $this->card_body_template = "card_code_project";
+      break;
+
+    case "md":
       $this->card_body_template = "card_code_project";
       break;
 

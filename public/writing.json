@@ -1,0 +1,28 @@
+[
+  {
+    "akte": "Go has two ways so interacting with variables: Pointers & Values. These\nsemantics are similar to other languages, but I'll quickly summarize them:\n\n-   values have their data live on the stack and are copied between stack frames\n-   pointers have their data live on the heap, but the pointer to the data lives\n    on the stack ans is copied between stack frames like values\n\nOne neat feature of Go is to coerce value types into pointer types when pointer\nmethods are called on values. That's a mouthful, so let's see an example:\n\n1.  Let's define a structure with a pointer method\n\n    ``` go\n    type SomeStruct struct {\n      value string\n    }\n\n    func (s *SomeStruct) String() string {\n      return s.value\n    }\n    ```\n\n2.  Next, let's create a value with that structure and call it's pointer method\n\n    ``` go\n    s := SomeStruct{value: \"a really great string\"}\n    fmt.Println(s.String())\n    ```\n\nGo will successfully call `String()` on `s`, despite the type of `s` being a\nvalue and not a pointer. This is because Go will take the address of the stack\nvariable `s` and call the `String()` method with the address.\n\nHowever, there are some limitations with where Go will perform this\ntransformation and there are some unpleasant consequences. The biggest\nlimitation is when the type information is erased when being passed to methods\nthat accept interfaces:\n\n``` go\nfmt.Println(s)          // {a really great string}\nfmt.Println(&s)         // \"a really great string\"\nfmt.Println(s.String()) // \"a really great string\"\n```\n\nBecause the type of `s` is a value type, when it's passed as an argument to\nfunction taking an interface type (like with\n`Println(a ...any) (n int, err error)`), the data in the receiving function\nactually looks something like this:\n\n\\[`(value, type)`\\]\n\nThen, when `Println` inspects `s`, it does not recognize `s` as a something that\nhas a `String() string` method on it, and so [`Println` defaults to printing a\nstruct representation] of the argument instead of [calling `String()`].\n\nGo interface's ignorance of pointer / value semantics has other consequences for\nthe memory locality of slices, and well as the ergonomics of generics.\n\n# Mutable vs Immutable\n\nThe only way to truly enforce mutability in Go is by combining \n\n# Non-local Slices\n\nLet's say you want a slice of `fmt.Stringers`. \n\n# Uncomfortable Generics\n\n\n\n  [`Println` defaults to printing a struct representation]: https://cs.opensource.google/go/go/+/refs/tags/go1.22.1:src/fmt/print.go;l=759\n  [calling `String()`]: https://cs.opensource.google/go/go/+/refs/tags/go1.22.1:src/fmt/print.go;l=670\n",
+    "akte-sha": "d85862eb830b5a593cdb1075d008fdb4f620d13008f86b276d2673b36f5cb073",
+    "bezeichnung": "pointer / value syntactic ambiguities",
+    "etiketten": [
+      "area-career-writing",
+      "req-comp",
+      "project-24q2-writing_and_publishing"
+    ],
+    "kennung": "rayon/lapras",
+    "typ": "md",
+    "tai": "2092829120.045935"
+  },
+  {
+    "akte": "# unix\n\n- exit status codes more like HTTP status codes\n- pipes with content type negotation and REST-like semantics\n- directories and paths in file system fragility\n\n# golang\n\n- ambiguous value / pointer syntax in go for methods fails for uses like\n  fmt.Sprintf where no type information exists to force the pointer-affinity of\n  the type for something like `String()`\n- go itself uses horrible hacks to prevent copy-by-value for value-averse types\n- value averse types can be a minefield\n- when designing structs in go, you don't always know if it makes sense to write\n  the type as value or reference\n- best practices suggest never mixing value / reference types\n- value types should not be used for immutability\n- value types are very poorly disambiguated in go and many other languages\n- generics have a broken view of the value / reference duality of\n  types\n- slices cause many overlapping mutable views of the same data and can be very\n  chaotic\n- strings are immutable and expensive to create often\n- inline arrays (where the elements are the rows of literal structs in memory)\n  are not ergonomic and incompatible with value-averse types\n- the inability to explicitly grow slices without appending is stupid af\n- bad for memory layout\n",
+    "akte-sha": "b8aad4012cb779a606ebfa98fcbdad8579d865338938cee5e2b0607203cb7937",
+    "bezeichnung": "ideas to write about",
+    "etiketten": [
+      "project-2022-recurse-23-anya_mentorship",
+      "zz-inbox",
+      "project-24q2-writing_and_publishing"
+    ],
+    "kennung": "arsenic/tauros",
+    "typ": "md",
+    "tai": "2094293666.375224"
+  }
+]
