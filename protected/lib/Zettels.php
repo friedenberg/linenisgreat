@@ -21,6 +21,7 @@ class Zettels {
     }
 
     $this->setResumeIfNecessary();
+    $this->setMeetIfNecessary();
 
     $this->parser = new ZettelParser(
       __DIR__ . "/../../public/{$this->getSiteData()['file']}",
@@ -29,6 +30,10 @@ class Zettels {
 
   function isResume() : bool {
     return strcmp($this->site, "sashafriedenberg.com/resume") == 0;
+  }
+
+  function isMeet() : bool {
+    return strcmp($this->site, "linenisgreat.com/meet") == 0;
   }
 
   function setResumeIfNecessary() : void {
@@ -41,6 +46,18 @@ class Zettels {
     }
 
     $this->site = "sashafriedenberg.com/resume";
+  }
+
+  function setMeetIfNecessary() : void {
+    if (strcmp($this->site, "linenisgreat.com") != 0) {
+      return;
+    }
+
+    if (strcmp($this->path, "/meet") != 0) {
+      return;
+    }
+
+    $this->site = "linenisgreat.com/meet";
   }
 
   function getSite() : string {

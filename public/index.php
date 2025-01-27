@@ -43,6 +43,9 @@ if ($zettels->isResume()) {
     __DIR__ . "/resume.html",
   );
   array_push($template_args["stylesheets"], "resume");
+} else if ($zettels->isMeet()) {
+  $template = "meet";
+  array_push($template_args["stylesheets"], "meet");
 } else {
   $template_args["zettels"] = array_map(
     function ($zettel) {
