@@ -1,123 +1,52 @@
 <?php declare(strict_types=1);
 
-class Zettels {
-  private $path;
+class Tab {
+  public $mustache;
+  public $title;
+
   private $zettels;
   private $parser;
   private $site;
+  /**
+   * @param string $title
+   * @param string $objectFile
+   */
+  function __construct(
+    $title,
+    $objectFile = null,
+  ) {
+    $this->title = $title;
 
-  function __construct() {
-    $this->path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $this->site = $site ?? $_ENV["SERVER_NAME"] ?? $_SERVER["SERVER_NAME"];
-
-    if (empty($this->site)) {
-      $this->site = "linenisgreat.com";
+    if (!is_null($objectFile)) {
+      $this->parser = new ZettelParser( "$objectFile");
     }
 
-    $prefix = 'www.';
+    $options = array('extension' => '.html.mustache');
 
-    if (substr($this->site, 0, strlen($prefix)) == $prefix) {
-      $this->site = substr($this->site, strlen($prefix));
-    }
-
-    $this->setResumeIfNecessary();
-    $this->setMeetIfNecessary();
-
-    $this->parser = new ZettelParser(
-      __DIR__ . "/../../public/{$this->getSiteData()['file']}",
-    );
-  }
-
-  function isResume() : bool {
-    return strcmp($this->site, "sashafriedenberg.com/resume") == 0;
-  }
-
-  function isMeet() : bool {
-    return strcmp($this->site, "linenisgreat.com/meet") == 0;
-  }
-
-  function setResumeIfNecessary() : void {
-    if (strcmp($this->site, "sashafriedenberg.com") != 0) {
-      return;
-    }
-
-    if (strcmp($this->path, "/resume") != 0) {
-      return;
-    }
-
-    $this->site = "sashafriedenberg.com/resume";
-  }
-
-  function setMeetIfNecessary() : void {
-    if (strcmp($this->site, "linenisgreat.com") != 0) {
-      return;
-    }
-
-    if (strcmp($this->path, "/meet") != 0) {
-      return;
-    }
-
-    $this->site = "linenisgreat.com/meet";
-  }
-
-  function getSite() : string {
-    return $this->site;
+    $this->mustache = new Mustache_Engine(array(
+      'loader' => new Mustache_Loader_FilesystemLoader(
+        __DIR__ . '/templates',
+        $options,
+      ),
+      'entity_flags' => ENT_QUOTES,
+    ));
   }
 
   /**
    * @return array<string,string>
    */
   function getSiteData() : array {
-    switch ($this->getSite()) {
-    case "sashafriedenberg.com/resume":
+    return [
+      "title" => $this->title,
+      "favicon" => "assets/favicon.png",
+    ];
 
-    case "sashafriedenberg.com":
-      return [
-        "title" => "Sasha Friedenberg",
-        "url" => "https://www.sashafriedenberg.com",
-        "file" => "cocktails.json",
-        "favicon" => "assets/favicon.png",
-      ];
-
-    case "isittimetostopworkingyet.com":
-      return [
-        "title" => "Is It Time to Stop Working Yet?",
-        "url" => "https://www.isittimetostopworkingyet.com",
-        "file" => "cocktails.json",
-        "favicon" => "assets/favicon.png",
-      ];
-
-    case "code.linenisgreat.com":
-      return [
-        "title" => "Linen is Great: Code",
-        "url" => "https://www.linenisgreat.com",
-        "file" => "code.json",
-        "favicon" => "assets/favicon.png",
-      ];
-
-    case "linenisgreat.com/writing":
-      return [
-        "title" => "Linen is Great: Writing",
-        "url" => "https://www.linenisgreat.com/writing",
-        "file" => "writing.json",
-        "favicon" => "assets/favicon.png",
-      ];
-
-
-    default:
-      return [
-        "title" => "Linen is Great",
-        "url" => "https://www.linenisgreat.com",
-        "file" => "zettels.json",
-        "favicon" => "assets/favicon.png",
-      ];
-    }
   }
   /**
    * @param mixed $mustache
    */
   function getCodeMetaRaw($mustache) : string {
-    if (strcmp($this->getSite(), "code.linenisgreat.com") != 0) {
+    if (strcmp($this->title, "code") != 0) {
       return "";
     }
 
@@ -150,20 +79,20 @@ class Zettels {
 
     return $mustache->render($code['template'], $code);
   }
+
   /**
-   * @param mixed $mustache
    * @return array<string,string>
    */
-  function getMeta($mustache) : array {
+  function getMeta() : array {
     $meta = $this->getSiteData();
-    $meta['raw'] = $this->getCodeMetaRaw($mustache);
+    $meta['raw'] = $this->getCodeMetaRaw($this->mustache);
 
     return $meta;
   }
 
   function getCardTemplate() : string{
-    switch ($this->getSite()) {
-    case "code.linenisgreat.com":
+    switch ($this->title) {
+    case "code":
       return "card_code_project";
 
     default:
@@ -241,5 +170,9 @@ class Zettels {
     $selected->writeToPath($selected->getLocalPath());
     symlink($other_path, $path);
     return $selected;
+  }
+
+  function render($template, $args) : void {
+    $this->mustache->render($template, $args);
   }
 }

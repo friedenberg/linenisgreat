@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,900;1,900&family=Spectral+SC:ital,wght@0,300;0,800;1,500&family=Spectral:wght@200;400;500&display=swap');
 
 h1 {
   font-size: xxx-large;
@@ -54,6 +53,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   position: absolute;
+  padding: var(--padding);
 }
 
 .container {
@@ -209,13 +209,22 @@ input#search-box {
   stroke: white;
 }
 
-table {
+.card-contents > * {
   width: 100%;
 }
 
-th {
+th,.card-head {
   padding-bottom: var(--padding);
   border-bottom: var(--stroke);
+}
+
+.card-head > div,.card-body > div {
+  margin-left: var(--padding);
+  margin-right: var(--padding);
+  width: calc(100% - (var(--padding) * 2));
+}
+.card-body {
+  padding-top: var(--padding);
 }
 
 tr:first-child td {
@@ -226,9 +235,14 @@ tr:last-child td {
   padding-bottom: var(--padding);
 }
 
+.text-center {
+  text-align: center;
+}
+
 .title {
   display: inline-block;
   font-size: 24px;
+  font-weight: bold;
 }
 
 .nightMode th {

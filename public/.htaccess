@@ -1,9 +1,8 @@
-Options +FollowSymLinks
+Options +FollowSymLinks -Indexes
 RewriteEngine On
 
-# Rewrite only if the URI does not starts with assets
-RewriteCond %{REQUEST_URI} !^/assets
+RewriteRule ^(cocktails|resume|meet|now|code)/?$    $1.php
 
-RewriteRule ^(.*)$      index.php?query=$1
-# RewriteRule ^assets/(\w+.(css|js))$      $1
-RewriteRule ^i/(.*)$    image.php?id=$1
+RewriteCond %{HTTP_HOST} ^code.linenisgreat.com$
+RewriteRule ^/?(.*)$ https://linenisgreat.com/code/$1 [R=302,L]
+# TODO add 404

@@ -7,18 +7,24 @@ $mustache = new Mustache_Engine(array(
   'entity_flags' => ENT_QUOTES,
 ));
 
-$zettels = new Tab('about');
-$nav = new Nav('about');
+$zettels = new Tab("cocktails", __DIR__ . '/cocktails.json');
+$nav = new Nav("cocktails");
 
-$template = 'about';
+$template = 'index';
 $template_args = [
   'nav' => array_values($nav->tiles),
   'meta' => $zettels->getMeta(),
   'stylesheets' => [
     "stylesheet",
-    "zettels",
     "fonts",
+    "zettels",
   ],
+  'zettels' => array_map(
+    function($zettel) {
+      return $zettel->html;
+    },
+    $zettels->getZettels($mustache),
+  ),
 ];
 
 $template_args['query'] = substr($_SERVER['REQUEST_URI'], 1);

@@ -24,6 +24,7 @@ class Zettel {
   public $css;
   public $card_body;
   public $description;
+  public $url;
 
   function __construct($j) {
     $this->typ = $j['typ'] ?? "toml-cocktail";
@@ -64,13 +65,16 @@ class Zettel {
     switch ($this->typ) {
     case "toml-project-code":
       $this->card_body_template = "card_code_project";
+      $this->url = "code/$this->identifier";
       break;
 
     case "md":
       $this->card_body_template = "card_code_project";
+      $this->url = "code/$this->identifier";
       break;
 
     default:
+      $this->url = "cocktails/$this->identifier";
       $this->card_body_template = "cocktail_card";
       $this->icon_css_class = "toml-cocktail-$this->glass";
     }

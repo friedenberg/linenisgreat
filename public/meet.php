@@ -7,12 +7,29 @@ $mustache = new Mustache_Engine(array(
   'entity_flags' => ENT_QUOTES,
 ));
 
-$zettels = new Tab('about');
-$nav = new Nav('about');
+$zettels = new Tab('meet');
 
-$template = 'about';
+$nav_raw = json_decode(
+  file_get_contents(
+    __DIR__ . "/../protected/nav.json",
+  ), true
+);
+
+$nav = array_map(
+  function ($value, $key) use ($zettels) {
+    if (strcmp($key, $zettels->title) == 0) {
+      $value["active"] = true;
+    }
+
+    return $value;
+  },
+  $nav_raw,
+  array_keys($nav_raw),
+);
+
+$template = 'meet';
 $template_args = [
-  'nav' => array_values($nav->tiles),
+  'nav' => array_values($nav),
   'meta' => $zettels->getMeta(),
   'stylesheets' => [
     "stylesheet",

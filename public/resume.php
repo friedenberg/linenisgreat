@@ -7,10 +7,10 @@ $mustache = new Mustache_Engine(array(
   'entity_flags' => ENT_QUOTES,
 ));
 
-$zettels = new Tab('about');
-$nav = new Nav('about');
+$zettels = new Tab('resume');
+$nav = new Nav("resume");
 
-$template = 'about';
+$template = 'resume';
 $template_args = [
   'nav' => array_values($nav->tiles),
   'meta' => $zettels->getMeta(),
@@ -19,6 +19,9 @@ $template_args = [
     "zettels",
     "fonts",
   ],
+  "resume" => file_get_contents(
+    __DIR__ . "/resume.html",
+  ),
 ];
 
 $template_args['query'] = substr($_SERVER['REQUEST_URI'], 1);

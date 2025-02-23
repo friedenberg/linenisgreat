@@ -147,14 +147,15 @@ function updateResults() {
     stylesheet.insertRule(rule, 0);
   }
 
-  if (window.history.replaceState) {
-    const joined = value.trim().split(" ").join(",");
-    window.history.replaceState(
-      window.history.statedata,
-      window.title,
-      `${window.origin}/${joined}`
-    );
-  }
+  // TODO reintroduce-url syncing
+  // if (window.history.replaceState) {
+  //   const joined = value.trim().split(" ").join(",");
+  //   window.history.replaceState(
+  //     window.history.statedata,
+  //     window.title,
+  //     `${window.origin}/${joined}`
+  //   );
+  // }
 }
 
 window.addEventListener("load", function () {

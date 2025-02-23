@@ -4,3 +4,38 @@ install-composer:
   php composer-setup.php
   php -r "unlink('composer-setup.php');"
   mv composer.phar protected/composer.phar
+
+install-revealjs-mkdir:
+  mkdir -p public/assets/revealjs
+
+[working-directory: 'public/assets/revealjs']
+install-revealjs: (install-revealjs-mkdir)
+  find . -delete
+  http \
+    --download "https://github.com/hakimel/reveal.js/archive/master.zip" \
+    -o reveal-js.zip
+  unzip reveal-js.zip
+  rm reveal-js.zip
+  mv reveal.js-master/{css,dist,js,plugin} ./
+  rm -rf reveal.js-master
+
+[working-directory: 'protected']
+build-php-composer:
+  php composer.phar install
+
+deploy-prod:
+  rsync -r \
+    --include ".htaccess" \
+    --delete \
+    --exclude ".*" \
+    private conf protected public \
+    linenisgreat.com:../
+
+  ssh linenisgreat.com ../private/deploy.sh
+
+deploy-local: build-php-composer
+  mkdir -p tmp
+  SERVER_NAME="${1:-linenisgreat.com}" php \
+      -S localhost:2222 \
+      -c conf/php.ini \
+      -t public/
