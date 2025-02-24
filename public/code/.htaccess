@@ -1,0 +1,6 @@
+Options +FollowSymLinks -Indexes
+RewriteEngine On
+
+RewriteBase "/code"
+RewriteCond "%{REQUEST_URI}" !=/code/index.php
+RewriteRule "^(.*)"    "/code/index.php?args=$1" [L,PT]

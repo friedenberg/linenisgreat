@@ -1,25 +1,16 @@
 <?php declare(strict_types=1);
 
-$options =  array('extension' => '.html.mustache');
+$route = new RouteObject('about');
+$path = __DIR__ . "/about.html";
+$fileContents = file_get_contents($path);
 
-$mustache = new Mustache_Engine(array(
-  'loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/../protected/lib/templates', $options),
-  'entity_flags' => ENT_QUOTES,
-));
+if (!$fileContents) {
+  throw new Exception("object not found: $path");
+}
 
-$zettels = new Tab('about');
-$nav = new Nav('about');
-
-$template = 'about';
-$template_args = [
-  'nav' => array_values($nav->tiles),
-  'meta' => $zettels->getMeta(),
-  'stylesheets' => [
-    "stylesheet",
-    "zettels",
-    "fonts",
+$route->renderObject(
+  'object',
+  [
+    'object' => $fileContents,
   ],
-];
-
-$template_args['query'] = substr($_SERVER['REQUEST_URI'], 1);
-echo $mustache->render($template, $template_args);
+);

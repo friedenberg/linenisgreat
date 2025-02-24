@@ -33,9 +33,11 @@ deploy-prod:
 
   ssh linenisgreat.com ../private/deploy.sh
 
+[no-cd]
 deploy-local: build-php-composer
   mkdir -p tmp
   SERVER_NAME="${1:-linenisgreat.com}" php \
+      -d "auto_prepend_file={{absolute_path("protected/vendor/autoload.php")}}" \
       -S localhost:2222 \
       -c conf/php.ini \
       -t public/

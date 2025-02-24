@@ -1,14 +1,13 @@
 <?php declare(strict_types=1);
 
 // TODO inherit from Route
-class RouteObjectOrObjectsIndex {
+class RouteObject {
   public $nav;
   public $mustache;
   public $title;
 
-  private $objects;
+  private $object;
   private $objectId;
-  private $parser;
 
   /**
    * @param string $title
@@ -20,8 +19,6 @@ class RouteObjectOrObjectsIndex {
     $this->nav = new Nav($title);
     $this->title = $title;
     $this->objectId = $objectId;
-    $objectsFile = __DIR__ . "/../../public/$title/index.json";
-    $this->parser = new ZettelParser($objectsFile);
 
     $options = array('extension' => '.html.mustache');
 
