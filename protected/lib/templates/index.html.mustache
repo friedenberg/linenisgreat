@@ -4,18 +4,20 @@
 
   <body>
 
-    <!-- <script async src="/assets/javascript.js"></script> -->
+    <script async src="/assets/javascript.js"></script>
 
-    <div class="container">
+    <div class="main-container">
 
       {{> nav}}
 
-      {{ > search_box }}
+      {{> search_box }}
 
-      <div class="card-grid">
-        {{#zettels}}
-        {{{.}}}
-        {{/zettels}}
+      <div class="main-container-body">
+        <div class="card-grid">
+          {{#zettels}}
+          {{{.}}}
+          {{/zettels}}
+        </div>
       </div>
 
     </div>

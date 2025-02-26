@@ -1,7 +1,7 @@
 Options +FollowSymLinks -Indexes
 RewriteEngine On
 
-RewriteRule ^(cocktails|resume|meet|now)/?$    $1.php
+RewriteRule ^(cocktails|resume|meet)/?$    $1.php
 
 RewriteCond %{HTTP_HOST} ^code.linenisgreat.com$
 RewriteRule ^/?(.*)$ https://linenisgreat.com/code/$1 [R=302,L]

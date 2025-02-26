@@ -3,12 +3,12 @@
 $tab = new Route('resume');
 
 $tab->renderWithExtraStylesheets(
-  'resume',
+  'object',
   [
     'resume',
   ],
   [
-    "resume" => file_get_contents(
+    "object" => file_get_contents(
       __DIR__ . "/resume.html",
     ),
   ],

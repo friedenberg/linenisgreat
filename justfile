@@ -23,7 +23,10 @@ install-revealjs: (install-revealjs-mkdir)
 build-php-composer:
   php composer.phar install
 
-deploy-prod:
+build:
+  pandoc -t html -i public/about.md -o public/about.html
+
+deploy-prod: build
   rsync -r \
     --include ".htaccess" \
     --delete \
@@ -34,7 +37,7 @@ deploy-prod:
   ssh linenisgreat.com ../private/deploy.sh
 
 [no-cd]
-deploy-local: build-php-composer
+deploy-local: build-php-composer build
   mkdir -p tmp
   SERVER_NAME="${1:-linenisgreat.com}" php \
       -d "auto_prepend_file={{absolute_path("protected/vendor/autoload.php")}}" \

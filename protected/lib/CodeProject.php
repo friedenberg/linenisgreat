@@ -6,7 +6,7 @@ class CodeProject {
   public $card_body_template;
   public $icon_css_class;
   public $name;
-  public $identifier;
+  public $title;
   public $search_string;
   public $search_array;
   public $html;
@@ -22,7 +22,7 @@ class CodeProject {
     $this->typ = $j['typ'] ?? "toml-cocktail";
     $this->description = $j['bezeichnung'] ?? "";
     $this->name = $j['bezeichnung'];
-    $this->identifier = $j['kennung'];
+    $this->title = $j['kennung'];
 
     $data = $j['akte'];
 
@@ -31,18 +31,18 @@ class CodeProject {
     }
 
     if (!empty($data['kennung'])) {
-      $this->identifier = $data['kennung'];
+      $this->title = $data['kennung'];
     }
 
     $this->meta = $data['meta'] ?? [];
 
-    $this->search_string = "$this->name $this->identifier";
+    $this->search_string = "$this->name $this->title";
     $this->search_string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->search_string);
     $this->search_string = trim(preg_replace("/<.*?>/", " ", $this->search_string));
     $this->search_array = preg_split("/[\W]+/", $this->search_string);
     $this->search_array = array_combine($this->search_array, $this->search_array);
-    $this->card_body_template = "card_code_project";
-    $this->url = "/code/$this->identifier";
+    $this->card_body_template = "card_common";
+    $this->url = "/code/$this->title";
   }
 
   function getHtml($mustache): string {

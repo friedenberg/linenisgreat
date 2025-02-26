@@ -26,9 +26,5 @@
   "resume": {
     "title": "résumé",
     "url": "/resume"
-  },
-  "now": {
-    "title": "now",
-    "url": "/now"
   }
 }

@@ -82,16 +82,6 @@ class RouteObjectOrObjectsIndex {
     return $meta;
   }
 
-  function getCardTemplate() : string{
-    switch ($this->title) {
-    case "code":
-      return "card_code_project";
-
-    default:
-      return "cocktail_card";
-    }
-  }
-
   function getObjects($objectClassName, $urlPrefix) : array {
     if (isset($this->objects)) {
       return $this->objects;
