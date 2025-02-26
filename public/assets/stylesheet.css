@@ -55,19 +55,18 @@ div.main-container {
   width: 100%;
   height: 100%;
   flex-direction: column;
-  /* overflow: hidden; */
   position: absolute;
 }
 
 div.object {
-  overflow: auto;
   max-width: 66em;
 }
 
 .main-container-body {
   flex-grow: 1;
   overflow: auto;
-  max-width: 66em;
+  display: flex;
+  justify-content: center;
 }
 
 /*  _   _             */
@@ -78,7 +77,6 @@ div.object {
 /*                    */
 
 nav {
-  /* position: absolute; */
   display: flex;
   justify-content: center;
   margin: auto;
@@ -149,29 +147,13 @@ input#search-box {
   --padding-width: calc(var(--number-of-gutters) * var(--padding));
   width: calc(var(--content-width) + var(--padding-width));
   margin: auto;
+  margin-top: 0;
   padding-bottom: var(--padding);
 }
 
 .card-grid > .card {
   margin-bottom: 8px;
 }
-
-/* .card:hover { */
-/*   box-shadow: 0px 1px 3px black; */
-/*   transform: scale(1.02); */
-/* } */
-
-/* .card:not(:target) { */
-/*   z-index: 0; */
-/* } */
-
-/* .card:target { */
-/*   z-index: 1; */
-/*   box-shadow: 0px 1px 3px black; */
-/*   transform: scale(1.5); */
-/*   position: absolute; */
-/*   margin: 0; */
-/* } */
 
 .card > a {
   color: inherit;
