@@ -1,8 +1,14 @@
 Options +FollowSymLinks -Indexes
 RewriteEngine On
 
-RewriteRule ^(cocktails|resume|meet)/?$    $1.php
+RewriteRule "^$"                     "object.php?tab=about&args=digastric/kitts" [L,PT,B]
+RewriteRule ^(objects|notes|slides|cocktails|resume|meet)/?$    $1.php
+RewriteRule "^(objects)/(.+)$"                   "object.php?tab=$1&args=$2" [L,PT,B]
+RewriteRule "^(notes)/(.+)$"                     "object.php?tab=$1&args=$2" [L,PT,B]
+RewriteRule "^(slides)/(.+)$"                    "object.php?tab=$1&template=slide&args=$2" [L,PT,B]
 
+# if the host is code.*, rewrite via a redirect to /code
 RewriteCond %{HTTP_HOST} ^code.linenisgreat.com$
 RewriteRule ^/?(.*)$ https://linenisgreat.com/code/$1 [R=302,L]
+
 # TODO add 404

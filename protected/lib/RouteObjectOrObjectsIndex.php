@@ -8,6 +8,10 @@ class RouteObjectOrObjectsIndex {
 
   private $objects;
   private $objectId;
+
+  /**
+   * @param ZettelParser $parser
+   */
   private $parser;
 
   /**
@@ -20,7 +24,7 @@ class RouteObjectOrObjectsIndex {
     $this->nav = new Nav($title);
     $this->title = $title;
     $this->objectId = $objectId;
-    $objectsFile = __DIR__ . "/../../public/$title/index.json";
+    $objectsFile = __DIR__ . "/../../public/$title.json";
     $this->parser = new ZettelParser($objectsFile);
 
     $options = array('extension' => '.html.mustache');

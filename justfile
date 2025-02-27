@@ -24,7 +24,7 @@ build-php-composer:
   php composer.phar install
 
 build:
-  pandoc -t html -i public/about.md -o public/about.html
+  # zit show -format json public | jq -s > ~/eng/site-linenisgreat/public/objects.json
 
 deploy-prod: build
   rsync -r \

@@ -64,12 +64,12 @@ class ZettelParser {
     return array_map(
       function ($c) use ($className, $urlPrefix) {
         if (!is_null($urlPrefix)) {
-          $cocktail = new $className($c, $urlPrefix);
+          $object = new $className($c, $urlPrefix);
         } else {
-          $cocktail = new $className($c);
+          $object = new $className($c);
         }
 
-        return $cocktail;
+        return $object;
       },
       $this->getRaw(),
     );

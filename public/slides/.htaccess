@@ -1,5 +1,0 @@
-Options +FollowSymLinks -Indexes
-RewriteEngine On
-
-RewriteBase /slides
-RewriteRule ^(\w+/\w+)/?(.*)$    index.php?objectId=$1&slug=$2

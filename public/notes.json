@@ -1,0 +1,30 @@
+[
+  {
+    "blob-string": "I'm Sasha Friedenberg.\n\nThings I do:\n\n-   viola (next concert: [2025-03-07, chamber music with Litha Symphony](https://www.lithasymphony.org/march-7-2025.html))\n-   yoga\n-   programming / software engineering\n\nThings I'm currently working on:\n\n-   home renovations (want free stuff? [come take\n    it](https://partiful.com/e/H2KJxFuQZy1yIRF4h1Ou))\n-   [`zit`](/code/zit), a cross between git and zettelkasten\n-   [`chrest`](/code/chrest), a web browser extension that lets you control your browser via CLI\n\nWhere I am:\n\n-   NYC\n\n",
+    "blob-sha": "71ee3b19764e36c0cc50c1e293104632dccd55f61303f268152ad0094238dcb3",
+    "description": "about",
+    "tags": [
+      "project-24q2-personal_sites",
+      "public"
+    ],
+    "object-id": "digastric/kitts",
+    "sha": "d60ade403476dfd0b1ec1f261cb69818e3e1563f5aa076c5a31e6f87c56a0d57",
+    "type": "!md",
+    "tai": "2119367923.189635005",
+    "date": "25-02-27 12:18:06"
+  },
+  {
+    "blob-string": "# furniture\n\n- grey 3--4 seat sofa\n- rosewood dining table that seats 6--10\n- white dining table / console that expands with storage inside\n- two sofa side tables\n\n# appliances\n\n- mini fridge\n- microwave\n- black coway hepa air filter\n\n# bathroomware\n\n- simple human tension shower caddy\n- black wall-mounted medicine cabinet\n\n# kitchenware\n\n- [hario v60 pour-over ceramic\n  dripper](https://www.amazon.com/dp/B000P4D5HG?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_3)\n\n# art\n\n# misc\n\n- spinning dirty / clean mop bucket\n- viola case\n- violin case\n- container store elfa rails, shelves\n- unknown closet shelves / system\n- rubbermaid trash / recycling bin\n",
+    "blob-sha": "1e7c6922f7c31aced81230659761f970799c8c7639db543ccd764e07608195c7",
+    "description": "things I'm giving away",
+    "tags": [
+      "project-24q1-reno-move_out",
+      "public"
+    ],
+    "object-id": "alaeque/philippines",
+    "sha": "bb0649a2bed0f8117cf5a722dee0966b92a51eec48dd403c44af25d7f68259a2",
+    "type": "!md",
+    "tai": "2119362646.897508885",
+    "date": "25-02-27 10:50:09"
+  }
+]

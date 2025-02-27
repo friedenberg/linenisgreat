@@ -242,6 +242,10 @@ tr:last-child td {
   text-transform: uppercase;
 }
 
+.object-id {
+  font-size: 10pt;
+}
+
 .small-caps {
   font-family: "Spectral SC";
   font-variant: small-caps;
