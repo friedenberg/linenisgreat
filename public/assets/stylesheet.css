@@ -48,6 +48,7 @@ body {
 
 hr.main {
   margin-top: 0;
+  margin-bottom: 0;
 }
 
 div.main-container {
@@ -67,6 +68,7 @@ div.object {
   overflow: auto;
   display: flex;
   justify-content: center;
+  padding: var(--padding);
 }
 
 /*  _   _             */
