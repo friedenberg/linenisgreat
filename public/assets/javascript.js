@@ -147,6 +147,20 @@ function updateResults() {
     stylesheet.insertRule(rule, 0);
   }
 
+  let cards = document.getElementsByClassName("card-contents");
+  let count = 0;
+
+  for (const card of cards) {
+    if (card.offsetParent === null) {
+      continue;
+    }
+
+    count++;
+  }
+
+  let searchResultCount = document.getElementById("search-result-count");
+  searchResultCount.textContent = count;
+
   // TODO reintroduce-url syncing
   // if (window.history.replaceState) {
   //   const joined = value.trim().split(" ").join(",");

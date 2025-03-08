@@ -9,6 +9,8 @@ h1 {
 body {
   --padding: 8px;
   --card-width: 304px;
+  --border-stroke-width: 2px;
+  --stroke: solid var(--border-stroke-width) black;
   margin: 0;
   user-select: none;
   font-family: Spectral;
@@ -46,11 +48,6 @@ body {
   }
 }
 
-hr.main {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
 div.main-container {
   display: flex;
   width: 100%;
@@ -59,16 +56,26 @@ div.main-container {
   position: absolute;
 }
 
-div.object {
-  max-width: 66em;
-}
-
 .main-container-body {
   flex-grow: 1;
   overflow: auto;
   display: flex;
   justify-content: center;
   padding: var(--padding);
+}
+
+.container-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-center-ve {
+  flex-direction: column;
+}
+
+img, video {
+  object-fit: contain;
 }
 
 /*  _   _             */
@@ -82,6 +89,7 @@ nav {
   display: flex;
   justify-content: center;
   margin: auto;
+  background: lightgrey;
 }
 
 nav ul {
@@ -130,6 +138,10 @@ input#search-box {
   margin: var(--padding);
 }
 
+div.search-bar input,label {
+  vertical-align: middle;
+}
+
 /*   ____              _     */
 /*  / ___|__ _ _ __ __| |___ */
 /* | |   / _` | '__/ _` / __|*/
@@ -164,8 +176,6 @@ input#search-box {
 
 .card {
   position: relative;
-  --border-stroke-width: 2px;
-  --stroke: solid var(--border-stroke-width) black;
   --actual-card-width: calc(var(--card-width) - calc(var(--padding) * 2) - calc(var(--border-stroke-width) * 2));
   width: var(--actual-card-width);
   border: var(--stroke);
@@ -212,8 +222,25 @@ th,.card-head {
   margin-right: var(--padding);
   width: calc(100% - (var(--padding) * 2));
 }
+
 .card-body {
   padding-top: var(--padding);
+}
+
+.card-body > div + div {
+  padding-top: var(--padding);
+}
+
+.card-body div {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.card-body tr {
+  line-height: 1.1;
 }
 
 tr:first-child td {
@@ -229,7 +256,6 @@ tr:last-child td {
 }
 
 .title {
-  display: inline-block;
   font-size: 24px;
   font-weight: bold;
 }
@@ -242,7 +268,7 @@ tr:last-child td {
   text-transform: uppercase;
 }
 
-.object-id {
+.text-small {
   font-size: 10pt;
 }
 
@@ -310,4 +336,54 @@ tr:last-child td {
 .icon-toml-cocktail-flute {
   visibility: visible;
   background-image: url("/assets/icon_glass_flute.svg");
+}
+
+details img {
+  width: 100%;
+}
+
+/*   ___  _     _           _   */
+/*  / _ \| |__ (_) ___  ___| |_ */
+/* | | | | '_ \| |/ _ \/ __| __|*/
+/* | |_| | |_) | |  __/ (__| |_ */
+/*  \___/|_.__// |\___|\___|\__|*/
+/*           |__/               */
+
+@media screen and (min-width: 1280px) {
+  div.object {
+    max-width: 66ch;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  div.object {
+    max-width: 100vw;
+  }
+}
+
+@media screen and (max-width: 940px) {
+  div.object {
+    max-width: 100vw;
+  }
+}
+
+@media screen and (max-width: 630px) {
+  div.object {
+    max-width: 100vw;
+  }
+}
+
+summary {
+  list-style-position: outside;
+  margin-inline-start: 40px;
+}
+
+div.object-head {
+  padding-bottom: var(--padding);
+  border-bottom: var(--stroke);
+}
+
+.object-container {
+  display: flex;
+  flex-direction: column;
 }

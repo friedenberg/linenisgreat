@@ -10,7 +10,13 @@ class RouteObject {
   private $objectId;
 
   /**
+   * @param ZettelParser $parser
+   */
+  private $parser;
+
+  /**
    * @param string $title
+   * @param string $objectId
    */
   function __construct(
     $title,
@@ -19,6 +25,8 @@ class RouteObject {
     $this->nav = new Nav($title);
     $this->title = $title;
     $this->objectId = $objectId;
+    $objectsFile = __DIR__ . "/../../public/objects.json";
+    $this->parser = new ZettelParser($objectsFile);
 
     $options = array('extension' => '.html.mustache');
 
@@ -88,7 +96,10 @@ class RouteObject {
       return "cocktail_card";
     }
   }
-
+  /**
+   * @param mixed $objectClassName
+   * @param mixed $urlPrefix
+   */
   function getObjects($objectClassName, $urlPrefix) : array {
     if (isset($this->objects)) {
       return $this->objects;
@@ -111,7 +122,48 @@ class RouteObject {
     return $this->objects;
   }
 
-  private function makeTemplateArgs(...$extra) : array {
+  /**
+   * @param mixed $extra
+   */
+  public function makeTemplateArgsMetadata(
+    $objectClassName,
+    $urlPrefix,
+  ) : array {
+    $objects = $this->parser->parseCustomClass($objectClassName, $urlPrefix);
+    $object = $objects[$this->objectId];
+
+    return [
+      'metadata' => [
+        'objectId' => $this->objectId,
+        'description' => $object->description,
+        'fields' => [
+          [
+            'key' => 'type',
+            'value' => $object->type,
+          ],
+          [
+            'key' => 'tags',
+            'value' => $object->tags,
+          ],
+          [
+            'key' => 'id',
+            'value' => $this->objectId,
+          ],
+          [
+            'key' => 'updated',
+            'value' => $object->date,
+          ],
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @param mixed $extra
+   */
+  private function makeTemplateArgs(
+    ...$extra,
+  ) : array {
     return array_merge(
       [
         'nav' => array_values($this->nav->tiles),
@@ -126,34 +178,17 @@ class RouteObject {
     );
   }
 
-  function renderIndex(
+  /**
+   * @param mixed $template
+   * @param mixed $args
+   */
+  function renderObject(
     $template,
-    $objectClassName,
-    $urlPrefix,
-    $args = [],
+    ...$args,
   ) : void {
-    $mustache = $this->mustache;
-
     echo $this->mustache->render(
       $template,
-      $this->makeTemplateArgs(
-        [
-          'objects' => array_map(
-            function ($object) use ($mustache) {
-              return $object->getHtml($mustache);
-            },
-            $this->getObjects($objectClassName, $urlPrefix),
-          ),
-        ],
-        $args,
-      ),
-    );
-  }
-
-  function renderObject($template, $args) : void {
-    echo $this->mustache->render(
-      $template,
-      $this->makeTemplateArgs($args),
+      $this->makeTemplateArgs(...$args),
     );
   }
 }

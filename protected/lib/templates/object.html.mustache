@@ -9,8 +9,33 @@
 
       <main class="main-container-body">
         <!-- TODO add option for object id prefix -->
-        <div class="object">
-          {{{object}}}
+        <div class="object-container">
+
+          {{#metadata}}
+          <div class="object object-head">
+            <div class="text-center title uppercase">{{metadata.description}}</div>
+            <div class="container-center container-center-ve">
+              <table>
+                <colgroup>
+                  <col class="tdleft">
+                  <col class="tdright">
+                </colgroup> 
+                <tbody>
+                  {{#fields}}
+                  <tr>
+                    <td class="tdleft small-caps">{{key}}</td>
+                    <td class="tdright">{{value}}</td>
+                  </tr>
+                  {{/fields}}
+                </tbody>
+              </table> 
+            </div>
+          </div>
+          {{/metadata}}
+
+          <div class="object object-body">
+            {{{object}}}
+          </div>
         </div>
       </main>
 

@@ -23,8 +23,12 @@ install-revealjs: (install-revealjs-mkdir)
 build-php-composer:
   php composer.phar install
 
-build:
-  # zit show -format json public | jq -s > ~/eng/site-linenisgreat/public/objects.json
+build-zit_object objectId: 
+  zit format-blob {{objectId}} html-partial > public/objects/{{objectId}}/index.html
+
+build: (build-zit_object "digastric/kitts") (build-zit_object "alaeque/philippines")
+  # zit show -format json public !md | jq -s 'map({(.["object-id"] | tostring): .}) | add' > ~/eng/site-linenisgreat/public/objects.json
+  # cp public/{object,notes}.json
 
 deploy-prod: build
   rsync -r \

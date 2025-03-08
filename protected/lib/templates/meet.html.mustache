@@ -1,21 +1,15 @@
-<!doctype html>
 <html lang="en">
   {{> head}}
 
   <body>
 
-    <script async src="/assets/javascript.js"></script>
-
     <div class="main-container">
 
       {{> nav}}
-      {{> search_box }}
 
       <main class="main-container-body">
-        <div class="card-grid">
-          {{#objects}}
-          {{{.}}}
-          {{/objects}}
+        <div class="object object-body">
+          {{{object}}}
         </div>
       </main>
 

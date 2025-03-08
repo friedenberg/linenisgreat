@@ -3,6 +3,8 @@
 $tab = $_GET['tab'] ?? 'notes';
 $args = $_GET['args'] ?? null;
 $template = $_GET['template'] ?? 'object';
+$parse_class = $_GET['parse_class'] ?? 'Objekt';
+$url_prefix = $_GET['url_prefix'] ?? '/notes/';
 
 if (!is_null($args)) {
   $url = parse_url($args);
@@ -15,6 +17,7 @@ $objectId = null;
 if (!is_null($path)) {
   $parts = explode('/', $path);
   $parts = array_slice($parts, 0, 2);
+
   $objectId = implode("/", $parts);
 }
 
@@ -28,6 +31,7 @@ if (!$objectContents) {
 
 $route->renderObject(
   $template,
+  $route->makeTemplateArgsMetadata($parse_class, $url_prefix),
   [
     'object' => $objectContents,
   ],

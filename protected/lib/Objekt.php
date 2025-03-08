@@ -2,6 +2,7 @@
 
 class Objekt {
   public $type;
+  public $tags;
   public $meta;
   public $card_body_template;
   public $icon_css_class;
@@ -22,9 +23,15 @@ class Objekt {
    */
   function __construct($j, $urlPrefix = "") {
     $this->type = $j['type'];
-    $this->description = $j['description'] ?? "";
-    $this->date = $j['date'];
-    $this->objectId = $j['object-id'];
+    $this->description = $j['description'] ?? $j['duration'] ?? "";
+    $this->date = $j['date'] ?? "";
+    $this->objectId = $j['object-id'] ?? $j['id'] ?? "";
+
+    if (is_array($j['tags'])) {
+      $this->tags = implode(', ', $j['tags'] ?? []);
+    } else {
+      $this->tags = $j['tags'] ?? "";
+    }
 
     /* $data = $j['blob-string']; */
 
@@ -38,7 +45,7 @@ class Objekt {
 
     /* $this->meta = $data['meta'] ?? []; */
 
-    $this->search_string = "$this->name $this->objectId";
+    $this->search_string = "$this->name $this->objectId $this->description $this->type $this->tags";
     $this->search_string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->search_string);
     $this->search_string = trim(preg_replace("/<.*?>/", " ", $this->search_string));
     $this->search_array = preg_split("/[\W]+/", $this->search_string);

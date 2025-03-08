@@ -1,8 +1,10 @@
-<div class="center">
-  <input
+<div class="center search-bar">
+  <span><input
       autocapitalize="off"
       type="search"
       id="search-box"
       oninput="this.setAttribute('value', this.value); updateResults();"
       />
+  </span>
+  <label id="search-result-count" for="search-box"></label>
 </div>
