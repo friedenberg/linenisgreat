@@ -2,9 +2,10 @@ protected/composer.phar
 protected/vendor/
 tmp/
 
-public/object.json
+public/objects.json
 public/notes.json
 public/objects/
+public/slides/
 public/notes/
 
 # Commit your application's lock file https://getcomposer.org/doc/01-basic-usage.md#commit-your-composer-lock-file-to-version-control
