@@ -24,11 +24,18 @@ build-php-composer:
   php composer.phar install
 
 build-zit_object objectId: 
+  mkdir -p public/objectId/{{objectId}}
   zit format-blob {{objectId}} html-partial > public/objects/{{objectId}}/index.html
 
-build: (build-zit_object "digastric/kitts") (build-zit_object "alaeque/philippines")
-  # zit show -format json public !md | jq -s 'map({(.["object-id"] | tostring): .}) | add' > ~/eng/site-linenisgreat/public/objects.json
-  # cp public/{object,notes}.json
+build-zit_objects:
+  #! /usr/bin/env -S bash -e
+  zit show -format object-id public | parallel -X just build-zit_object {}
+
+build: build-zit_objects
+  zit show -format json public !md \
+    | jq -s 'map({(.["object-id"] | tostring): .}) | add' \
+    > public/objects.json
+  cp public/{objects,notes}.json
 
 deploy-prod: build
   rsync -r \

@@ -12,7 +12,6 @@ body {
   --border-stroke-width: 2px;
   --stroke: solid var(--border-stroke-width) black;
   margin: 0;
-  user-select: none;
   font-family: Spectral;
   font-size: 20px;
 }
@@ -62,6 +61,17 @@ div.main-container {
   display: flex;
   justify-content: center;
   padding: var(--padding);
+}
+
+.main-container-body-iframe {
+  flex-grow: 1;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.main-container-body-iframe * {
+  flex-grow: 1;
 }
 
 .container-center {
@@ -338,7 +348,7 @@ tr:last-child td {
   background-image: url("/assets/icon_glass_flute.svg");
 }
 
-details img {
+img, video {
   width: 100%;
 }
 
@@ -386,4 +396,12 @@ div.object-head {
 .object-container {
   display: flex;
   flex-direction: column;
+}
+
+i.rc-scout__logo {
+  vertical-align: -1pt;
+}
+
+p.rc-scout__text {
+  height: unset;
 }
