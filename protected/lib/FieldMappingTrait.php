@@ -95,4 +95,40 @@ trait FieldMappingTrait
 
         return $default;
     }
+
+    /**
+     * Render HTML using two-phase template hydration.
+     * Phase 1: Render card body with object data
+     * Phase 2: Wrap in table_card container
+     *
+     * Requires: $this->html, $this->card_body, $this->card_body_template
+     *
+     * @param mixed $mustache Mustache engine instance
+     * @return string
+     */
+    public function getHtml($mustache): string
+    {
+        if (!isset($this->html)) {
+            $this->card_body = $mustache->render($this->card_body_template, $this);
+            $this->html = $mustache->render('table_card', $this);
+        }
+
+        return $this->html;
+    }
+
+    /**
+     * Get the site stylesheet content.
+     *
+     * Requires: $this->css
+     *
+     * @return string|false
+     */
+    public function getCss(): string|false
+    {
+        if (!isset($this->css)) {
+            $this->css = file_get_contents(__DIR__ . '/../../public/assets/stylesheet.css');
+        }
+
+        return $this->css;
+    }
 }

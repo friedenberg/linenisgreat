@@ -38,25 +38,4 @@ class Zettel2
         $this->card_body_template = "card_common";
     }
 
-    /**
-     * @param mixed $mustache
-     */
-    public function getHtml($mustache): string
-    {
-        if (!isset($this->html)) {
-            $this->card_body = $mustache->render($this->card_body_template, $this);
-            $this->html = $mustache->render('table_card', $this);
-        }
-
-        return $this->html;
-    }
-
-    public function getCss(): string
-    {
-        if (!isset($this->css)) {
-            $this->css = file_get_contents(__DIR__ . '/../../public/assets/stylesheet.css');
-        }
-
-        return $this->css;
-    }
 }

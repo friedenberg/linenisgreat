@@ -233,11 +233,20 @@ Updated models to use the trait:
 - `Yoga.php`
 - `CodeProject.php`
 
-### 2. Duplicate `getHtml()` Implementations
+### 2. Duplicate `getHtml()` Implementations - COMPLETED
 
-Nearly identical two-phase rendering exists in each model. Could be:
-- A trait with the common implementation
-- An abstract base class with a template method pattern
+**Status:** Refactored into `FieldMappingTrait`
+
+Added `getHtml()` and `getCss()` methods to the existing trait:
+
+- `getHtml($mustache)` - Two-phase template hydration (renders card body, then wraps in `table_card`)
+- `getCss()` - Cached stylesheet loading
+
+Removed duplicate implementations from:
+- `Objekt.php`
+- `Zettel2.php`
+- `Yoga.php`
+- `CodeProject.php`
 
 ### 3. Hardcoded Template Assignment
 
@@ -245,9 +254,16 @@ Each model hardcodes its `card_body_template`. Could be:
 - Configurable via constructor
 - Convention-based (derive from class name)
 
-### 4. Search Indexing Duplication
+### 4. Search Indexing Duplication - COMPLETED
 
-The same transliteration/tokenization pattern repeats across models. Could be extracted to a utility class or trait.
+**Status:** Already addressed by `buildSearchArray()` in `FieldMappingTrait`
+
+The `buildSearchArray()` method handles:
+- ASCII transliteration
+- HTML tag stripping
+- Whitespace normalization
+- Lowercase conversion
+- Tokenization to self-keyed array
 
 ### 5. Mixed JSON Structures
 

@@ -83,25 +83,4 @@ class Yoga
         $this->search_array = $this->buildSearchArray($this->search_string);
     }
 
-    /**
-     * @param mixed $mustache
-     */
-    public function getHtml($mustache): string
-    {
-        if (!isset($this->html)) {
-            $this->card_body = $mustache->render($this->card_body_template, $this);
-            $this->html = $mustache->render('table_card', $this);
-        }
-
-        return $this->html;
-    }
-
-    public function getCss(): string|false
-    {
-        if (!isset($this->css)) {
-            $this->css = file_get_contents(__DIR__ . '/../../public/assets/stylesheet.css');
-        }
-
-        return $this->css;
-    }
 }
