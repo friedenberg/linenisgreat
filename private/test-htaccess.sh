@@ -1,52 +1,63 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m' # No Color
-
+TEST_NUM=0
 FAILED=0
+
+# Define all tests upfront for TAP plan (pattern:::description)
+TESTS=(
+    '^Options \+FollowSymLinks -Indexes:::Options directive'
+    '^RewriteEngine On:::RewriteEngine enabled'
+    'RewriteRule.*object\.php\?tab=about:::Homepage route'
+    'RewriteRule.*yoga\|code.*\$1\.php:::Section index routes'
+    'RewriteRule.*objects.*object_with_metadata\.php:::Objects route'
+    'RewriteRule.*notes.*object_with_metadata\.php:::Notes route'
+    'RewriteRule.*slides.*object\.php.*template=slide:::Slides route'
+    'RewriteRule.*yoga/.*yoga_object\.php:::Yoga object route'
+    'RewriteRule.*code/.*code\.php:::Code project route'
+    'RewriteCond.*code\.linenisgreat\.com:::Subdomain condition'
+    'RewriteRule.*https://linenisgreat\.com/code/:::Subdomain redirect'
+)
 
 check_contains() {
     local pattern="$1"
     local description="$2"
 
+    ((++TEST_NUM))
+
     if echo "$HTACCESS" | grep -qE "$pattern"; then
-        echo -e "${GREEN}✓${NC} ${description}"
+        echo "ok ${TEST_NUM} - ${description}"
     else
-        echo -e "${RED}✗${NC} ${description} (pattern not found: ${pattern})"
-        FAILED=1
+        echo "not ok ${TEST_NUM} - ${description}"
+        echo "  ---"
+        echo "  pattern: ${pattern}"
+        echo "  ..."
+        ((++FAILED))
     fi
 }
 
-echo "Testing htaccess generation"
-echo
+gum style --border normal --padding "0 1" --border-foreground 212 \
+    "Testing htaccess generation"
 
 HTACCESS=$(php private/router.php --generate-htaccess)
 
-# Check header
-check_contains "^Options \+FollowSymLinks -Indexes" "Options directive"
-check_contains "^RewriteEngine On" "RewriteEngine enabled"
+# TAP header
+echo "TAP version 14"
+echo "1..${#TESTS[@]}"
 
-# Check routes
-check_contains 'RewriteRule.*object\.php\?tab=about' "Homepage route"
-check_contains 'RewriteRule.*yoga\|code.*\$1\.php' "Section index routes"
-check_contains 'RewriteRule.*objects.*object_with_metadata\.php' "Objects route"
-check_contains 'RewriteRule.*notes.*object_with_metadata\.php' "Notes route"
-check_contains 'RewriteRule.*slides.*object\.php.*template=slide' "Slides route"
-check_contains 'RewriteRule.*yoga/.*yoga_object\.php' "Yoga object route"
-check_contains 'RewriteRule.*code/.*code\.php' "Code project route"
+# Run tests
+for test in "${TESTS[@]}"; do
+    pattern="${test%%:::*}"
+    description="${test##*:::}"
+    check_contains "$pattern" "$description"
+done
 
-# Check redirect
-check_contains "RewriteCond.*code\.linenisgreat\.com" "Subdomain condition"
-check_contains "RewriteRule.*https://linenisgreat\.com/code/" "Subdomain redirect"
-
+# Summary
 echo
 if [[ "$FAILED" -eq 0 ]]; then
-    echo -e "${GREEN}All tests passed${NC}"
+    gum style --foreground 212 "All ${#TESTS[@]} tests passed"
     exit 0
 else
-    echo -e "${RED}Some tests failed${NC}"
+    gum style --foreground 196 "${FAILED} of ${#TESTS[@]} tests failed"
     exit 1
 fi
