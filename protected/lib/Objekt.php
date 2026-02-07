@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 class Objekt
 {
+    use FieldMappingTrait;
     public $type;
     public $tags;
     public $meta;
@@ -27,35 +28,15 @@ class Objekt
     public function __construct($j, $urlPrefix = "")
     {
         $this->type = $j['type'];
-        $this->description = $j['description'] ?? $j['duration'] ?? "";
+        $this->description = $this->extractWithFallback($j, ['description', 'duration'], "");
         $this->date = $j['date'] ?? "";
-        $this->objectId = $j['object-id'] ?? $j['id'] ?? "";
-
-        if (is_array($j['tags'])) {
-            $this->tags = implode(', ', $j['tags'] ?? []);
-        } else {
-            $this->tags = $j['tags'] ?? "";
-        }
-
-        /* $data = $j['blob-string']; */
-
-        /* if (is_string($data)) { */
-        /*   $this->description = $data; */
-        /* } */
-
-        /* if (!empty($data['object-id'])) { */
-        /*   $this->title = $data['object-id']; */
-        /* } */
-
-        /* $this->meta = $data['meta'] ?? []; */
+        $this->objectId = $this->extractObjectId($j);
+        $this->tags = $this->normalizeTags($j['tags'] ?? []);
 
         $this->search_string = "$this->name $this->objectId $this->description $this->type $this->tags";
-        $this->search_string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->search_string);
-        $this->search_string = trim(preg_replace("/<.*?>/", " ", $this->search_string));
-        $this->search_array = preg_split("/[\W]+/", $this->search_string);
-        $this->search_array = array_combine($this->search_array, $this->search_array);
+        $this->search_array = $this->buildSearchArray($this->search_string);
         $this->card_body_template = "card_object";
-        $this->url = "$urlPrefix$this->objectId/$this->description";
+        $this->url = $this->buildUrl($urlPrefix, $this->objectId, $this->description);
     }
 
     /**

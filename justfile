@@ -51,6 +51,9 @@ deploy-prod: build
 
   ssh linenisgreat.com ../private/deploy.sh
 
+generate-htaccess:
+  php router.php --generate-htaccess > public/.htaccess
+
 [no-cd]
 deploy-local: build-php-composer build
   mkdir -p tmp
@@ -58,4 +61,5 @@ deploy-local: build-php-composer build
       -d "auto_prepend_file={{absolute_path("protected/vendor/autoload.php")}}" \
       -S localhost:2222 \
       -c conf/php.ini \
-      -t public/
+      -t public/ \
+      router.php

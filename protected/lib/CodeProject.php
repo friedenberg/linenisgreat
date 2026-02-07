@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 class CodeProject
 {
+    use FieldMappingTrait;
     public $type;
     public $meta;
     public $card_body_template;
@@ -41,12 +42,9 @@ class CodeProject
         $this->meta = $data['meta'] ?? [];
 
         $this->search_string = "$this->name $this->title";
-        $this->search_string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->search_string);
-        $this->search_string = trim(preg_replace("/<.*?>/", " ", $this->search_string));
-        $this->search_array = preg_split("/[\W]+/", $this->search_string);
-        $this->search_array = array_combine($this->search_array, $this->search_array);
+        $this->search_array = $this->buildSearchArray($this->search_string);
         $this->card_body_template = "card_common";
-        $this->url = "/code/$this->title";
+        $this->url = $this->buildUrl("/code/", $this->title);
     }
 
     public function getHtml($mustache): string

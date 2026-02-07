@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 class Yoga
 {
+    use FieldMappingTrait;
     public $headers;
     public $fields;
 
@@ -37,13 +38,12 @@ class Yoga
         $this->duration = $j['duration'];
         $this->description = $j['description'];
         $this->date = $j['date'];
-        $this->objectId = $j['object-id'] ?? $j['id'] ?? "";
+        $this->objectId = $this->extractObjectId($j);
 
         $this->card_body_template = "card_object_new";
-        $titleUrlEncoded = urlencode($this->title);
-        $this->url = "$urlPrefix$this->objectId/$titleUrlEncoded";
+        $this->url = $this->buildUrl($urlPrefix, $this->objectId, $this->title);
 
-        $tags = implode(", ", $j['tags']);
+        $tags = $this->normalizeTags($j['tags'] ?? []);
 
         $this->headers = [
             [
@@ -56,63 +56,31 @@ class Yoga
             ],
         ];
 
-        $tags = implode(", ", $j['tags']);
-
         $this->fields = [];
 
         if (isset($this->duration)) {
-            array_push(
-                $this->fields,
-                [
-                    'key' => "duration",
-                    'value' => $this->duration,
-                ],
-            );
+            $this->fields[] = ['key' => "duration", 'value' => $this->duration];
         }
 
         if (isset($this->level)) {
-            array_push(
-                $this->fields,
-                [
-                    'key' => "level",
-                    'value' => $this->level,
-                ],
-            );
+            $this->fields[] = ['key' => "level", 'value' => $this->level];
         }
 
         if (isset($this->intensity)) {
-            array_push(
-                $this->fields,
-                [
-                    'key' => "intensity",
-                    'value' => $this->intensity,
-                ],
-            );
+            $this->fields[] = ['key' => "intensity", 'value' => $this->intensity];
         }
 
-        if (isset($tags)) {
-            array_push(
-                $this->fields,
-                [
-                    'key' => "tags",
-                    'value' => $tags,
-                ],
-            );
+        if (!empty($tags)) {
+            $this->fields[] = ['key' => "tags", 'value' => $tags];
         }
 
-        $this->search_string = "$this->title $this->subtitle $this->duration $this->objectId $this->description $this->type";
-        $this->search_string .= "{$j['level']} {$j['intensity']} {$tags}";
+        // Build search string with structured prefixes for filtering
+        $baseSearch = "$this->title $this->subtitle $this->duration $this->objectId $this->description $this->type";
+        $baseSearch .= " {$j['level']} {$j['intensity']} {$tags}";
+        $prefixedSearch = "d-$this->duration l-{$j['level']} i-{$j['intensity']}";
 
-        // TODO refactor below into card parent class
-        $this->search_string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->search_string);
-        $this->search_string = trim(preg_replace("/<.*?>/", " ", $this->search_string));
-        $this->search_string = trim(preg_replace("/\W+/", " ", $this->search_string));
-
-        $this->search_string .= "d-$this->duration l-{$j['level']} i-{$j['intensity']} {$tags}";
-        $this->search_string = strtolower($this->search_string);
-
-        $this->search_array = preg_split("/[\W]+/", $this->search_string);
-        $this->search_array = array_combine($this->search_array, $this->search_array);
+        $this->search_string = "$baseSearch $prefixedSearch";
+        $this->search_array = $this->buildSearchArray($this->search_string);
     }
 
     /**

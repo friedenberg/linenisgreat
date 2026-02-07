@@ -25,6 +25,8 @@
 
         pkgs = import nixpkgs {
           inherit system;
+
+          config.allowUnfree = true;
         };
 
       in
@@ -36,11 +38,13 @@
             with pkgs;
             [
               bats
-              composer
               fish
               gnumake
               gum
+              intelephense
               just
+              php84
+              php84Packages.composer
             ]
           );
 

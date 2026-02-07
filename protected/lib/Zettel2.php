@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 class Zettel2
 {
+    use FieldMappingTrait;
     public $title;
     public $subtitle;
     public $description;
@@ -27,16 +28,12 @@ class Zettel2
         $this->title = $j['title'];
         $this->subtitle = $j['subtitle'];
         $this->description = $j['description'];
-        $this->tags = $j['tags'];
-        $this->objectId = $j['objectId'];
-        $urlSafeTitle = urlencode($this->title);
-        $this->url = "$urlPrefix$this->objectId/$urlSafeTitle";
+        $this->tags = $this->normalizeTags($j['tags'] ?? []);
+        $this->objectId = $this->extractObjectId($j);
+        $this->url = $this->buildUrl($urlPrefix, $this->objectId, $this->title);
 
-        /* $this->search_string = strtolower(implode(" ", $this->ingredients) . " $this->name $this->kind $this->aka $this->identifier"); */
-        /* $this->search_string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->search_string); */
-        /* $this->search_string = trim(preg_replace("/<.*?>/", " ", $this->search_string)); */
-        /* $this->search_array = preg_split("/[\W]+/", $this->search_string); */
-        /* $this->search_array = array_combine($this->search_array, $this->search_array); */
+        $this->search_string = "$this->title $this->subtitle $this->description $this->tags";
+        $this->search_array = $this->buildSearchArray($this->search_string);
 
         $this->card_body_template = "card_common";
     }
