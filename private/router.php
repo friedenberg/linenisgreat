@@ -126,7 +126,7 @@ function routeRequest(array $routes, string $uri): bool
     $path = ltrim(parse_url($uri, PHP_URL_PATH), '/');
 
     // Let static files pass through
-    if ($path !== '' && file_exists(__DIR__ . '/public/' . $path)) {
+    if ($path !== '' && file_exists(__DIR__ . '/../public/' . $path)) {
         $ext = pathinfo($path, PATHINFO_EXTENSION);
         $staticExtensions = ['css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'woff', 'woff2', 'ttf', 'eot', 'json', 'html'];
         if (in_array(strtolower($ext), $staticExtensions, true)) {
@@ -158,7 +158,7 @@ function routeRequest(array $routes, string $uri): bool
             }
 
             // Include the target PHP file
-            $targetFile = __DIR__ . '/public/' . $file;
+            $targetFile = __DIR__ . '/../public/' . $file;
             if (file_exists($targetFile)) {
                 include $targetFile;
                 return true;
@@ -167,7 +167,7 @@ function routeRequest(array $routes, string $uri): bool
     }
 
     // No route matched - try serving from public directory
-    if ($path !== '' && file_exists(__DIR__ . '/public/' . $path)) {
+    if ($path !== '' && file_exists(__DIR__ . '/../public/' . $path)) {
         return false;
     }
 

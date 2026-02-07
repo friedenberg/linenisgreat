@@ -52,7 +52,34 @@ deploy-prod: build
   ssh linenisgreat.com ../private/deploy.sh
 
 generate-htaccess:
-  php router.php --generate-htaccess > public/.htaccess
+  php private/router.php --generate-htaccess > public/.htaccess
+
+test-htaccess:
+  private/test-htaccess.sh
+
+test-router PORT="2299": build-php-composer
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  # Start server in background
+  SERVER_NAME="linenisgreat.com" php \
+      -d "auto_prepend_file={{absolute_path("protected/vendor/autoload.php")}}" \
+      -S localhost:{{PORT}} \
+      -c conf/php.ini \
+      -t public/ \
+      private/router.php &
+  SERVER_PID=$!
+
+  # Ensure server is stopped on exit
+  trap "kill $SERVER_PID 2>/dev/null || true" EXIT
+
+  # Wait for server to start
+  sleep 1
+
+  # Run tests
+  private/test-router.sh {{PORT}}
+
+test: test-htaccess test-router
 
 [no-cd]
 deploy-local: build-php-composer build
@@ -62,4 +89,4 @@ deploy-local: build-php-composer build
       -S localhost:2222 \
       -c conf/php.ini \
       -t public/ \
-      router.php
+      private/router.php
