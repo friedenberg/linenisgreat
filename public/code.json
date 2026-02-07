@@ -1,39 +1,50 @@
-[
-  {
-    "akte-sha": "b1312f2a629246d8126cb827572e5b02944fef33fddfa7325ed83ce15e81975a",
-    "bezeichnung": "manage Chrome via REST & CLI",
-    "etiketten": [
-      "area-career",
-      "priority-2_want"
+{
+  "dodder": {
+    "blob-id": "sha256-s7uas5y7z7eaecg2qpkwktgheu02hnwsht073uzrquuura2h646qfj652z",
+    "blob-string": "name = \"dodder\"\n\n[meta]\ntemplate = \"code_go_import\"\nname = \"code.linenisgreat.com/dodder\"\nurl = \"https://www.github.com/friedenberg/dodder\"\n",
+    "date": "25-11-11 07:51:43",
+    "description": "an immutable cryptographic object graph with a robust and recursive type system that takes the best parts of Git, Nix, and Zettelkasten and allows you manage content, knowledge, builds, deployments and more",
+    "object-id": "project-dodder",
+    "repo-pub_key": "dodder-repo-public_key-v1@ed25519_pub-2sxpge0e3vugfd4tujx0cfffkcrksvnqzv7dhr9hep9yg6r7nemsay9zvs",
+    "repo-sig": "dodder-object-sig-v1@ed25519_sig-jcgdc79jzpwlavyjaq7jtrejvnp3x055d9sk0963yuquaz29jcy6frc55vgyhducx7pevyz28jgrwhheux0qlm8nl9xc6cjklwczyzck8cm0n",
+    "sha": "",
+    "tags": [
+      "project-24q2-personal_sites",
+      "public"
     ],
-    "kennung": "project-24q1-chrest",
-    "typ": "toml-project-code",
-    "tai": "2096469063.397732",
-    "akte": {
-      "kennung": "chrest",
+    "tai": "2141556740.060606382",
+    "type": "!toml-project-code",
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/dodder",
+        "template": "code_go_import",
+        "url": "https://www.github.com/friedenberg/dodder"
+      },
+      "name": "dodder"
+    }
+  },
+  "chrest": {
+    "blob-id": "fake",
+    "blob-string": "fake",
+    "date": "25-11-11 07:51:43",
+    "description": "",
+    "object-id": "project-chrest",
+    "repo-pub_key": "fake",
+    "repo-sig": "fake",
+    "sha": "",
+    "tags": [
+      "project-24q2-personal_sites",
+      "public"
+    ],
+    "tai": "2141556740.060606382",
+    "type": "!toml-project-code",
+    "blob": {
       "meta": {
         "name": "code.linenisgreat.com/chrest",
         "template": "code_go_import",
-        "url": "https://www.github.com/friedenberg/chrest/"
-      }
-    }
-  },
-  {
-    "akte-sha": "677368970f61fa8e745d34c4666b1345ca760c10026cb97327a94beedfd3dc4c",
-    "bezeichnung": "store, organize, query, and edit files via git and Zettelkasten-like repos",
-    "etiketten": [
-      "area-career"
-    ],
-    "kennung": "project-2021-zit",
-    "typ": "toml-project-code",
-    "tai": "2096469063.396499",
-    "akte": {
-      "kennung": "zit",
-      "meta": {
-        "name": "code.linenisgreat.com/zit",
-        "template": "code_go_import",
-        "url": "https://github.com/friedenberg/zit.git"
-      }
+        "url": "https://www.github.com/friedenberg/chrest"
+      },
+      "name": "chrest"
     }
   }
-]
+}

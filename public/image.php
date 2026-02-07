@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 $options =  array('extension' => '.html.mustache');
 
@@ -12,8 +14,8 @@ $cocktails = new Cocktails($m);
 $today_cocktail = $cocktails->getCocktailWithId($_GET['id']);
 
 if (is_null($today_cocktail)) {
-  http_response_code(404);
-  exit;
+    http_response_code(404);
+    exit;
 }
 
 $url = $today_cocktail->getImageUrl($m);

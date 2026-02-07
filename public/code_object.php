@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-$tab = $_GET['tab'] ?? 'notes';
+$tab = "code";
 $args = $_GET['args'] ?? null;
-$template = $_GET['template'] ?? 'object';
 
 if (!is_null($args)) {
     $url = parse_url($args);
@@ -16,21 +15,21 @@ $objectId = null;
 
 if (!is_null($path)) {
     $parts = explode('/', $path);
-    $parts = array_slice($parts, 0, 2);
+    $parts = array_slice($parts, 0, 1);
+
     $objectId = implode("/", $parts);
 }
 
 $route = new RouteObject($tab, $objectId);
 
-$objectContents = file_get_contents(__DIR__ . "/objects/$objectId/index.html");
-
-if (!$objectContents) {
-    throw new Exception("object does not exist");
-}
+$objectsFile = __DIR__ . "/yoga_objects.json";
+$parser = new ZettelParser($objectsFile);
+$objects = $parser->getRaw();
+$objectContents = $route->mustache->render('yoga_partial', $objects[$objectId]);
 
 $route->renderObject(
-    $template,
+    'object',
     [
-    'object' => $objectContents,
+        'object' => $objectContents,
     ],
 );

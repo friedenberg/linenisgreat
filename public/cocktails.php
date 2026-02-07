@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 $options =  array('extension' => '.html.mustache');
 
@@ -20,10 +22,10 @@ $template_args = [
     "zettels",
   ],
   'zettels' => array_map(
-    function($zettel) {
-      return $zettel->html;
-    },
-    $zettels->getZettels($mustache),
+      function ($zettel) {
+          return $zettel->html;
+      },
+      $zettels->getZettels($mustache),
   ),
 ];
 

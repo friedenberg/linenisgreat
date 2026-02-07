@@ -367,7 +367,7 @@ img, video {
 
 @media screen and (max-width: 1280px) {
   div.object {
-    max-width: 100vw;
+    max-width: 66ch;
   }
 }
 

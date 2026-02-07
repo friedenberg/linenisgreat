@@ -1,6 +1,6 @@
 install-composer:
   php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+  php -r "if (hash_file('sha384', 'composer-setup.php') === 'c8b085408188070d5f52bcfe4ecfbee5f727afa458b2573b8eaaf77b3419b0bf2768dc67c86944da1544f06fa544fd47') { echo 'Installer verified'; } else { echo 'Installer corrupt or hash changed'; unlink('composer-setup.php'); } echo PHP_EOL;"
   php composer-setup.php
   php -r "unlink('composer-setup.php');"
   mv composer.phar protected/composer.phar
@@ -23,19 +23,23 @@ install-revealjs: (install-revealjs-mkdir)
 build-php-composer:
   php composer.phar install
 
-build-zit_object objectId: 
-  mkdir -p public/objectId/{{objectId}}
-  zit format-blob {{objectId}} html-partial > public/objects/{{objectId}}/index.html
+build-der_object objectId: 
+  mkdir -p public/objects/{{objectId}}
+  {{bin_der}} format-blob {{objectId}} html-partial > public/objects/{{objectId}}/index.html
 
-build-zit_objects:
+bin_der := "$HOME/eng/pkgs/bravo/dodder/go/build/debug/der"
+der_query_public := "public !md"
+
+build-der_objects:
   #! /usr/bin/env -S bash -e
-  zit show -format object-id public | parallel -X just build-zit_object {}
+  {{bin_der}} show -format object-id {{der_query_public}} | parallel -n1 -X just build-der_object '{}'
 
-build: build-zit_objects
-  zit show -format json public !md \
+build: build-der_objects
+  {{bin_der}} show -format json {{der_query_public}} \
     | jq -s 'map({(.["object-id"] | tostring): .}) | add' \
     > public/objects.json
   cp public/{objects,notes}.json
+  # {{bin_der}} show -format toml-json [public !toml-project-code]:e | jq -s 'INDEX(.blob.name)' > public/code.json
 
 deploy-prod: build
   rsync -r \
