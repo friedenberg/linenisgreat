@@ -25,7 +25,8 @@ if (!is_null($path)) {
 
 $route = new RouteObject($tab, $objectId);
 
-$objectContents = file_get_contents(__DIR__ . "/objects/$objectId/index.html");
+$api = new ApiClient('objects');
+$objectContents = $api->getHtmlPartial($objectId);
 
 if (!$objectContents) {
     throw new Exception("object does not exist");

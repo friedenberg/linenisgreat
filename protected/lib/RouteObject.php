@@ -13,7 +13,7 @@ class RouteObject
     private $objectId;
 
     /**
-     * @param ZettelParser $parser
+     * @param ApiClient $parser
      */
     private $parser;
 
@@ -28,8 +28,7 @@ class RouteObject
         $this->nav = new Nav($title);
         $this->title = $title;
         $this->objectId = $objectId;
-        $objectsFile = __DIR__ . "/../../public/objects.json";
-        $this->parser = new ZettelParser($objectsFile);
+        $this->parser = new ApiClient('objects');
 
         $options = array('extension' => '.html.mustache');
 

@@ -1,0 +1,50 @@
+{
+  "dodder": {
+    "blob-id": "sha256-s7uas5y7z7eaecg2qpkwktgheu02hnwsht073uzrquuura2h646qfj652z",
+    "blob-string": "name = \"dodder\"\n\n[meta]\ntemplate = \"code_go_import\"\nname = \"code.linenisgreat.com/dodder\"\nurl = \"https://www.github.com/friedenberg/dodder\"\n",
+    "date": "25-11-11 07:51:43",
+    "description": "an immutable cryptographic object graph with a robust and recursive type system that takes the best parts of Git, Nix, and Zettelkasten and allows you manage content, knowledge, builds, deployments and more",
+    "object-id": "project-dodder",
+    "repo-pub_key": "dodder-repo-public_key-v1@ed25519_pub-2sxpge0e3vugfd4tujx0cfffkcrksvnqzv7dhr9hep9yg6r7nemsay9zvs",
+    "repo-sig": "dodder-object-sig-v1@ed25519_sig-jcgdc79jzpwlavyjaq7jtrejvnp3x055d9sk0963yuquaz29jcy6frc55vgyhducx7pevyz28jgrwhheux0qlm8nl9xc6cjklwczyzck8cm0n",
+    "sha": "",
+    "tags": [
+      "project-24q2-personal_sites",
+      "public"
+    ],
+    "tai": "2141556740.060606382",
+    "type": "!toml-project-code",
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/dodder",
+        "template": "code_go_import",
+        "url": "https://www.github.com/friedenberg/dodder"
+      },
+      "name": "dodder"
+    }
+  },
+  "chrest": {
+    "blob-id": "fake",
+    "blob-string": "fake",
+    "date": "25-11-11 07:51:43",
+    "description": "",
+    "object-id": "project-chrest",
+    "repo-pub_key": "fake",
+    "repo-sig": "fake",
+    "sha": "",
+    "tags": [
+      "project-24q2-personal_sites",
+      "public"
+    ],
+    "tai": "2141556740.060606382",
+    "type": "!toml-project-code",
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/chrest",
+        "template": "code_go_import",
+        "url": "https://www.github.com/friedenberg/chrest"
+      },
+      "name": "chrest"
+    }
+  }
+}

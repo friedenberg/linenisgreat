@@ -9,7 +9,7 @@ $mustache = new Mustache_Engine(array(
   'entity_flags' => ENT_QUOTES,
 ));
 
-$zettels = new Tab("cocktails", __DIR__ . '/cocktails.json');
+$zettels = new Tab("cocktails", "cocktails");
 $nav = new Nav("cocktails");
 
 $template = 'index';

@@ -22,8 +22,7 @@ if (!is_null($path)) {
 
 $route = new RouteObject($tab, $objectId);
 
-$objectsFile = __DIR__ . "/yoga_objects.json";
-$parser = new ZettelParser($objectsFile);
+$parser = new ApiClient('yoga-objects');
 $objects = $parser->getRaw();
 $objectContents = $route->mustache->render('yoga_partial', $objects[$objectId]);
 

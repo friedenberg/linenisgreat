@@ -16,8 +16,7 @@ $route = new RouteObjectOrObjectsIndex('code', $objectId);
 if (is_null($objectId)) {
     $route->renderIndex('common', 'CodeProject', '/code/');
 } else {
-    $objectsFile = __DIR__ . "/code.json";
-    $parser = new ZettelParser($objectsFile);
+    $parser = new ApiClient('code');
     $objects = $parser->getRaw();
     $objectContents = $route->mustache->render('object', $objects[$objectId]);
     $route->renderObject('object', ['object' => $objectContents]);

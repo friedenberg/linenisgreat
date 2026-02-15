@@ -12,16 +12,16 @@ class Tab
     private $site;
     /**
      * @param string $title
-     * @param string $objectFile
+     * @param string|null $endpoint
      */
     public function __construct(
         $title,
-        $objectFile = null,
+        $endpoint = null,
     ) {
         $this->title = $title;
 
-        if (!is_null($objectFile)) {
-            $this->parser = new ZettelParser("$objectFile");
+        if ($endpoint !== null) {
+            $this->parser = new ApiClient($endpoint);
         }
 
         $options = array('extension' => '.html.mustache');
