@@ -1,23 +1,19 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/dcfec31546cb7676a5f18e80008e5c56af471925";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/e9b7f2ff62b35f711568b1f0866243c7c302028d";
+    nixpkgs.url = "github:NixOS/nixpkgs/23d72dabcb3b12469f57b37170fcbc1789bd7457";
+    nixpkgs-master.url = "github:NixOS/nixpkgs/b28c4999ed71543e71552ccfd0d7e68c581ba7e9";
     utils.url = "https://flakehub.com/f/numtide/flake-utils/0.1.102";
 
-    devenv-nix.url = "github:friedenberg/eng?dir=devenvs/php";
     devenv-php.url = "github:friedenberg/eng?dir=devenvs/php";
-    devenv-shell.url = "github:friedenberg/eng?dir=devenvs/shell";
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      nixpkgs-stable,
-      utils,
-      devenv-nix,
-      devenv-php,
-      devenv-shell,
+    { self
+    , nixpkgs
+    , nixpkgs-master
+    , utils
+    , devenv-php
+    ,
     }:
     (utils.lib.eachDefaultSystem (
       system:
@@ -49,9 +45,7 @@
           );
 
           inputsFrom = [
-            devenv-nix.devShells.${system}.default
             devenv-php.devShells.${system}.default
-            devenv-shell.devShells.${system}.default
           ];
         };
       }

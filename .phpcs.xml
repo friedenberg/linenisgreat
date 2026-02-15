@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<ruleset name="My Project">
+    <description>Project coding standards</description>
+    
+    <!-- Files/directories to check -->
+    <file>protected/</file>
+    <file>public/</file>
+    
+    <!-- Exclude patterns -->
+    <exclude-pattern>protected/vendor/*</exclude-pattern>
+    <exclude-pattern>*.js</exclude-pattern>
+    
+    <!-- Set coding standard -->
+    <rule ref="PSR12"/>
+    
+    <!-- PHP version -->
+    <config name="testVersion" value="8.0-"/>
+    
+    <!-- Set default properties -->
+    <arg name="basepath" value="."/>
+    <arg name="colors"/>
+    <arg name="parallel" value="8"/>
+    <arg value="ps"/>
+</ruleset>

@@ -1,0 +1,14 @@
+{
+  "environment": {
+    "includePaths": [
+      "vendor",
+      "src"
+    ]
+  },
+  "files": {
+    "exclude": [
+      "**/vendor/**/{Tests,tests}/**",
+      "**/.git/**"
+    ]
+  }
+}
