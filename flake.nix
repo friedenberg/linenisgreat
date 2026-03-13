@@ -4,8 +4,8 @@
     nixpkgs-master.url = "github:NixOS/nixpkgs/5b7e21f22978c4b740b3907f3251b470f466a9a2";
     utils.url = "https://flakehub.com/f/numtide/flake-utils/0.1.102";
 
-    devenv-php = {
-      url = "github:amarbel-llc/eng?dir=devenvs/php";
+    just-us = {
+      url = "github:amarbel-llc/just-us";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.nixpkgs-master.follows = "nixpkgs-master";
       inputs.utils.follows = "utils";
@@ -13,12 +13,12 @@
   };
 
   outputs =
-    { self
-    , nixpkgs
-    , nixpkgs-master
-    , utils
-    , devenv-php
-    ,
+    {
+      self,
+      nixpkgs,
+      nixpkgs-master,
+      utils,
+      just-us,
     }:
     (utils.lib.eachDefaultSystem (
       system:
@@ -43,15 +43,12 @@
               gnumake
               gum
               intelephense
-              just
+              just-us.packages.${system}.default
               php84
               php84Packages.composer
             ]
           );
 
-          inputsFrom = [
-            devenv-php.devShells.${system}.default
-          ];
         };
       }
     ));
