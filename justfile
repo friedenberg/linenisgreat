@@ -54,8 +54,8 @@ deploy-prod: build
     --include ".htaccess" \
     --delete \
     --exclude ".*" \
-    api/ \
-    linenisgreat.com:../api/
+    api/public api/protected api/private api/conf \
+    api.linenisgreat.com:../
 
   ssh linenisgreat.com ../private/deploy.sh
 
