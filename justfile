@@ -27,7 +27,7 @@ build-der_object objectId:
   mkdir -p api/protected/data/objects/{{objectId}}
   {{bin_der}} format-blob {{objectId}} html-partial > api/protected/data/objects/{{objectId}}/index.html
 
-bin_der := "$HOME/eng/pkgs/bravo/dodder/go/build/debug/der"
+bin_der := require("der")
 der_query_public := "public !md"
 
 build-der_objects:
@@ -94,18 +94,32 @@ test-router PORT="2299" API_PORT="2298": build-php-composer
 
 test: test-htaccess test-router
 
-deploy-local-api:
-  CORS_ORIGIN="http://localhost:2222" php \
-      -S localhost:2223 \
-      -t api/public/
+deploy-local PORT="2222" API_PORT="2223": build-php-composer build
+  #!/usr/bin/env bash
+  set -euo pipefail
 
-[no-cd]
-deploy-local: build-php-composer build
-  mkdir -p app/tmp
-  API_BASE_URL="http://localhost:2223" \
-  SERVER_NAME="${1:-linenisgreat.com}" php \
+  # Start API server in background
+  CORS_ORIGIN="http://localhost:{{PORT}}" php \
+      -S localhost:{{API_PORT}} \
+      -t api/public/ &
+  API_PID=$!
+
+  trap "kill $API_PID 2>/dev/null || true" EXIT
+
+  # Start frontend server in foreground
+  API_BASE_URL="http://localhost:{{API_PORT}}" \
+  SERVER_NAME="linenisgreat.com" php \
       -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
-      -S localhost:2222 \
+      -S localhost:{{PORT}} \
+      -c app/conf/php.ini \
+      -t app/public/ \
+      app/private/router.php
+
+deploy-local-prod-api PORT="2222": build-php-composer
+  API_BASE_URL="https://api.linenisgreat.com" \
+  SERVER_NAME="linenisgreat.com" php \
+      -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
+      -S localhost:{{PORT}} \
       -c app/conf/php.ini \
       -t app/public/ \
       app/private/router.php
