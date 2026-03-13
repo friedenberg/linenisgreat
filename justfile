@@ -3,12 +3,12 @@ install-composer:
   php -r "if (hash_file('sha384', 'composer-setup.php') === 'c8b085408188070d5f52bcfe4ecfbee5f727afa458b2573b8eaaf77b3419b0bf2768dc67c86944da1544f06fa544fd47') { echo 'Installer verified'; } else { echo 'Installer corrupt or hash changed'; unlink('composer-setup.php'); } echo PHP_EOL;"
   php composer-setup.php
   php -r "unlink('composer-setup.php');"
-  mv composer.phar protected/composer.phar
+  mv composer.phar app/protected/composer.phar
 
 install-revealjs-mkdir:
-  mkdir -p public/assets/revealjs
+  mkdir -p app/public/assets/revealjs
 
-[working-directory: 'public/assets/revealjs']
+[working-directory: 'app/public/assets/revealjs']
 install-revealjs: (install-revealjs-mkdir)
   find . -delete
   http \
@@ -19,7 +19,7 @@ install-revealjs: (install-revealjs-mkdir)
   mv reveal.js-master/{css,dist,js,plugin} ./
   rm -rf reveal.js-master
 
-[working-directory: 'protected']
+[working-directory: 'app/protected']
 build-php-composer:
   php composer.phar install
 
@@ -47,7 +47,7 @@ deploy-prod: build
     --include ".htaccess" \
     --delete \
     --exclude ".*" \
-    private conf protected public \
+    app/private app/conf app/protected app/public \
     linenisgreat.com:../
 
   rsync -r \
@@ -60,10 +60,10 @@ deploy-prod: build
   ssh linenisgreat.com ../private/deploy.sh
 
 generate-htaccess:
-  php private/router.php --generate-htaccess > public/.htaccess
+  php app/private/router.php --generate-htaccess > app/public/.htaccess
 
 test-htaccess:
-  private/test-htaccess.sh
+  app/private/test-htaccess.sh
 
 test-router PORT="2299" API_PORT="2298": build-php-composer
   #!/usr/bin/env bash
@@ -76,11 +76,11 @@ test-router PORT="2299" API_PORT="2298": build-php-composer
   # Start frontend server in background
   API_BASE_URL="http://localhost:{{API_PORT}}" \
   SERVER_NAME="linenisgreat.com" php \
-      -d "auto_prepend_file={{absolute_path("protected/vendor/autoload.php")}}" \
+      -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
       -S localhost:{{PORT}} \
-      -c conf/php.ini \
-      -t public/ \
-      private/router.php &
+      -c app/conf/php.ini \
+      -t app/public/ \
+      app/private/router.php &
   SERVER_PID=$!
 
   # Ensure both servers are stopped on exit
@@ -90,7 +90,7 @@ test-router PORT="2299" API_PORT="2298": build-php-composer
   sleep 1
 
   # Run tests
-  private/test-router.sh {{PORT}}
+  app/private/test-router.sh {{PORT}}
 
 test: test-htaccess test-router
 
@@ -101,11 +101,11 @@ deploy-local-api:
 
 [no-cd]
 deploy-local: build-php-composer build
-  mkdir -p tmp
+  mkdir -p app/tmp
   API_BASE_URL="http://localhost:2223" \
   SERVER_NAME="${1:-linenisgreat.com}" php \
-      -d "auto_prepend_file={{absolute_path("protected/vendor/autoload.php")}}" \
+      -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
       -S localhost:2222 \
-      -c conf/php.ini \
-      -t public/ \
-      private/router.php
+      -c app/conf/php.ini \
+      -t app/public/ \
+      app/private/router.php

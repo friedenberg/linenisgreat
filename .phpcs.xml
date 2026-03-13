@@ -3,11 +3,11 @@
     <description>Project coding standards</description>
     
     <!-- Files/directories to check -->
-    <file>protected/</file>
-    <file>public/</file>
-    
+    <file>app/protected/</file>
+    <file>app/public/</file>
+
     <!-- Exclude patterns -->
-    <exclude-pattern>protected/vendor/*</exclude-pattern>
+    <exclude-pattern>app/protected/vendor/*</exclude-pattern>
     <exclude-pattern>*.js</exclude-pattern>
     
     <!-- Set coding standard -->

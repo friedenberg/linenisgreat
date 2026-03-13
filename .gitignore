@@ -1,12 +1,12 @@
-protected/composer.phar
-protected/vendor/
-tmp/
+app/protected/composer.phar
+app/protected/vendor/
+app/tmp/
 
-public/objects.json
-public/notes.json
-public/objects/
-public/slides/
-public/notes/
+app/public/objects.json
+app/public/notes.json
+app/public/objects/
+app/public/slides/
+app/public/notes/
 
 api/protected/data/objects.json
 api/protected/data/notes.json
@@ -17,4 +17,4 @@ api/protected/data/objects/
 # composer.lock
 .gitsecret/keys/random_seed
 !*.secret
-protected/lib/Html2ImageApiKey.php
+app/protected/lib/Html2ImageApiKey.php

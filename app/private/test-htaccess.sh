@@ -39,7 +39,7 @@ check_contains() {
 gum style --border normal --padding "0 1" --border-foreground 212 \
     "Testing htaccess generation"
 
-HTACCESS=$(php private/router.php --generate-htaccess)
+HTACCESS=$(php app/private/router.php --generate-htaccess)
 
 # TAP header
 echo "TAP version 14"
