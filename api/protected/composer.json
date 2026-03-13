@@ -1,0 +1,13 @@
+{
+    "name": "friedenberg/linenisgreat-api",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Sasha Friedenberg",
+            "email": "sashafriedenberg@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "": "lib/" }
+    }
+}
