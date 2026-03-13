@@ -58,6 +58,7 @@ deploy-prod: build
     api.linenisgreat.com:../
 
   ssh linenisgreat.com ../private/deploy.sh
+  ssh api.linenisgreat.com ../private/deploy.sh
 
 generate-htaccess:
   php app/private/router.php --generate-htaccess > app/public/.htaccess
