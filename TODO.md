@@ -1,1 +1,2 @@
 - [ ] Refactor justfile so host-specific recipes live in {api,app}/justfile instead of the top-level justfile
+- [ ] Use a fixed version of composer from nixpkgs instead of checked-in composer.phar
