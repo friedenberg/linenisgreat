@@ -1,10 +1,3 @@
-install-composer:
-  php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  php -r "if (hash_file('sha384', 'composer-setup.php') === 'c8b085408188070d5f52bcfe4ecfbee5f727afa458b2573b8eaaf77b3419b0bf2768dc67c86944da1544f06fa544fd47') { echo 'Installer verified'; } else { echo 'Installer corrupt or hash changed'; unlink('composer-setup.php'); } echo PHP_EOL;"
-  php composer-setup.php
-  php -r "unlink('composer-setup.php');"
-  mv composer.phar app/protected/composer.phar
-
 install-revealjs-mkdir:
   mkdir -p app/public/assets/revealjs
 
@@ -19,9 +12,9 @@ install-revealjs: (install-revealjs-mkdir)
   mv reveal.js-master/{css,dist,js,plugin} ./
   rm -rf reveal.js-master
 
-[working-directory: 'app/protected']
 build-php-composer:
-  php composer.phar install
+  composer install -d app/protected
+  composer install -d api/protected
 
 build-der_object objectId:
   mkdir -p api/protected/data/objects/{{objectId}}
@@ -42,7 +35,7 @@ build: build-der_objects
   cp api/protected/data/{objects,notes}.json
   # {{bin_der}} show -format toml-json [public !toml-project-code]:e | jq -s 'INDEX(.blob.name)' > api/protected/data/code.json
 
-deploy-prod: build
+deploy-prod: build-php-composer build
   rsync -r \
     --include ".htaccess" \
     --delete \

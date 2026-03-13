@@ -1,8 +1,6 @@
-app/protected/composer.phar
 app/protected/vendor/
 app/tmp/
 
-api/protected/composer.phar
 api/protected/vendor/
 
 app/public/objects.json
