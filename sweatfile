@@ -1,0 +1,9 @@
+# Repository-level spinclass sweatfile (highest precedence in the hierarchy).
+# See spinclass-sweatfile(7).
+#
+# Override the global pre-merge gate (`just build-nix`) with `just`, our
+# preferred CI loop here: this repo's flake ships no package (CI uses
+# `nix develop`), so the gate runs the PHP test suites via the justfile's
+# `default` recipe rather than a nix build.
+[hooks]
+pre-merge = "just"

@@ -1,3 +1,9 @@
+# Default recipe = the local CI loop the spinclass pre-merge gate runs (`just`,
+# set in ./sweatfile). This repo's flake ships no package, so CI is the PHP
+# test suites (htaccess + router + code/README), not a nix build. Hook-safe:
+# no dodder/gh/network dependencies.
+default: test test-code
+
 install-revealjs-mkdir:
   mkdir -p app/public/assets/revealjs
 
