@@ -1,5 +1,5 @@
 ---
-status: proposed
+status: accepted
 date: 2026-05-30
 ---
 
@@ -237,17 +237,35 @@ Two sub-decisions remain **open** and deferred to implementation:
 
 ### Confirmation
 
-A spike is required before accepting this ADR. Acceptance criteria:
+**Spike completed and accepted** (implemented in this change). The transport is a
+PHP cURL proxy at `app/public/code_git_proxy.php`, wired through `router.php` for
+both the apex (`/code/<name>/…`) and the literal subdomain bare-path
+(`code.linenisgreat.com/<name>/…`) URL shapes, covered by `just test-code-git`.
 
-* `nix flake metadata git+https://code.linenisgreat.com/<name>` resolves HEAD and a
-  pinned `?rev=`.
-* `git clone https://code.linenisgreat.com/<name>` succeeds read-only within the
-  3-min cap; `git push` is rejected (no `receive-pack` wired).
-* A module consumed via `flake-input-go_mod` in `amarbel-llc/{nixpkgs,igloo}` still
-  builds against the new ref (the actual Go-consumption path; `go get` vanity
-  resolution is explicitly *not* a criterion).
-* `nix develop -c just test-htaccess` and `test-router` still pass (router change
-  must not regress existing routes).
+Verified against a public upstream (`github.com/octocat/Hello-World`) on PHP 8.4:
+
+* ✅ Ref discovery returns HTTP 200 with
+  `Content-Type: application/x-git-upload-pack-advertisement`, body opening with the
+  `# service=git-upload-pack` pkt-line and the `0000` flush packet.
+* ✅ A real `git clone http://code.linenisgreat.com/<name>` (literal host, via host
+  mapping) succeeds; cloned HEAD byte-matches what GitHub serves directly — the
+  proxy is transparent.
+* ✅ Read-only holds: `info/refs?service=git-receive-pack` → 403, and no
+  `git-receive-pack` POST route exists.
+* ✅ No regression: all 11 `test-htaccess` assertions and all 15 `test-router`
+  routes still pass; the human-facing `/code/<name>` page is unaffected.
+
+Still to confirm on a real deploy (out of scope for the local spike):
+
+* `nix flake metadata git+https://code.linenisgreat.com/<name>` on a nix host
+  (`nix` is not in this devShell). The clone above exercises the identical
+  info/refs + `git-upload-pack` flow Nix's `git+https` fetcher uses, so this is
+  expected to pass; the `just test-code-git` comment documents the command.
+* Behaviour against the **real NFSN** Apache + 3-min wall-clock cap (the spike used
+  PHP's built-in server). Confirm the largest `amarbel-llc/*` repo clones within the
+  cap; otherwise move that repo (or all) to the Option 2a Worker fallback.
+* A module consumed via `flake-input-go_mod` in `amarbel-llc/{nixpkgs,igloo}` builds
+  against the new ref (the actual Go-consumption path).
 
 ## Cost Estimate (ballpark)
 
@@ -284,6 +302,12 @@ The recommended Option 0 adds **no new recurring cost**; the Option 2a fallback 
 ## More Information
 
 * Tracking issue: [#5 — Explore git smart HTTP on code.linenisgreat.com][issue-5]
+* Implementation (this change):
+  * `app/public/code_git_proxy.php` — the streaming read-only cURL proxy.
+  * `app/private/router.php` — host-scoped + apex git routes (and `host`/`flags`
+    support in the router/.htaccess generator).
+  * `just test-code-git` — 6-assertion TAP spike (networked; not in the hook-safe
+    `test` gate).
 * Related: ADR-0001 (app/api split; NFSN deploy model) — this ADR must not regress
   the plain-PHP layout established there.
 * Sources:

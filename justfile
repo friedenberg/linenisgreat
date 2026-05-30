@@ -130,6 +130,96 @@ build-code-github:
     fi
   done
 
+# Verify the read-only git smart-HTTP proxy (app/public/code_git_proxy.php) that
+# lets `code.linenisgreat.com/<name>` serve as a git/Nix-flake endpoint by
+# transparently forwarding to GitHub. Standalone + networked (clones a public
+# repo), so it is NOT in the hook-safe `test` gate. Points the proxy upstream at
+# github.com/<UPSTREAM_ORG> (default octocat) and drives a real `git clone`,
+# which exercises the same info/refs + git-upload-pack flow Nix's git+https
+# fetcher uses. On a nix host, additionally try:
+#   nix flake metadata "git+http://localhost:<PORT>/code/Hello-World"
+[group("post-build")]
+test-code-git PORT="2295" API_PORT="2294" UPSTREAM_ORG="octocat" REPO="Hello-World": build-php-composer
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT}} \
+      -t api/public/ &
+  API_PID=$!
+
+  CODE_GIT_UPSTREAM="https://github.com/{{UPSTREAM_ORG}}" \
+  API_BASE_URL="http://localhost:{{API_PORT}}" \
+  SERVER_NAME="linenisgreat.com" php \
+      -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
+      -S localhost:{{PORT}} \
+      -c app/conf/php.ini \
+      -t app/public/ \
+      app/private/router.php &
+  APP_PID=$!
+  trap "kill $APP_PID $API_PID 2>/dev/null || true; rm -rf /tmp/test-code-git" EXIT
+  sleep 1
+
+  base="http://localhost:{{PORT}}/code/{{REPO}}"
+  rm -rf /tmp/test-code-git
+  fail=0
+  echo "TAP version 14"
+  echo "1..6"
+
+  # 1. Ref discovery advertises the upload-pack service with the right type.
+  hdrs=$(curl -s -D - -o /tmp/test-code-git.refs "$base/info/refs?service=git-upload-pack")
+  if echo "$hdrs" | grep -qi 'content-type: application/x-git-upload-pack-advertisement' \
+     && head -c 40 /tmp/test-code-git.refs | grep -q '# service=git-upload-pack'; then
+    echo "ok 1 - info/refs advertises git-upload-pack"
+  else
+    echo "not ok 1 - info/refs advertisement malformed"; fail=1
+  fi
+
+  # 2. A real git clone through the proxy succeeds.
+  if git clone -q "$base" /tmp/test-code-git 2>/dev/null; then
+    echo "ok 2 - git clone through proxy succeeds"
+  else
+    echo "not ok 2 - git clone failed"; fail=1
+  fi
+
+  # 3. Cloned HEAD matches what GitHub serves directly (proxy is transparent).
+  proxy_head=$(git -C /tmp/test-code-git rev-parse HEAD 2>/dev/null || echo none)
+  gh_head=$(git ls-remote "https://github.com/{{UPSTREAM_ORG}}/{{REPO}}.git" HEAD 2>/dev/null | cut -f1)
+  if [ -n "$gh_head" ] && [ "$proxy_head" = "$gh_head" ]; then
+    echo "ok 3 - cloned HEAD matches upstream ($proxy_head)"
+  else
+    echo "not ok 3 - HEAD mismatch (proxy=$proxy_head upstream=$gh_head)"; fail=1
+  fi
+
+  # 4. Push transport (receive-pack) is never served — read-only.
+  code=$(curl -s -o /dev/null -w '%{http_code}' "$base/info/refs?service=git-receive-pack")
+  if [ "$code" = "403" ]; then
+    echo "ok 4 - receive-pack (push) discovery refused (403)"
+  else
+    echo "not ok 4 - receive-pack not refused (got $code)"; fail=1
+  fi
+
+  # 5. The human-facing catch-all /code/<name> route is unaffected.
+  code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:{{PORT}}/code/testproject")
+  if [ "$code" = "200" ]; then
+    echo "ok 5 - /code/<name> HTML route still 200"
+  else
+    echo "not ok 5 - /code/<name> route regressed (got $code)"; fail=1
+  fi
+
+  # 6. The literal flake host form — code.linenisgreat.com/<name> — resolves via
+  #    the bare-path host-scoped route (simulated with a Host header).
+  ct=$(curl -s -o /dev/null -H 'Host: code.linenisgreat.com' -w '%{content_type}' \
+    "http://localhost:{{PORT}}/{{REPO}}/info/refs?service=git-upload-pack")
+  if [ "$ct" = "application/x-git-upload-pack-advertisement" ]; then
+    echo "ok 6 - code.linenisgreat.com/<name> bare-path git endpoint resolves"
+  else
+    echo "not ok 6 - subdomain bare-path endpoint failed (content-type=$ct)"; fail=1
+  fi
+
+  exit $fail
+
 [group("operational")]
 deploy-prod: build-php-composer build
   rsync -r \

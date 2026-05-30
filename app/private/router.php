@@ -50,6 +50,44 @@ $routes = [
         'params' => ['args' => '$1'],
     ],
 
+    // Git smart-HTTP read-only proxy (fetch/clone) for code projects. Two URL
+    // shapes reach the same proxy:
+    //
+    //   1. On the code.linenisgreat.com subdomain, the BARE path —
+    //      `git+https://code.linenisgreat.com/<name>` → `/<name>/info/refs`. The
+    //      `host` guard means only git paths divert to the proxy; every other path
+    //      still falls through to the human 302 redirect below (unchanged).
+    //   2. On the apex, under `/code/` — `linenisgreat.com/code/<name>/...` — so
+    //      the endpoint also works without the subdomain.
+    //
+    // All four precede the catch-all code route, since `code/<name>/info/refs`
+    // would otherwise be swallowed as project=<name>, remainder=/info/refs. QSA on
+    // the ref-discovery routes preserves the original ?service=git-upload-pack.
+    [
+        'host' => '^code\.linenisgreat\.com$',
+        'pattern' => '^([\w.-]+)/info/refs$',
+        'file' => 'code_git_proxy.php',
+        'params' => ['project' => '$1', 'endpoint' => 'info/refs'],
+        'flags' => '[L,PT,B,QSA]',
+    ],
+    [
+        'host' => '^code\.linenisgreat\.com$',
+        'pattern' => '^([\w.-]+)/git-upload-pack$',
+        'file' => 'code_git_proxy.php',
+        'params' => ['project' => '$1', 'endpoint' => 'git-upload-pack'],
+    ],
+    [
+        'pattern' => '^code/([\w.-]+)/info/refs$',
+        'file' => 'code_git_proxy.php',
+        'params' => ['project' => '$1', 'endpoint' => 'info/refs'],
+        'flags' => '[L,PT,B,QSA]',
+    ],
+    [
+        'pattern' => '^code/([\w.-]+)/git-upload-pack$',
+        'file' => 'code_git_proxy.php',
+        'params' => ['project' => '$1', 'endpoint' => 'git-upload-pack'],
+    ],
+
     // Code project with optional remainder
     [
         'pattern' => '^code/(\w+)(.+)?$',
@@ -89,10 +127,16 @@ function generateHtaccess(array $routes, array $redirects): string
                 $queryParts[] = "{$key}={$value}";
             }
             $target = $file . '?' . implode('&', $queryParts);
-            $flags = '[L,PT,B]';
+            $flags = $route['flags'] ?? '[L,PT,B]';
         } else {
             $target = $file;
-            $flags = '';
+            $flags = $route['flags'] ?? '';
+        }
+
+        // Host-scoped routes (e.g. the bare-path git proxy on
+        // code.linenisgreat.com) emit a preceding RewriteCond on HTTP_HOST.
+        if (isset($route['host'])) {
+            $lines[] = "RewriteCond %{HTTP_HOST} {$route['host']}";
         }
 
         $line = "RewriteRule \"{$pattern}\" \"{$target}\"";
@@ -134,7 +178,15 @@ function routeRequest(array $routes, string $uri): bool
         }
     }
 
+    // Host without port, for host-scoped routes (mirrors RewriteCond %{HTTP_HOST}).
+    $host = preg_replace('/:\d+$/', '', $_SERVER['HTTP_HOST'] ?? '');
+
     foreach ($routes as $route) {
+        // Host-scoped routes only match when HTTP_HOST matches their guard.
+        if (isset($route['host']) && !preg_match('~' . $route['host'] . '~', $host)) {
+            continue;
+        }
+
         // Convert htaccess pattern to PHP regex
         $regex = '~' . $route['pattern'] . '~';
 
