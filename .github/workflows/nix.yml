@@ -32,6 +32,11 @@ jobs:
           determinate: true
       - uses: DeterminateSystems/flakehub-cache-action@main
       - run: nix develop -c true
+      # Run the project gate (treefmt format check + PHP test suites) on Linux
+      # only — the suite spins PHP servers + curl, validated on x86_64-linux.
+      # macOS still validates the devShell builds via `nix develop -c true`.
+      - if: matrix.system == 'x86_64-linux'
+        run: nix develop -c just
 
   flakehub-publish:
     if: github.ref == 'refs/heads/master'

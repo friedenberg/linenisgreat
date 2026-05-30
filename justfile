@@ -49,7 +49,12 @@ build-der_object objectId:
   mkdir -p api/protected/data/objects/{{objectId}}
   {{bin_der}} format-blob {{objectId}} html-partial > api/protected/data/objects/{{objectId}}/index.html
 
-bin_der := require("der")
+# `der` (dodder) drives build/build-der_*/deploy-prod. Use a plain string, not
+# require("der"): require is evaluated eagerly at justfile LOAD, so it would
+# break `nix develop -c just` in any env without der on PATH (the spinclass
+# pre-merge gate and GitHub CI). The der recipes still fail clearly at runtime
+# if der is missing.
+bin_der := "der"
 der_query_public := "public !md"
 
 [group("build")]
