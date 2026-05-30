@@ -37,9 +37,12 @@ implementation. Tracking issue: [#5][issue-5].
   discovery via `GET …/info/refs?service=git-upload-pack` and expects a real
   upload-pack negotiation; dumb static HTTP is not sufficient for reliable
   `ref`/`rev` resolution.
-* **One URL for both protocols** — `go get` probes with `?go-get=1` and reads the
-  meta tag; git uses `…/info/refs` + `…/git-upload-pack`. The paths/params are
-  disjoint, so a single URL can serve both.
+* **`go get` is *not* a hard constraint** — Go consumers of these modules resolve
+  them through the `flake-input-go_mod` feature in `amarbel-llc/{nixpkgs,igloo}`
+  (the flake input supplies the module/`go.mod` wiring), **not** via `go get` +
+  vanity meta-tag resolution. We are therefore willing to **break `go get`** on
+  `code.linenisgreat.com/<name>` if it simplifies the git endpoint. This removes
+  the "one URL must serve both protocols" requirement entirely.
 * **Hosting fit** — the rest of the site is plain PHP on NearlyFreeSpeech.NET
   (NFSN). Git smart HTTP is a poor fit for NFSN's standard PHP/CGI model; we should
   weigh whether the git endpoint even belongs on NFSN.
@@ -113,13 +116,10 @@ subdomain) via DNS. Sub-variants:
 * Good: clean separation; the git host can be swapped without touching the site.
 * Good (2a): essentially free and stateless.
 * Bad: a second moving part and a second vendor/DNS dependency.
-* Caveat: the "one URL for both protocols" property only holds if the *same*
-  hostname serves both. If the git host is a CNAME of `code.linenisgreat.com`, the
-  meta-tag HTML must move there too (or be served by the same proxy with a
-  `?go-get=1` branch). If instead we delegate a **different** name for git (e.g.
-  the flake input points at `git.code.linenisgreat.com`), go-import and the flake
-  ref no longer share one URL — acceptable, since Nix doesn't require the flake URL
-  to equal the Go import path.
+* Note: because `go get` is not a constraint (see Decision Drivers —
+  `flake-input-go_mod`), the host can serve *only* git smart HTTP. We can CNAME the
+  whole of `code.linenisgreat.com` to the git host without needing to also serve the
+  go-import meta tag there, or delegate a separate name — either is fine.
 
 ### Option 3 — Do nothing / dumb static HTTP
 
@@ -146,24 +146,33 @@ Rationale:
   GitHub bridge" framing in `build-code-github` — when dodder becomes the source of
   truth, only the proxy's upstream changes, not the public URL.
 
-Two sub-decisions still **open** and deferred to implementation (see
-Confirmation):
+Because `go get` resolution is **not** a requirement here — Go consumers go through
+`flake-input-go_mod` in `amarbel-llc/{nixpkgs,igloo}`, not vanity meta tags — the
+git endpoint is free to serve git smart HTTP and nothing else. This collapses what
+was previously an open "shared URL vs. delegated name" sub-decision: we can point
+`code.linenisgreat.com` (or a sub-path/subdomain) straight at the git host without
+preserving the go-import HTML alongside it.
 
-1. **Shared URL vs. delegated git name.** Either (i) move the go-import HTML behind
-   the same proxy so `code.linenisgreat.com/<name>` serves both, or (ii) keep HTML
-   on NFSN and advertise flake refs at a delegated name. (i) is the cleaner
-   canonical story; (ii) is the smaller change. *Leaning (ii) for v1.*
-2. **Removing the 302.** Whichever path, `app/private/router.php:61-69` must stop
-   blindly redirecting git/flake traffic.
+One sub-decision remains **open** and deferred to implementation:
+
+1. **Disposition of the existing `/code` HTML + 302.** `app/private/router.php:61-69`
+   currently 302-redirects `code.linenisgreat.com/*` to the frontend, which breaks
+   git/flake clients. We must decide whether to (i) drop the redirect and hand the
+   subdomain entirely to the git host, or (ii) keep the human-facing `/code` pages
+   on `linenisgreat.com/code/*` and only repoint the bare `code.linenisgreat.com`
+   git traffic. Either is viable now that `go get` need not be preserved.
 
 ### Consequences
 
-* Good: canonical `git+https://` flake refs work; `go get` keeps working.
+* Good: canonical `git+https://` flake refs work.
 * Good: NFSN stays plain PHP; no daemon to babysit.
 * Good: backing store is swappable (GitHub today, dodder later) behind a stable URL.
 * Bad: introduces a second vendor (Cloudflare) and a DNS dependency for the git
   path.
 * Bad: a GitHub outage breaks fetches until a mirror (2b) is added.
+* Neutral: `go get code.linenisgreat.com/<name>` may stop resolving. Accepted —
+  consumers use `flake-input-go_mod`, not vanity resolution. If a vanity fallback
+  is ever wanted again, the go-import HTML can be reinstated on `linenisgreat.com`.
 * Neutral: requires a Cloudflare account; stays within the free Workers tier at
   expected volume.
 
@@ -173,8 +182,10 @@ A spike is required before accepting this ADR. Acceptance criteria:
 
 * `nix flake metadata git+https://code.linenisgreat.com/<name>` (or the delegated
   name) resolves HEAD and a pinned `?rev=`.
+* A module consumed via `flake-input-go_mod` in `amarbel-llc/{nixpkgs,igloo}` still
+  builds against the new ref (this is the actual Go-consumption path; `go get`
+  vanity resolution is explicitly *not* a criterion).
 * `git clone https://<name-host>/<name>` succeeds read-only; push is rejected.
-* `go get code.linenisgreat.com/<name>` still resolves via the meta tag.
 * `nix develop -c just test-htaccess` and `test-router` still pass (router change
   must not regress existing routes).
 
@@ -192,7 +203,7 @@ change.
 
 The recommended Option 2a is expected to be **$0/mo** at portfolio traffic levels.
 
-## Nix flake / go-import technical notes
+## Nix flake / Go-consumption technical notes
 
 * Flake ref form: `git+https://<host>/<name>?ref=<branch>` or `?rev=<sha40>` (also
   `?tag=`). `ref` defaults to **HEAD**.
@@ -201,9 +212,12 @@ The recommended Option 2a is expected to be **$0/mo** at portfolio traffic level
   `ref`/HEAD. → **smart HTTP is mandatory**, dumb HTTP is not enough.
 * Gotchas: `ref` is assumed to be a branch (`refs/heads/`), so tags need `?tag=`;
   supplying `ref` *and* `rev` together is rejected by Nix.
-* go-import vs. flake URL need **not** be the same string — Go reads the meta tag,
-  Nix fetches git directly — which is what makes the delegated-name sub-variant
-  (2-ii) viable.
+* **Go consumption goes through Nix, not `go get`.** The `flake-input-go_mod`
+  feature in `amarbel-llc/{nixpkgs,igloo}` wires the module from a flake input, so
+  the go-import meta tag is not on the critical path. (Exact mechanism not verified
+  in this RFC — those repos are outside this repo's tooling scope; recorded from
+  project owner.) This is why we accept breaking `go get` and let the git endpoint
+  serve git-only.
 
 ## More Information
 
