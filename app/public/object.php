@@ -23,10 +23,17 @@ if (!is_null($path)) {
 $route = new RouteObject($tab, $objectId);
 
 $api = new ApiClient('objects');
-$objectContents = $api->getHtmlPartial($objectId);
+
+try {
+    $objectContents = $api->getHtmlPartial($objectId);
+} catch (Exception $e) {
+    // No HTML partial (e.g. objects data not built locally, or unknown id) —
+    // degrade to a placeholder instead of fataling. Mirrors code.php.
+    $objectContents = '<article class="markdown-body"><p>Object not found.</p></article>';
+}
 
 if (!$objectContents) {
-    throw new Exception("object does not exist");
+    $objectContents = '<article class="markdown-body"><p>Object not found.</p></article>';
 }
 
 $route->renderObject(

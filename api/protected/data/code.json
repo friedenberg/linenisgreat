@@ -1,50 +1,294 @@
 {
-  "dodder": {
-    "blob-id": "sha256-s7uas5y7z7eaecg2qpkwktgheu02hnwsht073uzrquuura2h646qfj652z",
-    "blob-string": "name = \"dodder\"\n\n[meta]\ntemplate = \"code_go_import\"\nname = \"code.linenisgreat.com/dodder\"\nurl = \"https://www.github.com/friedenberg/dodder\"\n",
-    "date": "25-11-11 07:51:43",
-    "description": "an immutable cryptographic object graph with a robust and recursive type system that takes the best parts of Git, Nix, and Zettelkasten and allows you manage content, knowledge, builds, deployments and more",
-    "object-id": "project-dodder",
-    "repo-pub_key": "dodder-repo-public_key-v1@ed25519_pub-2sxpge0e3vugfd4tujx0cfffkcrksvnqzv7dhr9hep9yg6r7nemsay9zvs",
-    "repo-sig": "dodder-object-sig-v1@ed25519_sig-jcgdc79jzpwlavyjaq7jtrejvnp3x055d9sk0963yuquaz29jcy6frc55vgyhducx7pevyz28jgrwhheux0qlm8nl9xc6cjklwczyzck8cm0n",
-    "sha": "",
-    "tags": [
-      "project-24q2-personal_sites",
-      "public"
-    ],
-    "tai": "2141556740.060606382",
-    "type": "!toml-project-code",
+  "bob": {
     "blob": {
       "meta": {
-        "name": "code.linenisgreat.com/dodder",
+        "name": "code.linenisgreat.com/bob",
         "template": "code_go_import",
-        "url": "https://www.github.com/friedenberg/dodder"
+        "url": "https://github.com/amarbel-llc/bob"
       },
-      "name": "dodder"
-    }
-  },
-  "chrest": {
-    "blob-id": "fake",
-    "blob-string": "fake",
-    "date": "25-11-11 07:51:43",
-    "description": "",
-    "object-id": "project-chrest",
-    "repo-pub_key": "fake",
-    "repo-sig": "fake",
-    "sha": "",
+      "name": "bob"
+    },
+    "description": "MCP servers and CLI tools — currently exposing lux and caldav",
+    "object-id": "project-bob",
     "tags": [
-      "project-24q2-personal_sites",
       "public"
     ],
-    "tai": "2141556740.060606382",
-    "type": "!toml-project-code",
+    "type": "!toml-project-code"
+  },
+  "chrest": {
     "blob": {
       "meta": {
         "name": "code.linenisgreat.com/chrest",
         "template": "code_go_import",
-        "url": "https://www.github.com/friedenberg/chrest"
+        "url": "https://github.com/amarbel-llc/chrest"
       },
       "name": "chrest"
-    }
+    },
+    "description": "CLI, MCP server, and browser extensions for managing Chrome/Firefox and capturing web content per the nebulous capture protocol",
+    "object-id": "project-chrest",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "clown": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/clown",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/clown"
+      },
+      "name": "clown"
+    },
+    "description": "Nix wrapper for Claude Code with hierarchical prompts, default-deny Bash/auto-mode, parameterized plugin loading via mkCircus, and HTTP MCP server orchestration",
+    "object-id": "project-clown",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "crap": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/crap",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/crap"
+      },
+      "name": "crap"
+    },
+    "description": "Command Result Accessibility Protocol — a TAP fork for human-readable script output trees with ANSI display hints, locale-aware numbers, status lines, and streaming",
+    "object-id": "project-crap",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "cutting-garden": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/cutting-garden",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/cutting-garden"
+      },
+      "name": "cutting-garden"
+    },
+    "description": "Filesystem-tree capture/restore CLI atop madder's blob store",
+    "object-id": "project-cutting-garden",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "dodder": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/dodder",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/dodder"
+      },
+      "name": "dodder"
+    },
+    "description": "an immutable cryptographic object graph with a robust and recursive type system that takes the best parts of Git, Nix, and Zettelkasten and allows you manage content, knowledge, builds, deployments and more.",
+    "object-id": "project-dodder",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "doppelgang": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/doppelgang",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/doppelgang"
+      },
+      "name": "doppelgang"
+    },
+    "description": "Find duplicate packages in a Nix closure, sorted by wasted bytes.",
+    "object-id": "project-doppelgang",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "eng": {
+    "blob": {
+      "meta": {
+        "url": "https://github.com/amarbel-llc/eng"
+      },
+      "name": "eng"
+    },
+    "description": "Nix monorepo aggregating dotfiles, system packages, devshells, plugins, and 30+ project repos; published to FlakeHub",
+    "object-id": "project-eng",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "igloo": {
+    "blob": {
+      "meta": {
+        "url": "https://github.com/amarbel-llc/igloo"
+      },
+      "name": "igloo"
+    },
+    "description": "amarbel-llc/igloo — overlay flake providing Nix build-support helpers, pins, and package additions on top of nixpkgs.",
+    "object-id": "project-igloo",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "madder": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/madder",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/madder"
+      },
+      "name": "madder"
+    },
+    "description": "Content-addressable blob store with opaque encryption, compression, syncing, and packfiles — Go library and CLI",
+    "object-id": "project-madder",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "maneater": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/maneater",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/maneater"
+      },
+      "name": "maneater"
+    },
+    "description": "Local semantic search engine with pluggable corpora and llama.cpp embeddings — includes builtin support for man pages, extensible to arbitrary text collections",
+    "object-id": "project-maneater",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "moxy": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/moxy",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/moxy"
+      },
+      "name": "moxy"
+    },
+    "description": "MCP proxy aggregating child servers behind one connection, with result caching, progressive disclosure, composable result URIs, a declarative micro-MCP framework, and per-tool permission policy",
+    "object-id": "project-moxy",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "nebulous": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/nebulous",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/nebulous"
+      },
+      "name": "nebulous"
+    },
+    "description": "NewsBlur MCP server and Web Capture Archive Protocol orchestrator — local-first feed/story index, plus URL preservation into a content-addressed blob store via chrest + madder",
+    "object-id": "project-nebulous",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "purse-first": {
+    "blob": {
+      "meta": {
+        "url": "https://github.com/amarbel-llc/purse-first"
+      },
+      "name": "purse-first"
+    },
+    "description": "Nix-based package framework for Claude Code: bundles CLIs, MCP servers, and skills into composable plugins; ships go-mcp/rust-mcp libraries and a marketplace CLI",
+    "object-id": "project-purse-first",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "spinclass": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/spinclass",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/spinclass"
+      },
+      "name": "spinclass"
+    },
+    "description": "Git worktree session manager for parallel workstreams — orchestrates configurable session entrypoints (shells, agents, etc.) and lifecycle hooks via hierarchical sweatfile config",
+    "object-id": "project-spinclass",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "stats-me": {
+    "blob": {
+      "meta": {
+        "url": "https://github.com/amarbel-llc/stats-me"
+      },
+      "name": "stats-me"
+    },
+    "description": "Personal stats: home-manager / nix-darwin module wrapping statsd, run under Bun",
+    "object-id": "project-stats-me",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "tacky": {
+    "blob": {
+      "meta": {
+        "url": "https://github.com/amarbel-llc/tacky"
+      },
+      "name": "tacky"
+    },
+    "description": "macOS pasteboard CLI — copy/paste typed content (HTML, plain text, multi-UTI) and list current UTIs",
+    "object-id": "project-tacky",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "tommy": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/tommy",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/tommy"
+      },
+      "name": "tommy"
+    },
+    "description": "Go TOML library and CLI with round-trip-preserving CST and codegen for type-safe Decode/Encode methods — keeps comments, whitespace, and formatting intact",
+    "object-id": "project-tommy",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "xdg": {
+    "blob": {
+      "meta": {
+        "url": "https://github.com/amarbel-llc/xdg"
+      },
+      "name": "xdg"
+    },
+    "description": "Fork of freedesktop.org xdg-specs with draft XDG_LOG_HOME and XDG_LOG_DIRS extensions",
+    "object-id": "project-xdg",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
   }
 }

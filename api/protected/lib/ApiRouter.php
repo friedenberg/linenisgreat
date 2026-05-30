@@ -65,17 +65,19 @@ class ApiRouter
             });
         }
 
-        // Object HTML partial
-        $this->get('objects/(.+)/html', function (string $id) use ($ds, $res) {
-            $html = $ds->getHtmlPartial('objects', $id);
+        // HTML partials (objects + code project READMEs)
+        foreach (['objects', 'code'] as $type) {
+            $this->get("{$type}/(.+)/html", function (string $id) use ($ds, $res, $type) {
+                $html = $ds->getHtmlPartial($type, $id);
 
-            if ($html === null) {
-                $res->sendNotFound("Object HTML not found: {$id}");
-                return;
-            }
+                if ($html === null) {
+                    $res->sendNotFound("{$type} HTML not found: {$id}");
+                    return;
+                }
 
-            $res->sendHtml($html);
-        });
+                $res->sendHtml($html);
+            });
+        }
 
         // Item endpoints
         foreach (['objects', 'yoga-objects', 'code'] as $type) {

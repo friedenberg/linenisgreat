@@ -40,9 +40,11 @@
             [
               bats
               fish
+              gh
               gnumake
               gum
               intelephense
+              jq
               just-us.packages.${system}.default
               php84
               php84Packages.composer

@@ -16,8 +16,19 @@ $route = new RouteObjectOrObjectsIndex('code', $objectId);
 if (is_null($objectId)) {
     $route->renderIndex('common', 'CodeProject', '/code/');
 } else {
-    $parser = new ApiClient('code');
-    $objects = $parser->getRaw();
-    $objectContents = $route->mustache->render('object', $objects[$objectId]);
+    $api = new ApiClient('code');
+
+    try {
+        // README HTML partial built from GitHub (see `just build-code-github`).
+        $objectContents = $api->getHtmlPartial($objectId);
+    } catch (Exception $e) {
+        // No README partial (e.g. unknown project) — fall back to the project's
+        // description so the page still renders rather than 500-ing.
+        $objects = $api->getRaw();
+        $description = $objects[$objectId]['description'] ?? '';
+        $objectContents = '<article class="markdown-body"><p>'
+            . htmlspecialchars($description) . '</p></article>';
+    }
+
     $route->renderObject('object', ['object' => $objectContents]);
 }

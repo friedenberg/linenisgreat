@@ -2,7 +2,7 @@
     "name": "friedenberg/isittimetostopworkingyet",
     "type": "project",
     "require": {
-        "mustache/mustache": "^2.13"
+        "mustache/mustache": "^3.0"
     },
     "authors": [
         {

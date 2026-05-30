@@ -26,8 +26,8 @@ class Tab
 
         $options = array('extension' => '.html.mustache');
 
-        $this->mustache = new Mustache_Engine(array(
-            'loader' => new Mustache_Loader_FilesystemLoader(
+        $this->mustache = new Mustache\Engine(array(
+            'loader' => new Mustache\Loader\FilesystemLoader(
                 __DIR__ . '/templates',
                 $options,
             ),
