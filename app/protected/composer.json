@@ -1,16 +1,18 @@
 {
-    "name": "friedenberg/isittimetostopworkingyet",
-    "type": "project",
-    "require": {
-        "mustache/mustache": "^3.0"
-    },
-    "authors": [
-        {
-            "name": "Sasha Friedenberg",
-            "email": "sashafriedenberg@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": { "": "lib/" }
+  "name": "friedenberg/isittimetostopworkingyet",
+  "type": "project",
+  "require": {
+    "mustache/mustache": "^3.0"
+  },
+  "authors": [
+    {
+      "name": "Sasha Friedenberg",
+      "email": "sashafriedenberg@gmail.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "": "lib/"
+    }
+  }
 }

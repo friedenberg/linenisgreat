@@ -21,7 +21,7 @@ just build               # Build object data from dodder (requires `der` binary)
 just deploy-local        # Run both servers locally (app:2222, api:2223)
 just deploy-local-prod-api  # Run app locally against production API
 just deploy-prod         # rsync to production + web-kick (requires SSH access)
-just generate-htaccess   # Regenerate app/public/.htaccess from router.php
+just build-htaccess   # Regenerate app/public/.htaccess from router.php
 ```
 
 ## Architecture
@@ -69,7 +69,7 @@ two-phase HTML rendering).
 
 `app/private/router.php` serves dual purpose — single route definition array
 drives both the PHP built-in dev server and `.htaccess` generation. After
-editing routes, regenerate with `just generate-htaccess`.
+editing routes, regenerate with `just build-htaccess`.
 
 ### PHP Autoloading
 

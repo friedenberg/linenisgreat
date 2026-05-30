@@ -39,6 +39,7 @@
             with pkgs;
             [
               bats
+              curl
               fish
               gh
               gnumake
@@ -46,8 +47,13 @@
               intelephense
               jq
               just-us.packages.${system}.default
+              nixfmt-rfc-style
               php84
               php84Packages.composer
+              php84Packages.php-cs-fixer
+              prettier
+              shfmt
+              treefmt
             ]
           );
 

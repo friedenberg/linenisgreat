@@ -1,13 +1,15 @@
 # Default recipe = the local CI loop the spinclass pre-merge gate runs (`just`,
-# set in ./sweatfile). This repo's flake ships no package, so CI is the PHP
-# test suites (htaccess + router + code/README), not a nix build. Hook-safe:
-# no dodder/gh/network dependencies.
-default: test test-code
+# set in ./sweatfile). This repo's flake ships no package, so CI is treefmt's
+# format check plus the PHP test suites (htaccess + router + code/README), not a
+# nix build. Hook-safe: no dodder/gh/network dependencies.
+default: codemod-fmt-check test test-code
 
+[private]
 install-revealjs-mkdir:
   mkdir -p app/public/assets/revealjs
 
 [working-directory: 'app/public/assets/revealjs']
+[group("operational")]
 install-revealjs: (install-revealjs-mkdir)
   find . -delete
   http \
@@ -18,16 +20,31 @@ install-revealjs: (install-revealjs-mkdir)
   mv reveal.js-master/{css,dist,js,plugin} ./
   rm -rf reveal.js-master
 
+[group("build")]
 build-php-composer:
   composer install -d app/protected
   composer install -d api/protected
 
 # Update composer dependencies to the latest allowed by each composer.json and
 # refresh composer.lock. Run after bumping a constraint (e.g. mustache ^2 -> ^3).
+[group("maintenance")]
 update-php-composer:
   composer update -d app/protected
   composer update -d api/protected
 
+# Format the whole tree via treefmt, configured by the repo-local ./treefmt.toml.
+# The eng `treefmt` wrapper falls back to plain treefmt when a repo-local
+# treefmt.toml exists, so the formatters are supplied by this flake's devShell.
+[group("codemod")]
+codemod-fmt:
+  treefmt
+
+# Fail if anything is unformatted (consumed by the pre-merge gate / CI).
+[group("codemod")]
+codemod-fmt-check:
+  treefmt --fail-on-change
+
+[private]
 build-der_object objectId:
   mkdir -p api/protected/data/objects/{{objectId}}
   {{bin_der}} format-blob {{objectId}} html-partial > api/protected/data/objects/{{objectId}}/index.html
@@ -35,10 +52,12 @@ build-der_object objectId:
 bin_der := require("der")
 der_query_public := "public !md"
 
+[group("build")]
 build-der_objects:
   #! /usr/bin/env -S bash -e
   {{bin_der}} show -format object-id {{der_query_public}} | parallel -n1 -X just build-der_object '{}'
 
+[group("build")]
 build: build-der_objects
   mkdir -p api/protected/data
   {{bin_der}} show -format json {{der_query_public}} \
@@ -58,6 +77,7 @@ build: build-der_objects
 # partial at code/<name>/index.html (GitHub renders the GFM), mirroring the
 # objects/<id>/index.html pattern and surfaced on the /code/<name> page.
 # Serves the dev loop: `just build-code-github` then review + `just deploy-prod`.
+[group("build")]
 build-code-github:
   #!/usr/bin/env bash
   set -euo pipefail
@@ -103,6 +123,7 @@ build-code-github:
     fi
   done
 
+[group("operational")]
 deploy-prod: build-php-composer build
   rsync -r \
     --include ".htaccess" \
@@ -121,12 +142,16 @@ deploy-prod: build-php-composer build
   ssh linenisgreat.com ../private/deploy.sh
   ssh api.linenisgreat.com ../private/deploy.sh
 
-generate-htaccess:
+# Regenerate app/public/.htaccess from the unified router definition.
+[group("build")]
+build-htaccess:
   php app/private/router.php --generate-htaccess > app/public/.htaccess
 
+[group("post-build")]
 test-htaccess:
   app/private/test-htaccess.sh
 
+[group("post-build")]
 test-router PORT="2299" API_PORT="2298": build-php-composer
   #!/usr/bin/env bash
   set -euo pipefail
@@ -158,6 +183,7 @@ test-router PORT="2299" API_PORT="2298": build-php-composer
   # Run tests
   app/private/test-router.sh {{PORT}}
 
+[group("post-build")]
 test: test-htaccess test-router
 
 # Verify the /code tab + /code/<project> README pages end to end. Starts app+api
@@ -166,6 +192,7 @@ test: test-htaccess test-router
 # the way it does under test-router. Serves the build-code-github dev loop.
 # Standalone (not in `test`): the README partials are gitignored / built on
 # demand, but every check here also passes via the description fallback.
+[group("post-build")]
 test-code PORT="2297" API_PORT="2296": build-php-composer
   #!/usr/bin/env bash
   set -euo pipefail
@@ -249,6 +276,7 @@ test-code PORT="2297" API_PORT="2296": build-php-composer
 
   exit $fail
 
+[group("operational")]
 deploy-local PORT="2222" API_PORT="2223": build-php-composer build
   #!/usr/bin/env bash
   set -euo pipefail
@@ -273,6 +301,7 @@ deploy-local PORT="2222" API_PORT="2223": build-php-composer build
       -t app/public/ \
       app/private/router.php
 
+[group("operational")]
 deploy-local-prod-api PORT="2222": build-php-composer
   API_BASE_URL="https://api.linenisgreat.com" \
   SERVER_NAME="linenisgreat.com" php \
@@ -286,7 +315,8 @@ deploy-local-prod-api PORT="2222": build-php-composer
 # /code/<project> README pages can be eyeballed against the GitHub-sourced data
 # (`just build-code-github`) without needing a dodder repo present. Unlike
 # deploy-local, this does not regenerate objects.json from dodder.
-serve-local PORT="2222" API_PORT="2223": build-php-composer
+[group("operational")]
+deploy-local-fast PORT="2222" API_PORT="2223": build-php-composer
   #!/usr/bin/env bash
   set -euo pipefail
 

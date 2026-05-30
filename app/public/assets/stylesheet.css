@@ -1,4 +1,3 @@
-
 h1 {
   font-size: xxx-large;
   font-family: "Montserrat", sans-serif;
@@ -84,7 +83,8 @@ div.main-container {
   flex-direction: column;
 }
 
-img, video {
+img,
+video {
   object-fit: contain;
 }
 
@@ -122,11 +122,11 @@ nav li a {
 }
 
 nav li a:hover {
-  background-color: #ADD8E6;
+  background-color: #add8e6;
 }
 
 nav li a.active {
-  background-color: #ADD8E6;
+  background-color: #add8e6;
 }
 
 /*  ____                      _     */
@@ -148,7 +148,8 @@ input#search-box {
   margin: var(--padding);
 }
 
-div.search-bar input,label {
+div.search-bar input,
+label {
   vertical-align: middle;
 }
 
@@ -186,7 +187,10 @@ div.search-bar input,label {
 
 .card {
   position: relative;
-  --actual-card-width: calc(var(--card-width) - calc(var(--padding) * 2) - calc(var(--border-stroke-width) * 2));
+  --actual-card-width: calc(
+    var(--card-width) - calc(var(--padding) * 2) -
+      calc(var(--border-stroke-width) * 2)
+  );
   width: var(--actual-card-width);
   border: var(--stroke);
   border-radius: 7px;
@@ -222,12 +226,14 @@ div.search-bar input,label {
   width: 100%;
 }
 
-th,.card-head {
+th,
+.card-head {
   padding-bottom: var(--padding);
   border-bottom: var(--stroke);
 }
 
-.card-head > div,.card-body > div {
+.card-head > div,
+.card-body > div {
   margin-left: var(--padding);
   margin-right: var(--padding);
   width: calc(100% - (var(--padding) * 2));
@@ -291,7 +297,8 @@ tr:last-child td {
   font-style: italic;
 }
 
-.tdleft, .tdright {
+.tdleft,
+.tdright {
   vertical-align: top;
 }
 
@@ -323,7 +330,8 @@ tr:last-child td {
   background-image: url("/assets/icon_glass_martini.svg");
 }
 
-.icon-toml-cocktail-martini, .icon-toml-cocktail-cocktail {
+.icon-toml-cocktail-martini,
+.icon-toml-cocktail-cocktail {
   visibility: visible;
   background-image: url("/assets/icon_glass_martini.svg");
 }
@@ -338,7 +346,8 @@ tr:last-child td {
   background-image: url("/assets/icon_glass_highball.svg");
 }
 
-.icon-toml-cocktail-lowball, .icon-toml-cocktail-rocks {
+.icon-toml-cocktail-lowball,
+.icon-toml-cocktail-rocks {
   visibility: visible;
   background-image: url("/assets/icon_glass_lowball.svg");
 }
@@ -348,7 +357,8 @@ tr:last-child td {
   background-image: url("/assets/icon_glass_flute.svg");
 }
 
-img, video {
+img,
+video {
   width: 100%;
 }
 

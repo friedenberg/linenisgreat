@@ -1,4 +1,3 @@
-
 .resume {
   --font-size: 10pt;
   --font-size-position: calc(var(--font-size) + 1pt);
@@ -78,7 +77,8 @@ div.resume > div {
   visibility: collapse;
 }
 
-.resume section, .resume footer {
+.resume section,
+.resume footer {
   /* padding-bottom: var(--gap-vertical); */
   padding-top: var(--gap-vertical);
 }
@@ -96,12 +96,14 @@ div.resume > div {
   padding-bottom: var(--gap-vertical);
 }
 
-.resume .title, .resume header td {
+.resume .title,
+.resume header td {
   font-size: calc(var(--font-size) + 2pt);
   font-weight: 600;
 }
 
-.resume h1, .resume p {
+.resume h1,
+.resume p {
   margin-block-start: 0pt;
   margin-block-end: 0pt;
 }
@@ -134,9 +136,7 @@ div.resume > div {
 }
 
 .resume span.todo::before {
-  content:
-  "todo!"
-  ;
+  content: "todo!";
 }
 
 .resume div.position-flex {
@@ -186,19 +186,21 @@ div.resume div.position-flex > div.position-flex-text.position-flex-company {
   font-weight: bold;
 }
 
-div.resume div.position-flex > div.position-flex-text.position-flex-company:has(+ .position-flex-title)::after {
+div.resume
+  div.position-flex
+  > div.position-flex-text.position-flex-company:has(
+    + .position-flex-title
+  )::after {
   font-weight: normal;
   /* content: ","; */
 }
 
 .resume div.position-flex > div.position-flex-space::before {
-  content:
-  ". . . . . . . . . . . . . . . . . . . . "
-  ". . . . . . . . . . . . . . . . . . . . "
-  ". . . . . . . . . . . . . . . . . . . . "
-  ". . . . . . . . . . . . . . . . . . . . "
-  ". . . . . . . . . . . . . . . . . . . . "
-  ;
+  content: ". . . . . . . . . . . . . . . . . . . . "
+    ". . . . . . . . . . . . . . . . . . . . "
+    ". . . . . . . . . . . . . . . . . . . . "
+    ". . . . . . . . . . . . . . . . . . . . "
+    ". . . . . . . . . . . . . . . . . . . . ";
   text-align: justify;
   overflow: hidden;
   height: calc(var(--font-size-position) + 1pt);
@@ -232,7 +234,8 @@ div.resume div.position-flex > div.position-flex-text.position-flex-company:has(
 }
 
 /* ul that have more than one child */
-.resume section.columns-two.level3 > ul, .resume .columns-two .level3 > ul {
+.resume section.columns-two.level3 > ul,
+.resume .columns-two .level3 > ul {
   column-gap: 14pt;
   columns: 2;
 }
@@ -270,7 +273,8 @@ div.resume div.position-flex > div.position-flex-text.position-flex-company:has(
 /* |____/ \___|_.__/ \__,_|\__, |*/
 /*                         |___/ */
 
-.debug div, .debug table {
+.debug div,
+.debug table {
   border: 1px solid red;
 }
 
@@ -281,4 +285,3 @@ div.resume div.position-flex > div.position-flex-text.position-flex-company:has(
 section.debug > section {
   border: var(--debug-border);
 }
-
