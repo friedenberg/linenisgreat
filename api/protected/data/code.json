@@ -177,7 +177,7 @@
         "template": "code_go_import",
         "url": "https://github.com/amarbel-llc/madder",
         "license_url": "https://github.com/amarbel-llc/madder/blob/master/LICENSE",
-        "readme_updated": "2026-05-04"
+        "readme_updated": "2026-05-31"
       },
       "name": "madder"
     },
@@ -245,11 +245,11 @@
       "meta": {
         "url": "https://github.com/amarbel-llc/purse-first",
         "license_url": "https://github.com/amarbel-llc/purse-first/blob/master/LICENSE",
-        "readme_updated": "2026-05-29"
+        "readme_updated": "2026-05-31"
       },
       "name": "purse-first"
     },
-    "description": "Nix-based package framework for Claude Code: bundles CLIs, MCP servers, and skills into composable plugins; ships go-mcp/rust-mcp libraries and a marketplace CLI",
+    "description": "Nix package framework plus the go-mcp and dewey Go libraries: build self-describing, composable CLI/MCP-server/skill packages for agentic tooling",
     "object-id": "project-purse-first",
     "tags": [
       "public"
