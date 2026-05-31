@@ -116,8 +116,12 @@ build-code-github:
   # 2. Rebuild README partials from scratch so projects dropped from the org
   #    (archived, deleted, renamed) don't leave stale dirs behind.
   rm -rf "$data_dir/code"
-  # 3. Capture each project's README as a rendered HTML partial. No README on
-  #    GitHub -> fall back to the description so /code/<name> always renders.
+  # 3. Capture each project's README as a rendered HTML partial, plus the footer
+  #    metadata surfaced on /code/<name> (LICENSE link + README last-commit date).
+  #    No README on GitHub -> fall back to the description so the page always
+  #    renders. All GitHub lookups are best-effort: a 404/absent field is omitted,
+  #    never fatal.
+  meta_extra=$(mktemp)
   for name in $(jq -r 'keys[]' "$data_dir/code.json"); do
     dir="$data_dir/code/$name"
     mkdir -p "$dir"
@@ -128,7 +132,31 @@ build-code-github:
       desc=$(jq -r --arg n "$name" '.[$n].description // ""' "$data_dir/code.json")
       printf '<article class="markdown-body"><p>%s</p></article>\n' "$desc" > "$dir/index.html"
     fi
+
+    # LICENSE file link + README's last-commit date (date only; never the
+    # committer email, which is private).
+    license_url=$(gh api "repos/amarbel-llc/$name/license" --jq '.html_url' 2>/dev/null || true)
+    readme_path=$(gh api "repos/amarbel-llc/$name/readme" --jq '.path' 2>/dev/null || echo README.md)
+    readme_date=$(gh api "repos/amarbel-llc/$name/commits?path=${readme_path}&per_page=1" \
+        --jq '.[0].commit.committer.date // empty' 2>/dev/null || true)
+    readme_updated=""
+    if [ -n "$readme_date" ]; then
+      readme_updated=$(date -u -d "$readme_date" +%Y-%m-%d)
+    fi
+    jq -nc --arg n "$name" --arg lu "$license_url" --arg ru "$readme_updated" \
+      '{name: $n, license_url: $lu, readme_updated: $ru}' >> "$meta_extra"
   done
+
+  # 4. Merge the footer metadata into each entry's blob.meta in one pass; only
+  #    non-empty fields are added.
+  tmp=$(mktemp)
+  jq --slurpfile extra "$meta_extra" '
+      reduce $extra[] as $e (.;
+        .[$e.name].blob.meta +=
+          ( (if $e.license_url != "" then {license_url: $e.license_url} else {} end)
+          + (if $e.readme_updated != "" then {readme_updated: $e.readme_updated} else {} end) ))
+    ' "$data_dir/code.json" > "$tmp" && mv "$tmp" "$data_dir/code.json"
+  rm -f "$meta_extra"
 
 # Verify the read-only git smart-HTTP proxy (app/public/code_git_proxy.php) that
 # lets `code.linenisgreat.com/<name>` serve as a git/Nix-flake endpoint by

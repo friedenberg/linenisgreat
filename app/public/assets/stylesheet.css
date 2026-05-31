@@ -408,6 +408,19 @@ div.object-head {
   flex-direction: column;
 }
 
+/* Per-repo footer on /code/<repo> pages: github/license links + last-updated.
+   Mirrors the résumé tab footer (centered, x-small) — see app/public/resume.css
+   `.resume footer`. */
+.code-footer {
+  padding-top: var(--padding);
+  font-size: x-small;
+  text-align: center;
+}
+
+.code-footer-date {
+  margin-bottom: 0.5em;
+}
+
 i.rc-scout__logo {
   vertical-align: -1pt;
 }

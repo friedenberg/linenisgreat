@@ -2,7 +2,8 @@
   "and-so-can-you": {
     "blob": {
       "meta": {
-        "url": "https://github.com/amarbel-llc/and-so-can-you"
+        "url": "https://github.com/amarbel-llc/and-so-can-you",
+        "license_url": "https://github.com/amarbel-llc/and-so-can-you/blob/master/LICENSE"
       },
       "name": "and-so-can-you"
     },
@@ -18,7 +19,8 @@
       "meta": {
         "name": "code.linenisgreat.com/bob",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/bob"
+        "url": "https://github.com/amarbel-llc/bob",
+        "license_url": "https://github.com/amarbel-llc/bob/blob/master/LICENSE"
       },
       "name": "bob"
     },
@@ -34,7 +36,9 @@
       "meta": {
         "name": "code.linenisgreat.com/chrest",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/chrest"
+        "url": "https://github.com/amarbel-llc/chrest",
+        "license_url": "https://github.com/amarbel-llc/chrest/blob/master/LICENSE",
+        "readme_updated": "2026-05-26"
       },
       "name": "chrest"
     },
@@ -50,7 +54,9 @@
       "meta": {
         "name": "code.linenisgreat.com/clown",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/clown"
+        "url": "https://github.com/amarbel-llc/clown",
+        "license_url": "https://github.com/amarbel-llc/clown/blob/master/LICENSE",
+        "readme_updated": "2026-05-04"
       },
       "name": "clown"
     },
@@ -66,7 +72,9 @@
       "meta": {
         "name": "code.linenisgreat.com/crap",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/crap"
+        "url": "https://github.com/amarbel-llc/crap",
+        "license_url": "https://github.com/amarbel-llc/crap/blob/master/LICENSE",
+        "readme_updated": "2026-03-15"
       },
       "name": "crap"
     },
@@ -82,7 +90,9 @@
       "meta": {
         "name": "code.linenisgreat.com/cutting-garden",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/cutting-garden"
+        "url": "https://github.com/amarbel-llc/cutting-garden",
+        "license_url": "{\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/licenses/licenses#get-the-license-for-a-repository\",\"status\":\"404\"}",
+        "readme_updated": "2026-05-10"
       },
       "name": "cutting-garden"
     },
@@ -98,7 +108,9 @@
       "meta": {
         "name": "code.linenisgreat.com/dodder",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/dodder"
+        "url": "https://github.com/amarbel-llc/dodder",
+        "license_url": "https://github.com/amarbel-llc/dodder/blob/master/LICENSE",
+        "readme_updated": "2026-02-27"
       },
       "name": "dodder"
     },
@@ -114,7 +126,9 @@
       "meta": {
         "name": "code.linenisgreat.com/doppelgang",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/doppelgang"
+        "url": "https://github.com/amarbel-llc/doppelgang",
+        "license_url": "https://github.com/amarbel-llc/doppelgang/blob/master/LICENSE",
+        "readme_updated": "2026-05-28"
       },
       "name": "doppelgang"
     },
@@ -128,7 +142,8 @@
   "eng": {
     "blob": {
       "meta": {
-        "url": "https://github.com/amarbel-llc/eng"
+        "url": "https://github.com/amarbel-llc/eng",
+        "license_url": "https://github.com/amarbel-llc/eng/blob/master/LICENSE"
       },
       "name": "eng"
     },
@@ -142,7 +157,9 @@
   "igloo": {
     "blob": {
       "meta": {
-        "url": "https://github.com/amarbel-llc/igloo"
+        "url": "https://github.com/amarbel-llc/igloo",
+        "license_url": "https://github.com/amarbel-llc/igloo/blob/master/COPYING",
+        "readme_updated": "2026-05-29"
       },
       "name": "igloo"
     },
@@ -158,7 +175,9 @@
       "meta": {
         "name": "code.linenisgreat.com/madder",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/madder"
+        "url": "https://github.com/amarbel-llc/madder",
+        "license_url": "https://github.com/amarbel-llc/madder/blob/master/LICENSE",
+        "readme_updated": "2026-05-04"
       },
       "name": "madder"
     },
@@ -174,7 +193,8 @@
       "meta": {
         "name": "code.linenisgreat.com/maneater",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/maneater"
+        "url": "https://github.com/amarbel-llc/maneater",
+        "license_url": "https://github.com/amarbel-llc/maneater/blob/master/LICENSE"
       },
       "name": "maneater"
     },
@@ -190,7 +210,9 @@
       "meta": {
         "name": "code.linenisgreat.com/moxy",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/moxy"
+        "url": "https://github.com/amarbel-llc/moxy",
+        "license_url": "https://github.com/amarbel-llc/moxy/blob/master/LICENSE",
+        "readme_updated": "2026-05-08"
       },
       "name": "moxy"
     },
@@ -206,7 +228,8 @@
       "meta": {
         "name": "code.linenisgreat.com/nebulous",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/nebulous"
+        "url": "https://github.com/amarbel-llc/nebulous",
+        "license_url": "https://github.com/amarbel-llc/nebulous/blob/master/LICENSE"
       },
       "name": "nebulous"
     },
@@ -220,7 +243,9 @@
   "purse-first": {
     "blob": {
       "meta": {
-        "url": "https://github.com/amarbel-llc/purse-first"
+        "url": "https://github.com/amarbel-llc/purse-first",
+        "license_url": "https://github.com/amarbel-llc/purse-first/blob/master/LICENSE",
+        "readme_updated": "2026-05-29"
       },
       "name": "purse-first"
     },
@@ -236,7 +261,9 @@
       "meta": {
         "name": "code.linenisgreat.com/spinclass",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/spinclass"
+        "url": "https://github.com/amarbel-llc/spinclass",
+        "license_url": "{\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/licenses/licenses#get-the-license-for-a-repository\",\"status\":\"404\"}",
+        "readme_updated": "2026-05-29"
       },
       "name": "spinclass"
     },
@@ -250,7 +277,9 @@
   "stats-me": {
     "blob": {
       "meta": {
-        "url": "https://github.com/amarbel-llc/stats-me"
+        "url": "https://github.com/amarbel-llc/stats-me",
+        "license_url": "{\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/licenses/licenses#get-the-license-for-a-repository\",\"status\":\"404\"}",
+        "readme_updated": "2026-05-01"
       },
       "name": "stats-me"
     },
@@ -264,7 +293,9 @@
   "tacky": {
     "blob": {
       "meta": {
-        "url": "https://github.com/amarbel-llc/tacky"
+        "url": "https://github.com/amarbel-llc/tacky",
+        "license_url": "https://github.com/amarbel-llc/tacky/blob/master/LICENSE",
+        "readme_updated": "2026-05-26"
       },
       "name": "tacky"
     },
@@ -280,7 +311,9 @@
       "meta": {
         "name": "code.linenisgreat.com/tommy",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/tommy"
+        "url": "https://github.com/amarbel-llc/tommy",
+        "license_url": "https://github.com/amarbel-llc/tommy/blob/master/LICENSE",
+        "readme_updated": "2026-05-24"
       },
       "name": "tommy"
     },
@@ -296,7 +329,9 @@
       "meta": {
         "name": "code.linenisgreat.com/treelint",
         "template": "code_go_import",
-        "url": "https://github.com/amarbel-llc/treelint"
+        "url": "https://github.com/amarbel-llc/treelint",
+        "license_url": "https://github.com/amarbel-llc/treelint/blob/main/LICENSE",
+        "readme_updated": "2026-05-31"
       },
       "name": "treelint"
     },
@@ -310,7 +345,9 @@
   "xdg": {
     "blob": {
       "meta": {
-        "url": "https://github.com/amarbel-llc/xdg"
+        "url": "https://github.com/amarbel-llc/xdg",
+        "license_url": "https://github.com/amarbel-llc/xdg/blob/master/LICENSE.CC-BY-SA-4.0",
+        "readme_updated": "2026-01-19"
       },
       "name": "xdg"
     },

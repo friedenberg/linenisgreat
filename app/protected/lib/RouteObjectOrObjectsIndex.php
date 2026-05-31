@@ -54,33 +54,53 @@ class RouteObjectOrObjectsIndex
         ];
     }
 
-    public function getCodeMetaRaw(): string
+    /**
+     * Find the code.json meta for the current single code-project page, or []
+     * when this isn't a code page, has no object id, or no entry matches.
+     *
+     * @return array<string,mixed>
+     */
+    private function findCodeMeta(): array
     {
-        if (strcmp($this->title, "code") != 0) {
-            return "";
+        if (strcmp($this->title, "code") != 0 || is_null($this->objectId)) {
+            return [];
         }
 
-        if (is_null($this->objectId)) {
-            return "";
-        }
-
-        $raw = $this->parser->getRaw();
-        $object = [];
-
-        foreach ($raw as $someZettel) {
+        foreach ($this->parser->getRaw() as $someZettel) {
             if (strcmp($someZettel['blob']['name'], $this->objectId) === 0) {
-                $object = $someZettel;
-                break;
+                return $someZettel['blob']['meta'] ?? [];
             }
         }
 
-        if (empty($object)) {
+        return [];
+    }
+
+    public function getCodeMetaRaw(): string
+    {
+        $code = $this->findCodeMeta();
+
+        // Only Go projects carry a head-meta template (code_go_import); others
+        // (and non-code pages) have none, so render nothing.
+        if (empty($code) || !isset($code['template'])) {
             return "";
         }
 
-        $code = $object['blob']['meta'];
-
         return $this->mustache->render($code['template'], $code);
+    }
+
+    /**
+     * Render the per-repo footer (github/license links + last-updated) for a
+     * single code-project page; "" everywhere else.
+     */
+    public function getCodeFooter(): string
+    {
+        $code = $this->findCodeMeta();
+
+        if (empty($code)) {
+            return "";
+        }
+
+        return $this->mustache->render('code_footer', $code);
     }
 
     /**
@@ -89,7 +109,8 @@ class RouteObjectOrObjectsIndex
     public function getMeta(): array
     {
         $meta = $this->getSiteData();
-        $meta['raw'] = $this->getCodeMetaRaw($this->mustache);
+        $meta['raw'] = $this->getCodeMetaRaw();
+        $meta['footer'] = $this->getCodeFooter();
 
         return $meta;
     }
