@@ -220,6 +220,57 @@ test-code-git PORT="2295" API_PORT="2294" UPSTREAM_ORG="octocat" REPO="Hello-Wor
 
   exit $fail
 
+# Org-wide breadth check for the git proxy: clone every non-archived
+# {{UPSTREAM_ORG}} repo through a local server and assert each succeeds. Networked
+# (hits GitHub) + slow, so NOT in the hook-safe `test` gate — run before a deploy
+# that changes the proxy. Complements test-code-git's single-repo deep check.
+# Archived repos are skipped, notably the nixpkgs fork that exceeds the proxy's
+# 170s cap (tracked in issue #7). Each clone is bounded by `timeout 180` (just
+# above the proxy's curl cap) and discarded immediately.
+[group("post-build")]
+test-code-git-org PORT="2295" API_PORT="2294" UPSTREAM_ORG="amarbel-llc": build-php-composer
+  #!/usr/bin/env bash
+  set -uo pipefail
+
+  php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT}} -t api/public/ >/dev/null 2>&1 &
+  API_PID=$!
+  CODE_GIT_UPSTREAM="https://github.com/{{UPSTREAM_ORG}}" \
+  API_BASE_URL="http://localhost:{{API_PORT}}" \
+  SERVER_NAME="linenisgreat.com" php \
+      -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
+      -S localhost:{{PORT}} -c app/conf/php.ini -t app/public/ app/private/router.php >/dev/null 2>&1 &
+  APP_PID=$!
+  tmpd=$(mktemp -d)
+  trap "kill $APP_PID $API_PID 2>/dev/null || true; rm -rf $tmpd" EXIT
+  sleep 1
+
+  mapfile -t repos < <(gh api --paginate 'orgs/{{UPSTREAM_ORG}}/repos?per_page=100&type=all' \
+    | jq -rs 'add | map(select(.archived | not)) | sort_by(.size) | .[] | [.name, .size] | @tsv')
+
+  echo "TAP version 14"
+  echo "1..${#repos[@]}"
+  i=0; fail=0
+  for line in "${repos[@]}"; do
+    i=$((i + 1))
+    name=${line%%$'\t'*}
+    size=${line##*$'\t'}
+    err="$tmpd/$name.err"
+    SECONDS=0
+    if timeout 180 git clone --quiet "http://localhost:{{PORT}}/code/$name" "$tmpd/$name" >/dev/null 2>"$err"; then
+      echo "ok $i - $name (${size}KB, ${SECONDS}s)"
+    else
+      rc=$?
+      msg=$(grep -iaE 'fatal|error|rpc|hung up|EOF|disconnect' "$err" | head -1 | tr -d '\r')
+      [ "$rc" -eq 124 ] && msg="outer-timeout 180s; $msg"
+      echo "not ok $i - $name (${size}KB, ${SECONDS}s) - exit $rc: $msg"
+      fail=1
+    fi
+    rm -rf "$tmpd/$name" "$err"
+  done
+  exit $fail
+
 [group("operational")]
 deploy-prod: build-php-composer build
   rsync -r \
