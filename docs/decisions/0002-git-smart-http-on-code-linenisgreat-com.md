@@ -266,6 +266,8 @@ Still to confirm on a real deploy (out of scope for the local spike):
   cap; otherwise move that repo (or all) to the Option 2a Worker fallback.
 * A module consumed via `flake-input-go_mod` in `amarbel-llc/{nixpkgs,igloo}` builds
   against the new ref (the actual Go-consumption path).
+* **Send NFSN support a heads-up** that this is a read-only single-origin git
+  gateway, not an open proxy (see NFSN policy compliance below).
 
 ## Cost Estimate (ballpark)
 
@@ -282,6 +284,43 @@ change.
 
 The recommended Option 0 adds **no new recurring cost**; the Option 2a fallback is
 **$0/mo** at portfolio traffic levels.
+
+## NFSN policy compliance
+
+Reviewed because a script that forwards traffic to a third party (GitHub) can
+superficially resemble a proxy, and NFSN automatically disables open proxies.
+
+* **The rule.** NFSN's proxy FAQ: *"If you need to set up a private web proxy on
+  your site for your personal use that is appropriately access-limited, that is no
+  problem as long as your use complies with our Terms & Conditions of Service. This
+  does not include using our SSH server as a Socks or HTTP proxy."* Separately,
+  **public HTTP proxies** *"will be disabled without notice or warning upon
+  discovery"* because they get *"abused within minutes"* — the prohibited class is
+  the **open/anonymizing proxy where the client chooses the destination**.
+* **Why this proxy is allowed, not prohibited.** `code_git_proxy.php` is a
+  **single-origin, read-only gateway to the owner's own repositories**, not an open
+  relay. The client cannot choose the destination: the upstream host is fixed
+  server-side (`CODE_GIT_UPSTREAM`, default `github.com/amarbel-llc`), the path is
+  locked to one repo (`^[\w.-]+$`, no `..`/slashes), and only two read-only git
+  endpoints are reachable (`info/refs?service=git-upload-pack`, `git-upload-pack`).
+  It cannot anonymize third-party browsing or be repurposed as a relay.
+* **Other policy angles clear too.** Content/copyright (DMCA/TACOS): we serve our
+  own `amarbel-llc` code — no third-party IP. Bandwidth (the "unlimited bandwidth,
+  don't cause problems" floating limit): small personal git clones are trivial, not
+  CDN-scale third-party distribution.
+* **Residual risk = automated false positive.** NFSN's open-proxy discovery is
+  automated and their philosophy is to refuse proxy-shaped things up front, so the
+  one real risk is a scanner misclassifying the `git-upload-pack` relay.
+  Mitigations: (1) the proxy is hardened so it provably can't act as an open proxy
+  (fixed host, repo-name allowlist, two endpoints, HTTPS-pinned redirects); (2)
+  **send NFSN support a one-paragraph heads-up before going live** — "read-only,
+  single-origin git smart-HTTP gateway to my own GitHub org at
+  code.linenisgreat.com; not an open proxy" — which matches their stated "ask up
+  front" preference and converts ambiguity into an explicit OK. **Action item
+  before deploy.**
+* Sources: NFSN proxy FAQ <https://faq.nearlyfreespeech.net/full/proxy>,
+  DMCA/TACOS <https://www.nearlyfreespeech.net/policies/dmca>, unlimited-bandwidth
+  limitations <https://blog.nearlyfreespeech.net/2016/02/19/unlimited_free_bandwidth_some_limitations_apply/>.
 
 ## Nix flake / Go-consumption technical notes
 
