@@ -54,11 +54,15 @@ includes = ["*.css", "*.scss", "*.yaml", "*.yml"]
 # JSON via `jq .` (no native in-place mode; tempfile round-trip), mirroring eng's
 # treefmt.nix. The bulk data files are excluded globally above, so this covers
 # composer.json and other small source JSON.
+#
+# Only `mv` over the original when the formatted output actually differs:
+# treefmt's --fail-on-change keys off mtime, and an unconditional `mv` bumps mtime
+# even when jq is a no-op, which spuriously fails the cold-cache CI gate.
 [formatter.jq]
 command = "bash"
 options = [
   "-euc",
-  'for f in "$@"; do tmp=$(mktemp "${f}.XXXXXX"); jq . "$f" > "$tmp" && mv "$tmp" "$f"; done',
+  'for f in "$@"; do tmp=$(mktemp "${f}.XXXXXX"); jq . "$f" > "$tmp"; if cmp -s "$tmp" "$f"; then rm -f "$tmp"; else mv "$tmp" "$f"; fi; done',
   "--",
 ]
 includes = ["*.json"]
