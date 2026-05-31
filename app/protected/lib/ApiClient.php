@@ -83,7 +83,10 @@ class ApiClient
     public function getHtmlPartial(string $objectId): string
     {
         $url = "{$this->baseUrl}/{$this->endpoint}/{$objectId}/html";
-        $response = file_get_contents($url);
+        // Suppress the connection warning on a non-200 (e.g. a missing partial
+        // 404); callers catch the exception and fall back to a description-only
+        // card, so the warning is just noise that would otherwise leak to the page.
+        $response = @file_get_contents($url);
 
         if ($response === false) {
             throw new Exception("Failed to fetch HTML partial from API: {$url}");
