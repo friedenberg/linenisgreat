@@ -15,7 +15,7 @@ All commands require the Nix devShell: `nix develop -c just <recipe>`
 ```sh
 just test                # Run all tests (htaccess + router integration)
 just test-htaccess       # Validate generated .htaccess rules (11 TAP tests)
-just test-router         # Start both servers, test HTTP routes (16 TAP tests)
+just test-router         # Start both servers, test HTTP routes (15 TAP tests)
 just build-php-composer  # composer install in both app/ and api/
 just build               # Build object data from dodder (requires `der` binary)
 just deploy-local        # Run both servers locally (app:2222, api:2223)
@@ -86,9 +86,19 @@ data files (yoga, cocktails, slides) are committed directly.
 ## Testing
 
 Tests use TAP v14 format via bash scripts with curl. `test-router` spins up
-both PHP built-in servers, runs 16 HTTP assertions, then tears them down.
+both PHP built-in servers, runs 15 HTTP assertions, then tears them down.
 `test-htaccess` validates the generated `.htaccess` against regex patterns
 without needing a server.
+
+## Code Style
+
+PHP follows PSR-12 (configured in `.phpcs.xml`, covers `app/protected/` and
+`app/public/`).
+
+## Secrets
+
+Secrets are managed via `git-secret`. Encrypted files (`.secret` extension) are
+committed; decrypted files are gitignored.
 
 ## Hosting
 

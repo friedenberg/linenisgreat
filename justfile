@@ -60,6 +60,7 @@ der_query_public := "public !md"
 [group("build")]
 build-der_objects:
   #! /usr/bin/env -S bash -e
+  rm -rf api/protected/data/objects/
   {{bin_der}} show -format object-id {{der_query_public}} | parallel -n1 -X just build-der_object '{}'
 
 [group("build")]
@@ -67,7 +68,8 @@ build: build-der_objects
   mkdir -p api/protected/data
   {{bin_der}} show -format json {{der_query_public}} \
     | jq -s 'map({(.["object-id"] | tostring): .}) | add' \
-    > api/protected/data/objects.json
+    > api/protected/data/objects.json.tmp \
+    && mv api/protected/data/objects.json.tmp api/protected/data/objects.json
   cp api/protected/data/{objects,notes}.json
   # {{bin_der}} show -format toml-json [public !toml-project-code]:e | jq -s 'INDEX(.blob.name)' > api/protected/data/code.json
 
