@@ -7,6 +7,10 @@ class ApiClient
     private string $endpoint;
     private string $baseUrl;
     private ?array $raw = null;
+    private int $cacheTtl;
+
+    /** Opaque API-response cache TTL: 1 hour. Override via API_CACHE_TTL (seconds; 0 disables). */
+    private const DEFAULT_CACHE_TTL = 3600;
 
     /**
      * @param string $endpoint API endpoint name (e.g., 'objects', 'yoga', 'code')
@@ -18,6 +22,57 @@ class ApiClient
             getenv('API_BASE_URL') ?: 'https://api.linenisgreat.com',
             '/',
         );
+        $ttl = getenv('API_CACHE_TTL');
+        $this->cacheTtl = ($ttl === false || $ttl === '') ? self::DEFAULT_CACHE_TTL : (int) $ttl;
+    }
+
+    /**
+     * Opaquely cache an API GET to the writable tmp dir (the cocktail-image
+     * pattern; see Zettel::getImageUrl), keyed by the request URL with a TTL.
+     * The cache is agnostic to what backs the API — static files today, dodder
+     * later — so it carries across that swap unchanged. On an upstream failure a
+     * stale cached copy is served if one exists; returns false only when there's
+     * neither a fresh fetch nor any cached copy.
+     */
+    private function fetchCached(string $url): string|false
+    {
+        $dir = __DIR__ . '/../../tmp';
+        $path = "{$dir}/api-cache-" . md5($url);
+
+        if (
+            $this->cacheTtl > 0
+            && is_file($path)
+            && (time() - filemtime($path)) < $this->cacheTtl
+        ) {
+            $cached = @file_get_contents($path);
+            if ($cached !== false) {
+                return $cached;
+            }
+        }
+
+        // Miss or expired: refetch. The @ suppresses the connection warning on a
+        // non-200 (callers handle false / catch the exception).
+        $response = @file_get_contents($url);
+
+        if ($response !== false) {
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0775, true);
+            }
+            // Write via temp file + rename so a concurrent reader never sees a
+            // half-written cache entry.
+            $tmp = "{$path}." . getmypid() . ".tmp";
+            if (@file_put_contents($tmp, $response) !== false) {
+                @rename($tmp, $path);
+            }
+            return $response;
+        }
+
+        // Upstream failed: fall back to a stale cached copy if we have one.
+        if (is_file($path)) {
+            return @file_get_contents($path);
+        }
+
+        return false;
     }
 
     /**
@@ -30,7 +85,7 @@ class ApiClient
         }
 
         $url = "{$this->baseUrl}/{$this->endpoint}";
-        $response = file_get_contents($url);
+        $response = $this->fetchCached($url);
 
         if ($response === false) {
             throw new Exception("Failed to fetch from API: {$url}");
@@ -83,10 +138,9 @@ class ApiClient
     public function getHtmlPartial(string $objectId): string
     {
         $url = "{$this->baseUrl}/{$this->endpoint}/{$objectId}/html";
-        // Suppress the connection warning on a non-200 (e.g. a missing partial
-        // 404); callers catch the exception and fall back to a description-only
-        // card, so the warning is just noise that would otherwise leak to the page.
-        $response = @file_get_contents($url);
+        // Cached + warning-suppressed fetch; callers catch the exception and fall
+        // back to a description-only card when a partial is genuinely missing.
+        $response = $this->fetchCached($url);
 
         if ($response === false) {
             throw new Exception("Failed to fetch HTML partial from API: {$url}");
