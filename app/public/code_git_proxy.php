@@ -18,6 +18,13 @@ declare(strict_types=1);
  * routed here. git-receive-pack (push) is never wired, and an info/refs request
  * for any service other than git-upload-pack is rejected.
  *
+ * NOT AN OPEN PROXY (re: NFSN's prohibition on public HTTP proxies). The client
+ * cannot choose the destination: the upstream host is fixed server-side via
+ * CODE_GIT_UPSTREAM (default github.com/amarbel-llc), the path is locked to a
+ * single repo whose name must match ^[\w.-]+$ (no '..', no slashes), and only two
+ * fixed read-only git endpoints are reachable. It is a single-origin gateway to
+ * the owner's own repositories, not a general-purpose relay.
+ *
  * Streaming is deliberate — output buffering is torn down and each chunk is
  * flushed as it arrives so a clone neither balloons PHP's memory nor stalls
  * against NFSN's 3-minute wall-clock request cap.
@@ -81,8 +88,15 @@ $forwardHeaders[] = 'User-Agent: ' . ($_SERVER['HTTP_USER_AGENT'] ?? 'git-lineni
 $ch = curl_init($url);
 curl_setopt_array($ch, [
     CURLOPT_HTTPHEADER     => $forwardHeaders,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HEADER         => false,
+    // GitHub may 30x within its own infrastructure; follow it, but pin to HTTPS
+    // so a redirect can never downgrade the protocol. The destination host is
+    // already fixed server-side (open-proxy guard lives at URL construction,
+    // above — the client never supplies a host), so redirects only ever chase
+    // GitHub's own canonicalisation.
+    CURLOPT_FOLLOWLOCATION  => true,
+    CURLOPT_REDIR_PROTOCOLS => CURLPROTO_HTTPS,
+    CURLOPT_MAXREDIRS       => 5,
+    CURLOPT_HEADER          => false,
     // Leave the upstream body byte-identical: do NOT auto-decompress, so a
     // gzipped pack streams through with its Content-Encoding intact.
     CURLOPT_ENCODING       => '',
