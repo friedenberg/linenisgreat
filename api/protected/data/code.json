@@ -1,4 +1,18 @@
 {
+  "and-so-can-you": {
+    "blob": {
+      "meta": {
+        "url": "https://github.com/amarbel-llc/and-so-can-you"
+      },
+      "name": "and-so-can-you"
+    },
+    "description": "conformist — a whole-repo cross-format linter and scaffolder encoding amarbel-llc/eng's eng-*(7) conventions as enforceable rules; home for cross-repo lint & rewrite tooling",
+    "object-id": "project-and-so-can-you",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
   "bob": {
     "blob": {
       "meta": {
@@ -272,6 +286,22 @@
     },
     "description": "Go TOML library and CLI with round-trip-preserving CST and codegen for type-safe Decode/Encode methods — keeps comments, whitespace, and formatting intact",
     "object-id": "project-tommy",
+    "tags": [
+      "public"
+    ],
+    "type": "!toml-project-code"
+  },
+  "treelint": {
+    "blob": {
+      "meta": {
+        "name": "code.linenisgreat.com/treelint",
+        "template": "code_go_import",
+        "url": "https://github.com/amarbel-llc/treelint"
+      },
+      "name": "treelint"
+    },
+    "description": "",
+    "object-id": "project-treelint",
     "tags": [
       "public"
     ],
