@@ -133,6 +133,23 @@ build-code-github:
       printf '<article class="markdown-body"><p>%s</p></article>\n' "$desc" > "$dir/index.html"
     fi
 
+    # Absolutize repo-relative README links/images back to GitHub so they don't
+    # resolve against linenisgreat.com/code/<name> and 404. ast-grep is AST-scoped
+    # (won't rewrite an href="..." that is literal text inside a code block) and
+    # edits in place; the not-regex skips already-absolute / // / #-anchor /
+    # mailto: refs. HEAD resolves to the repo's default branch.
+    repo="amarbel-llc/$name"
+    rules_dir=$(mktemp -d)
+    printf 'id: readme-href\nlanguage: html\nrule:\n  pattern: %s\n  not: { regex: %s }\nfix: %s\n' \
+      "'<a href=\"\$U\">\$\$\$C</a>'" "'href=\"(https?:|//|#|mailto:)'" \
+      "'<a href=\"https://github.com/$repo/blob/HEAD/\$U\">\$\$\$C</a>'" > "$rules_dir/href.yml"
+    printf 'id: readme-img\nlanguage: html\nrule:\n  pattern: %s\n  not: { regex: %s }\nfix: %s\n' \
+      "'<img src=\"\$U\">'" "'src=\"(https?:|//|data:)'" \
+      "'<img src=\"https://github.com/$repo/raw/HEAD/\$U\">'" > "$rules_dir/img.yml"
+    ast-grep scan --rule "$rules_dir/href.yml" --update-all "$dir/index.html" >/dev/null
+    ast-grep scan --rule "$rules_dir/img.yml" --update-all "$dir/index.html" >/dev/null
+    rm -rf "$rules_dir"
+
     # LICENSE file link + README's last-commit date (date only; never the
     # committer email, which is private).
     license_url=$(gh api "repos/amarbel-llc/$name/license" --jq '.html_url' 2>/dev/null || true)

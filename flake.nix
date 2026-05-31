@@ -38,6 +38,7 @@
           packages = (
             with pkgs;
             [
+              ast-grep
               bats
               curl
               fish
