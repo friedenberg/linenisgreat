@@ -412,6 +412,10 @@ div.object-head {
    Mirrors the résumé tab footer (centered, x-small) — see app/public/resume.css
    `.resume footer`. */
 .code-footer {
+  /* Shrink-wrap and center in the flex-column .object-container, so the links
+     center as a group regardless of the (possibly wide) README content width —
+     text-align alone would center within the full stretched width. */
+  align-self: center;
   padding-top: var(--padding);
   font-size: x-small;
   text-align: center;
