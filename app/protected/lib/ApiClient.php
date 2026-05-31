@@ -87,19 +87,25 @@ class ApiClient
         $url = "{$this->baseUrl}/{$this->endpoint}";
         $response = $this->fetchCached($url);
 
+        // Degrade gracefully instead of fatalling. A transient API failure with
+        // no cached copy to fall back on — e.g. the NFSN hiccup right after a
+        // web-kick, when the deploy cache-bust has just cleared the stale copy —
+        // returns empty data so pages still render (empty index / description
+        // fallback / no footer) rather than 500. Logged for observability and
+        // memoized so one failed fetch isn't retried within the request.
         if ($response === false) {
-            throw new Exception("Failed to fetch from API: {$url}");
+            error_log("ApiClient: API unavailable, serving empty data from: {$url}");
+            return $this->raw = [];
         }
 
         $decoded = json_decode($response, true);
 
         if (!is_array($decoded) || !isset($decoded['data'])) {
-            throw new Exception("Invalid API response from: {$url}");
+            error_log("ApiClient: invalid API response from: {$url}");
+            return $this->raw = [];
         }
 
-        $this->raw = $decoded['data'];
-
-        return $this->raw;
+        return $this->raw = $decoded['data'];
     }
 
     /**
