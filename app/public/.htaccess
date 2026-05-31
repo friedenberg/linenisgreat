@@ -13,7 +13,7 @@ RewriteCond %{HTTP_HOST} ^code\.linenisgreat\.com$
 RewriteRule "^([\w.-]+)/git-upload-pack$" "code_git_proxy.php?project=$1&endpoint=git-upload-pack" [L,PT,B]
 RewriteRule "^code/([\w.-]+)/info/refs$" "code_git_proxy.php?project=$1&endpoint=info/refs" [L,PT,B,QSA]
 RewriteRule "^code/([\w.-]+)/git-upload-pack$" "code_git_proxy.php?project=$1&endpoint=git-upload-pack" [L,PT,B]
-RewriteRule "^code/(\w+)(.+)?$" "code.php?project=$1&remainder=$2" [L,PT,B]
+RewriteRule "^code/([\w.-]+)(.+)?$" "code.php?project=$1&remainder=$2" [L,PT,B]
 
 RewriteCond %{HTTP_HOST} ^code.linenisgreat.com$
 RewriteRule ^/?(.*)$ https://linenisgreat.com/code/$1 [R=302,L]

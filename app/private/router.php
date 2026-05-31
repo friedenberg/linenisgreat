@@ -88,9 +88,11 @@ $routes = [
         'params' => ['project' => '$1', 'endpoint' => 'git-upload-pack'],
     ],
 
-    // Code project with optional remainder
+    // Code project with optional remainder. [\w.-] (not \w) so hyphenated repo
+    // names like purse-first / and-so-can-you match fully instead of truncating
+    // at the hyphen (project=purse). Mirrors the git-proxy routes' char class.
     [
-        'pattern' => '^code/(\w+)(.+)?$',
+        'pattern' => '^code/([\w.-]+)(.+)?$',
         'file' => 'code.php',
         'params' => ['project' => '$1', 'remainder' => '$2'],
     ],
