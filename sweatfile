@@ -8,3 +8,14 @@
 # is treefmt's format check + the PHP test suites, not a nix build.
 [hooks]
 pre-merge = "nix develop -c just"
+
+# TODO bootstrap the piggy store path here once the installed spinclass supports
+# it. The intended config is:
+#     [direnv]
+#     dotenv = { PIGGY_STORE_DIR = "$WORKTREE/secrets" }
+# which (per spinclass-sweatfile(7) + internal/sweatfile/apply.go) writes
+# .spinclass.env with $WORKTREE expanded and auto-appends `dotenv .spinclass.env`
+# to the generated .envrc. But the installed spinclass's `sc validate` rejects
+# `direnv.dotenv` as an unknown field (version skew vs. its own manpage) — see
+# the filed spinclass issue. Deferred for now; `just reveal-secrets` pins
+# PIGGY_STORE_DIR itself, so only interactive `piggy pass …` convenience is lost.

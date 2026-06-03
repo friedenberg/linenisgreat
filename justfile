@@ -316,6 +316,50 @@ test-code-git-org PORT="2295" API_PORT="2294" UPSTREAM_ORG="amarbel-llc": build-
   done
   exit $fail
 
+# Repo-local piggy secret store: PIV/YubiKey-encrypted .ebox files committed
+# under secrets/. Recipes pin the store path so they don't depend on direnv;
+# the sweatfile's [direnv].dotenv sets PIGGY_STORE_DIR for interactive use.
+PIGGY_STORE_DIR := justfile_directory() / "secrets"
+
+# Materialize the plaintext secret PHP classes from the committed piggy store in
+# a single PIN/touch (pass show-batch). Replaces the old `git secret reveal`:
+# writes the two gitignored files the apps load — api/.../GithubToken.php (the
+# README read-through PAT) and app/.../Html2ImageApiKey.php (the hcti.io key).
+# Run before deploy-prod whenever a secret changes; the plaintext is never
+# committed. Serves the deploy dev loop.
+[group("operational")]
+reveal-secrets:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  tmp=$(mktemp -d)
+  trap 'rm -rf "$tmp"' EXIT
+  # Force the graphical PIN prompt: setsid drops the controlling terminal so the
+  # prompt can't open /dev/tty, stdin is /dev/null, and SSH_ASKPASS_REQUIRE=force
+  # tells OpenSSH-derived prompts to use SSH_ASKPASS (pivy's zenity helper)
+  # instead of the terminal. setsid -w waits and propagates the exit status.
+  # Workaround until piggy show-batch consults SSH_ASKPASS by default:
+  # https://github.com/amarbel-llc/piggy/issues/140 — drop the setsid/force/
+  # /dev/null wrapper once that lands.
+  SSH_ASKPASS_REQUIRE=force \
+  PIGGY_STORE_DIR="{{PIGGY_STORE_DIR}}" \
+    setsid -w piggy pass show-batch --out-dir "$tmp" \
+      github-readme-token html2image-api-key \
+      < /dev/null
+  # Wrap each plaintext into its PHP class; var_export gives injection-safe quoting.
+  php -r '
+    $targets = [
+      ["api/protected/lib/GithubToken.php",      "GithubToken",      "TOKEN", $argv[1]],
+      ["app/protected/lib/Html2ImageApiKey.php", "Html2ImageApiKey", "KEY",   $argv[2]],
+    ];
+    foreach ($targets as [$path, $class, $const, $plaintextFile]) {
+      $value = rtrim(file_get_contents($plaintextFile), "\n");
+      file_put_contents($path,
+        "<?php\n\ndeclare(strict_types=1);\n\nclass {$class}\n{\n    const {$const} = "
+        . var_export($value, true) . ";\n}\n");
+    }
+  ' "$tmp/github-readme-token" "$tmp/html2image-api-key"
+  echo "revealed: api/protected/lib/GithubToken.php app/protected/lib/Html2ImageApiKey.php"
+
 [group("operational")]
 deploy-prod: build-php-composer build
   rsync -r \
@@ -377,7 +421,15 @@ test-router PORT="2299" API_PORT="2298": build-php-composer
   app/private/test-router.sh {{PORT}}
 
 [group("post-build")]
-test: test-htaccess test-router
+test: test-htaccess test-router test-readme-absolutize
+
+# Hermetic unit check of the README link absolutizer (no network, no composer):
+# asserts the request-time DOMDocument rewrite matches the build-time ast-grep
+# rules and leaves absolute/scheme-relative/anchor/mailto/data refs — and
+# code-block literals — untouched. In the `test` gate.
+[group("post-build")]
+test-readme-absolutize:
+  php api/private/test-readme-absolutize.php
 
 # Verify the /code tab + /code/<project> README pages end to end. Starts app+api
 # locally (API with the explicit autoload the recipes otherwise omit) and asserts
@@ -465,6 +517,74 @@ test-code PORT="2297" API_PORT="2296": build-php-composer
     echo "not ok 7 - /code leaked a PHP deprecation notice"; fail=1
   else
     echo "ok 7 - /code has no deprecation notice"
+  fi
+
+  exit $fail
+
+# Networked end-to-end check of the live README read-through. With a piggy-
+# revealed token present (api/protected/lib/GithubToken.php) it starts app+api
+# and asserts /code/<PROJECT> serves live GitHub README content — the MARKER
+# string, which the description fallback lacks — and that relative links are
+# absolutized back to GitHub. Skips cleanly with no token. Networked +
+# token-gated, so NOT in the `test` gate; run before a deploy that touches the
+# read-through. MARKER defaults to a word in dodder's live README.
+[group("post-build")]
+test-readme-live PORT="2293" API_PORT="2292" PROJECT="dodder" MARKER="Zettelkasten": build-php-composer
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  echo "TAP version 14"
+  echo "1..3"
+
+  if [ ! -f api/protected/lib/GithubToken.php ]; then
+    echo "ok 1 - SKIP no GithubToken.php (run 'just reveal-secrets' first)"
+    echo "ok 2 - SKIP no token"
+    echo "ok 3 - SKIP no token"
+    exit 0
+  fi
+
+  php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT}} \
+      -t api/public/ &
+  API_PID=$!
+
+  API_BASE_URL="http://localhost:{{API_PORT}}" \
+  SERVER_NAME="linenisgreat.com" php \
+      -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
+      -S localhost:{{PORT}} \
+      -c app/conf/php.ini \
+      -t app/public/ \
+      app/private/router.php &
+  APP_PID=$!
+  trap "kill $API_PID $APP_PID 2>/dev/null || true" EXIT
+  sleep 1
+
+  api="http://localhost:{{API_PORT}}"
+  base="http://localhost:{{PORT}}"
+  fail=0
+
+  # 1. API serves the live README partial carrying the freshness marker.
+  if curl -sf "$api/code/{{PROJECT}}/html" | grep -q "{{MARKER}}"; then
+    echo "ok 1 - API /code/{{PROJECT}}/html carries live README ({{MARKER}})"
+  else
+    echo "not ok 1 - API live README missing marker {{MARKER}}"; fail=1
+  fi
+
+  # 2. Frontend page renders that same live README body.
+  if [ "$(curl -s -o /dev/null -w '%{http_code}' "$base/code/{{PROJECT}}")" = "200" ] \
+     && curl -s "$base/code/{{PROJECT}}" | grep -q "{{MARKER}}"; then
+    echo "ok 2 - /code/{{PROJECT}} renders live README ({{MARKER}})"
+  else
+    echo "not ok 2 - /code/{{PROJECT}} missing live README marker"; fail=1
+  fi
+
+  # 3. Relative README links/images are absolutized back to GitHub.
+  if curl -s "$api/code/{{PROJECT}}/html" \
+       | grep -q "https://github.com/amarbel-llc/{{PROJECT}}/\(blob\|raw\)/HEAD/"; then
+    echo "ok 3 - relative README links absolutized to GitHub"
+  else
+    echo "not ok 3 - no absolutized GitHub links found"; fail=1
   fi
 
   exit $fail

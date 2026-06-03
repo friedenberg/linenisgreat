@@ -5,7 +5,25 @@ declare(strict_types=1);
 $dataDir = __DIR__ . '/../protected/data';
 $allowedOrigin = getenv('CORS_ORIGIN') ?: 'https://linenisgreat.com';
 
-$dataSource = new FileDataSource($dataDir);
+// Serve /code/<name> READMEs live from GitHub (TTL-cached), falling back to the
+// build-time partial / description when read-through is unavailable. The token
+// is materialized from the piggy store by `just reveal-secrets`; its absence
+// (CI, local) cleanly disables the live path, keeping those environments
+// hermetic. See docs/decisions/0003-request-time-readme-read-through.md.
+$githubOrg = getenv('CODE_GITHUB_ORG') ?: 'amarbel-llc';
+$readmeTtl = getenv('CODE_README_TTL');
+$readmeTtl = ($readmeTtl === false || $readmeTtl === '') ? 21600 : (int) $readmeTtl;
+$githubToken = class_exists('GithubToken') ? GithubToken::TOKEN : null;
+
+$readmeClient = new GithubReadmeClient(
+    $githubOrg,
+    $readmeTtl,
+    __DIR__ . '/../tmp',
+    $githubToken,
+    new ReadmeLinkAbsolutizer(),
+);
+
+$dataSource = new CodeReadmeDataSource(new FileDataSource($dataDir), $readmeClient);
 $response = new ApiResponse($allowedOrigin);
 $router = new ApiRouter($dataSource, $response);
 

@@ -97,8 +97,12 @@ PHP follows PSR-12 (configured in `.phpcs.xml`, covers `app/protected/` and
 
 ## Secrets
 
-Secrets are managed via `git-secret`. Encrypted files (`.secret` extension) are
-committed; decrypted files are gitignored.
+Secrets live in a repo-local [piggy](https://github.com/amarbel-llc/piggy) store
+under `secrets/` — PIV/YubiKey-encrypted `.ebox` files, committed. Run `just
+reveal-secrets` to materialize the decrypted PHP class files
+(`api/protected/lib/GithubToken.php`, `app/protected/lib/Html2ImageApiKey.php`),
+which are gitignored and rsynced to the hosts at deploy. See
+`docs/decisions/0003-request-time-readme-read-through.md`.
 
 ## Hosting
 

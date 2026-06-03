@@ -2,6 +2,7 @@ app/protected/vendor/
 app/tmp/
 
 api/protected/vendor/
+api/tmp/
 
 app/public/objects.json
 app/public/notes.json
@@ -18,6 +19,8 @@ api/protected/data/code/
 # You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
 # composer.lock
 .php-cs-fixer.cache
-.gitsecret/keys/random_seed
-!*.secret
+
+# Secrets materialized from the piggy store by `just reveal-secrets` (plaintext;
+# never committed). The encrypted .ebox sources live under secrets/.
 app/protected/lib/Html2ImageApiKey.php
+api/protected/lib/GithubToken.php
