@@ -3,9 +3,9 @@
 #
 # Override the global pre-merge gate (`just build-nix`) with this project's CI
 # loop. It runs through `nix develop` so the gate always carries the flake's
-# devShell (php, composer, treefmt + formatters, curl, …) regardless of whether
+# devShell (php, composer, treelint + formatters, curl, …) regardless of whether
 # the caller's direnv is loaded. This repo's flake ships no package, so the gate
-# is treefmt's format check + the PHP test suites, not a nix build.
+# is treelint's format+lint check + the PHP test suites, not a nix build.
 [hooks]
 pre-merge = "nix develop -c just"
 

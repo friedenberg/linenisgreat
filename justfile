@@ -1,7 +1,7 @@
 # Default recipe = the local CI loop the spinclass pre-merge gate runs (`just`,
-# set in ./sweatfile). This repo's flake ships no package, so CI is treefmt's
-# format check plus the PHP test suites (htaccess + router + code/README), not a
-# nix build. Hook-safe: no dodder/gh/network dependencies.
+# set in ./sweatfile). This repo's flake ships no package, so CI is treelint's
+# read-only format+lint check plus the PHP test suites (htaccess + router +
+# code/README), not a nix build. Hook-safe: no dodder/gh/network dependencies.
 default: codemod-fmt-check test test-code
 
 [private]
@@ -32,17 +32,18 @@ update-php-composer:
   composer update -d app/protected
   composer update -d api/protected
 
-# Format the whole tree via treefmt, configured by the repo-local ./treefmt.toml.
-# The eng `treefmt` wrapper falls back to plain treefmt when a repo-local
-# treefmt.toml exists, so the formatters are supplied by this flake's devShell.
+# Repair the whole tree via treelint (repair mode), configured by the repo-local
+# ./treelint.toml. treelint runs every formatter/linter from this flake's
+# devShell, applying formatter fixes and `[linter.*]` repair-commands.
 [group("codemod")]
 codemod-fmt:
-  treefmt
+  treelint
 
-# Fail if anything is unformatted (consumed by the pre-merge gate / CI).
+# Read-only format+lint gate (consumed by the pre-merge gate / CI). `treelint
+# check` exits non-zero on any finding without writing to the tree.
 [group("codemod")]
 codemod-fmt-check:
-  treefmt --fail-on-change
+  treelint check
 
 [private]
 build-der_object objectId:

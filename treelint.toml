@@ -1,0 +1,76 @@
+# Repository-local treelint config (treelint is a treefmt superset that adds a
+# `[linter.*]` section + a read-only `treelint check`). treelint comes from
+# flake.nix's devShell and resolves every tool below from PATH — so the devShell
+# carries php-cs-fixer / nixfmt / shfmt / prettier / jq. Repair the tree with
+# `just codemod-fmt` (`treelint`); gate it with `just codemod-fmt-check`
+# (`treelint check`).
+#
+# INTERIM: PHP is linted/formatted locally until amarbel-llc/eng#125 adds
+# php-cs-fixer to the shared treefmt.nix; then this file + the local formatter
+# devShell deps can be dropped in favour of eng's baked config.
+
+[global]
+excludes = [
+  "**/vendor/**",
+  "flake.lock",
+  "**/composer.lock",
+  # Generated / large committed data. code.json's sorted-key form is owned by
+  # `just build-code-github`; jq would thrash it and the bulk yoga/cocktails data.
+  "api/protected/data/**",
+  "app/public/*.json",
+  "app/public/.htaccess",
+  # Mustache templates are not valid HTML for prettier.
+  "**/*.html.mustache",
+  # Binary / image assets.
+  "*.png",
+  "*.jpg",
+  "*.jpeg",
+  "*.gif",
+  "*.svg",
+  "*.ico",
+  "*.pdf",
+]
+
+# PHP is a treelint LINTER (not a formatter) so we drive php-cs-fixer's native
+# read-only dry-run as the `treelint check` gate instead of treelint's sandbox-
+# copy-and-diff. `command` exits non-zero when any file would change; `repair-
+# command` applies the fixes in `treelint` (repair) mode. php-cs-fixer rejects
+# multiple path args without a --config, so the committed .php-cs-fixer.dist.php
+# (rules live there) is passed to both invocations; treelint appends the matched
+# files as args.
+[linter.php]
+command = "php-cs-fixer"
+options = ["fix", "--dry-run", "--diff", "--config=.php-cs-fixer.dist.php", "--using-cache=no"]
+repair-command = "php-cs-fixer"
+repair-options = ["fix", "--config=.php-cs-fixer.dist.php", "--using-cache=no", "--quiet"]
+includes = ["*.php"]
+
+[formatter.nixfmt]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.shfmt]
+command = "shfmt"
+options = ["-w", "-i", "2", "-s"]
+includes = ["*.sh", "*.bash", "*.bats"]
+
+[formatter.prettier]
+command = "prettier"
+options = ["--write"]
+includes = ["*.css", "*.scss", "*.yaml", "*.yml"]
+
+# JSON via `jq .` (no native in-place mode; tempfile round-trip), mirroring eng's
+# treefmt.nix. The bulk data files are excluded globally above, so this covers
+# composer.json and other small source JSON.
+#
+# Only `mv` over the original when the formatted output actually differs: the
+# change-detection keys off mtime, and an unconditional `mv` bumps mtime even when
+# jq is a no-op, which spuriously reports a change on the cold-cache CI gate.
+[formatter.jq]
+command = "bash"
+options = [
+  "-euc",
+  'for f in "$@"; do tmp=$(mktemp "${f}.XXXXXX"); jq . "$f" > "$tmp"; if cmp -s "$tmp" "$f"; then rm -f "$tmp"; else mv "$tmp" "$f"; fi; done',
+  "--",
+]
+includes = ["*.json"]

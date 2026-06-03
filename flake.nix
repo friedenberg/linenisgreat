@@ -10,6 +10,11 @@
       inputs.nixpkgs-master.follows = "nixpkgs-master";
       inputs.utils.follows = "utils";
     };
+
+    # The linter + formatter multiplexer (a treefmt superset). Deliberately NOT
+    # following this flake's nixpkgs: treelint pins its own go_1_26 toolchain
+    # and the amarbel-llc/nixpkgs (igloo) overlay, which overriding would break.
+    treelint.url = "github:amarbel-llc/treelint";
   };
 
   outputs =
@@ -19,6 +24,7 @@
       nixpkgs-master,
       utils,
       just-us,
+      treelint,
     }:
     (utils.lib.eachDefaultSystem (
       system:
@@ -54,7 +60,7 @@
               php84Packages.php-cs-fixer
               prettier
               shfmt
-              treefmt
+              treelint.packages.${system}.default
             ]
           );
 
