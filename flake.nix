@@ -6,9 +6,11 @@
 
     just-us = {
       url = "github:amarbel-llc/just-us";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-master.follows = "nixpkgs-master";
-      inputs.utils.follows = "utils";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nixpkgs-master.follows = "nixpkgs-master";
+        utils.follows = "utils";
+      };
     };
 
     # The linter + formatter multiplexer (a treefmt superset). Deliberately NOT
@@ -19,8 +21,12 @@
 
   outputs =
     {
+      # always-available flake arg, unused here but kept for future use
+      # deadnix: skip
       self,
       nixpkgs,
+      # deliberate pin (just-us follows it), unused arg kept for future use
+      # deadnix: skip
       nixpkgs-master,
       utils,
       just-us,
@@ -41,29 +47,31 @@
 
         devShells.default = pkgs.mkShell {
 
-          packages = (
-            with pkgs;
-            [
-              ast-grep
-              bats
-              curl
-              fish
-              gh
-              gnumake
-              gum
-              intelephense
-              jq
-              just-us.packages.${system}.default
-              nixfmt-rfc-style
-              php84
-              php84Packages.composer
-              php84Packages.php-cs-fixer
-              prettier
-              shellcheck
-              shfmt
-              treelint.packages.${system}.default
-            ]
-          );
+          packages = with pkgs; [
+            actionlint
+            ast-grep
+            bats
+            curl
+            deadnix
+            fish
+            gh
+            gnumake
+            gum
+            intelephense
+            jq
+            just-us.packages.${system}.default
+            nixfmt-rfc-style
+            php84
+            php84Packages.composer
+            php84Packages.php-cs-fixer
+            prettier
+            shellcheck
+            shfmt
+            statix
+            stylelint
+            taplo
+            treelint.packages.${system}.default
+          ];
 
         };
       }

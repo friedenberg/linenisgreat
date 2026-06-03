@@ -40,13 +40,44 @@ excludes = [
 # files as args.
 [linter.php]
 command = "php-cs-fixer"
-options = ["fix", "--dry-run", "--diff", "--config=.php-cs-fixer.dist.php", "--using-cache=no"]
+options = [
+  "fix",
+  "--dry-run",
+  "--diff",
+  "--config=.php-cs-fixer.dist.php",
+  "--using-cache=no",
+]
 repair-command = "php-cs-fixer"
-repair-options = ["fix", "--config=.php-cs-fixer.dist.php", "--using-cache=no", "--quiet"]
+repair-options = [
+  "fix",
+  "--config=.php-cs-fixer.dist.php",
+  "--using-cache=no",
+  "--quiet",
+]
 includes = ["*.php"]
 
 [formatter.nixfmt]
 command = "nixfmt"
+includes = ["*.nix"]
+
+# Nix anti-pattern linter. `statix fix` autofixes most findings, but a few (e.g.
+# "repeated keys in attribute sets") are check-only and must be resolved by hand.
+[linter.statix]
+command = "statix"
+options = ["check"]
+repair-command = "statix"
+repair-options = ["fix"]
+includes = ["*.nix"]
+
+# Dead-code (unused binding) linter for nix. deadnix exits 0 by default, so
+# `--fail` is required to make it gate. `--edit` autofixes in repair mode.
+# Intentionally-kept-but-unused bindings carry a `# deadnix: skip` pragma in the
+# source (see flake.nix's outputs args).
+[linter.deadnix]
+command = "deadnix"
+options = ["--fail"]
+repair-command = "deadnix"
+repair-options = ["--edit"]
 includes = ["*.nix"]
 
 [formatter.shfmt]
@@ -66,10 +97,21 @@ command = "shellcheck"
 options = ["--severity=warning"]
 includes = ["*.sh", "*.bash"]
 
+# prettier formats CSS/SCSS/YAML plus Markdown and JS. proseWrap defaults to
+# "preserve", so markdown prose is not rewrapped — only structural normalization.
+# (*.html.mustache stays globally excluded — not valid HTML for prettier.)
 [formatter.prettier]
 command = "prettier"
 options = ["--write"]
-includes = ["*.css", "*.scss", "*.yaml", "*.yml"]
+includes = ["*.css", "*.scss", "*.yaml", "*.yml", "*.md", "*.js"]
+
+# CSS correctness linter (formatting is prettier's job). Errors-only ruleset in
+# the committed .stylelintrc.json (no preset/extends, so the bare stylelint CLI
+# suffices — stylelint-config-standard is not packaged in nixpkgs). No
+# repair-command: the enabled rules are not auto-fixable.
+[linter.stylelint]
+command = "stylelint"
+includes = ["*.css"]
 
 # JSON via `jq .` (no native in-place mode; tempfile round-trip), mirroring eng's
 # treefmt.nix. The bulk data files are excluded globally above, so this covers
@@ -86,3 +128,15 @@ options = [
   "--",
 ]
 includes = ["*.json"]
+
+# TOML formatter (covers this very file plus any other *.toml).
+[formatter.taplo]
+command = "taplo"
+options = ["format"]
+includes = ["*.toml"]
+
+# Lint GitHub Actions workflows. No autofix; gates only. actionlint also shells
+# out to shellcheck (present in the devShell) to check inline `run:` scripts.
+[linter.actionlint]
+command = "actionlint"
+includes = [".github/workflows/*.yml", ".github/workflows/*.yaml"]

@@ -6,13 +6,13 @@ This document captures the current patterns around object data and template hydr
 
 The codebase has several model classes that follow a consistent pattern:
 
-| Class | File | Purpose |
-|-------|------|---------|
-| `Objekt` | `protected/lib/Objekt.php` | Generic object model |
-| `Zettel2` | `protected/lib/Zettel2.php` | Article/common content |
-| `Yoga` | `protected/lib/Yoga.php` | Yoga classes with structured fields |
+| Class         | File                            | Purpose                             |
+| ------------- | ------------------------------- | ----------------------------------- |
+| `Objekt`      | `protected/lib/Objekt.php`      | Generic object model                |
+| `Zettel2`     | `protected/lib/Zettel2.php`     | Article/common content              |
+| `Yoga`        | `protected/lib/Yoga.php`        | Yoga classes with structured fields |
 | `CodeProject` | `protected/lib/CodeProject.php` | Code projects with nested blob data |
-| `Zettel` | `protected/lib/Zettel.php` | Legacy serialized model (cocktails) |
+| `Zettel`      | `protected/lib/Zettel.php`      | Legacy serialized model (cocktails) |
 
 ### Common Constructor Pattern
 
@@ -63,13 +63,13 @@ public function getHtml($mustache): string
 
 Each model specifies its own `card_body_template`:
 
-| Model | Template |
-|-------|----------|
-| `Objekt` | `card_object` |
-| `Zettel2` | `card_common` |
-| `Yoga` | `card_object_new` |
-| `CodeProject` | `card_common` |
-| `Zettel` | `cocktail_card` or `card_code_project` |
+| Model         | Template                               |
+| ------------- | -------------------------------------- |
+| `Objekt`      | `card_object`                          |
+| `Zettel2`     | `card_common`                          |
+| `Yoga`        | `card_object_new`                      |
+| `CodeProject` | `card_common`                          |
+| `Zettel`      | `cocktail_card` or `card_code_project` |
 
 All cards then wrap in the shared `table_card` wrapper template.
 
@@ -169,6 +169,7 @@ private function makeTemplateArgs(...$extra): array
 ### Two JSON Formats
 
 **Keyed dictionaries** (`objects.json`, `code.json`):
+
 ```json
 {
   "radon/magnemite": {
@@ -181,6 +182,7 @@ private function makeTemplateArgs(...$extra): array
 ```
 
 **Arrays** (`yoga.json`):
+
 ```json
 [
   {
@@ -228,6 +230,7 @@ Created `protected/lib/FieldMappingTrait.php` with shared helper methods:
 - `extractWithFallback($j, $keys, $default)` - Generic fallback extraction
 
 Updated models to use the trait:
+
 - `Objekt.php`
 - `Zettel2.php`
 - `Yoga.php`
@@ -243,6 +246,7 @@ Added `getHtml()` and `getCss()` methods to the existing trait:
 - `getCss()` - Cached stylesheet loading
 
 Removed duplicate implementations from:
+
 - `Objekt.php`
 - `Zettel2.php`
 - `Yoga.php`
@@ -251,6 +255,7 @@ Removed duplicate implementations from:
 ### 3. Hardcoded Template Assignment
 
 Each model hardcodes its `card_body_template`. Could be:
+
 - Configurable via constructor
 - Convention-based (derive from class name)
 
@@ -259,6 +264,7 @@ Each model hardcodes its `card_body_template`. Could be:
 **Status:** Already addressed by `buildSearchArray()` in `FieldMappingTrait`
 
 The `buildSearchArray()` method handles:
+
 - ASCII transliteration
 - HTML tag stripping
 - Whitespace normalization
