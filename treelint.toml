@@ -56,6 +56,16 @@ repair-options = [
 ]
 includes = ["*.php"]
 
+# Static analysis (real bugs/types, beyond php-cs-fixer's style). Config +
+# baseline live in phpstan.neon / phpstan-baseline.neon (auto-discovered at the
+# repo root). No repair-command (phpstan has no autofix). `--memory-limit=1G`
+# because the default 128M OOMs in the phpdoc parser here. treelint may feed only
+# changed files, so phpstan.neon's scanDirectories supplies cross-file symbols.
+[linter.phpstan]
+command = "phpstan"
+options = ["analyse", "--no-progress", "--memory-limit=1G"]
+includes = ["*.php"]
+
 [formatter.nixfmt]
 command = "nixfmt"
 includes = ["*.nix"]

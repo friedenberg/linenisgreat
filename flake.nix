@@ -64,6 +64,7 @@
             php84
             php84Packages.composer
             php84Packages.php-cs-fixer
+            phpstan
             prettier
             shellcheck
             shfmt

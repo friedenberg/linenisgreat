@@ -1,0 +1,43 @@
+# PHPStan config for the treelint gate.
+#
+# This codebase is no-namespace PSR-4 loaded at runtime via auto_prepend_file
+# (conf/php.ini), and each app vendors its own deps under
+# {app,api}/protected/vendor (gitignored, composer-installed). PHPStan runs at
+# the REPO ROOT, where there is no composer.json/vendor, so it does NOT auto-load
+# those per-app vendor autoloaders. Third-party classes (Mustache) and the
+# gitignored secret classes (Html2ImageApiKey / GithubToken, materialized only by
+# `just reveal-secrets`) therefore read as "not found" and are absorbed by
+# phpstan-baseline.neon. This keeps the gate deterministic whether or not
+# `composer install` / `just reveal-secrets` has run.
+#
+# scanDirectories mirrors paths so cross-file symbols still resolve when treelint
+# feeds phpstan only a subset of changed files (treelint is per-file + cached).
+#
+# Memory: a phpstan.neon cannot set the PHP memory limit; the treelint
+# [linter.phpstan] command passes --memory-limit (the default 128M OOMs here).
+#
+# Level starts at 1 (catches real bugs: unknown classes/methods, undefined
+# variables, wrong argument counts) without the missing-type-hint noise of higher
+# levels on this untyped legacy code. Ratchet up over time by raising `level` and
+# regenerating the baseline.
+includes:
+  - phpstan-baseline.neon
+
+parameters:
+  level: 1
+  paths:
+    - .php-cs-fixer.dist.php
+    - app/protected/lib
+    - app/public
+    - app/private
+    - api/protected/lib
+    - api/public
+    - api/private
+  scanDirectories:
+    - app/protected/lib
+    - app/public
+    - app/private
+    - api/protected/lib
+    - api/public
+    - api/private
+  reportUnmatchedIgnoredErrors: false
