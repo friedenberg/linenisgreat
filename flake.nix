@@ -59,6 +59,7 @@
               php84Packages.composer
               php84Packages.php-cs-fixer
               prettier
+              shellcheck
               shfmt
               treelint.packages.${system}.default
             ]

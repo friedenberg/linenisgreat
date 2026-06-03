@@ -54,6 +54,18 @@ command = "shfmt"
 options = ["-w", "-i", "2", "-s"]
 includes = ["*.sh", "*.bash", "*.bats"]
 
+# Bug-finding linter for shell scripts. No repair-command: shellcheck has no
+# reliable autofix, so it is a no-op in repair mode and only gates via `treelint
+# check`. `--severity=warning` skips info-level notes (e.g. SC2016 on the
+# intentional single-quoted RewriteRule test strings) while still catching real
+# warnings/errors. *.bats is excluded — shellcheck does not understand bats's
+# `@test` syntax. Inline bash inside justfile shebang recipes is not covered
+# (treelint only sees files matched by globs).
+[linter.shellcheck]
+command = "shellcheck"
+options = ["--severity=warning"]
+includes = ["*.sh", "*.bash"]
+
 [formatter.prettier]
 command = "prettier"
 options = ["--write"]
