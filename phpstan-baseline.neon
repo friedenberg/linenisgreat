@@ -161,3 +161,27 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: app/public/image.php
+
+		-
+			message: '#^Instantiated class Mustache\\Engine not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: shared/card-render/src/CardRenderer.php
+
+		-
+			message: '#^Instantiated class Mustache\\Loader\\FilesystemLoader not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: shared/card-render/src/CardRenderer.php
+
+		-
+			message: '#^Parameter \$mustache of method Card\\CardRenderer\:\:__construct\(\) has invalid type Mustache\\Engine\.$#'
+			identifier: class.notFound
+			count: 1
+			path: shared/card-render/src/CardRenderer.php
+
+		-
+			message: '#^Property Card\\CardRenderer\:\:\$mustache has unknown class Mustache\\Engine as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: shared/card-render/src/CardRenderer.php
