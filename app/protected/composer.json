@@ -6,7 +6,7 @@
       "type": "path",
       "url": "../../shared/card-render",
       "options": {
-        "symlink": false
+        "symlink": true
       }
     }
   ],

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3baa93a3e8f58dd05a2fff23901b7cf5",
+    "content-hash": "c0d6bac8412a1348898bcd146e00e290",
     "packages": [
         {
             "name": "linenisgreat/card-render",
@@ -12,7 +12,7 @@
             "dist": {
                 "type": "path",
                 "url": "../../shared/card-render",
-                "reference": "4ff96d04cf79fd6cd0cfa97d08250a856f5679e3"
+                "reference": "c0634798ec694bed15e96436b330873c3226e45d"
             },
             "require": {
                 "mustache/mustache": "^3.0"
@@ -24,7 +24,7 @@
                 }
             },
             "transport-options": {
-                "symlink": false,
+                "symlink": true,
                 "relative": true
             }
         },

@@ -36,9 +36,11 @@ apps consume.
   object, addressed by a dodder-style formats path; `og-image` is a `format_id`.
 - **Sharing mechanism:** a local **Composer path package** (chosen over a
   build-time file copy for isolation + single source of truth). PSR-4, namespace
-  `Card\`, required by both `app/protected` and `api/protected` with
-  `"options": {"symlink": false}` so each `vendor/` holds a self-contained copy
-  that survives the `deploy-prod` rsync.
+  `Card\`, required by both `app/protected` and `api/protected`. NOTE
+  (implementation correction): the package is a `"symlink": true` path repo
+  (composer never re-mirrors a fixed-version `symlink:false` copy on `install`,
+  so the vendored copy silently goes stale); `deploy-prod` rsyncs with
+  `--copy-unsafe-links` to materialize the symlink into a real copy on each host.
 
 ## Architecture
 

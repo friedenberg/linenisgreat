@@ -55,8 +55,11 @@ HTML partials for individual objects live at
 
 Card rendering lives in a local Composer path package, `shared/card-render`
 (PSR-4 namespace `Card\`), required by **both** `app/protected` and
-`api/protected` with `"options": {"symlink": false}` so each `vendor/` holds a
-self-contained copy that survives the deploy rsync. It owns the card mustache
+`api/protected` as a `"symlink": true` path repo so each `vendor/` entry always
+reflects the live source (a `symlink:false` copy silently goes stale — composer
+never re-mirrors a fixed-version path package on `install`). `deploy-prod` rsyncs
+with `--copy-unsafe-links` to materialize the symlink into a real copy on each
+host (which has no `shared/`). It owns the card mustache
 templates, `card.css`, `Card\CardRenderer` (data → card HTML, data-driven across
 all card types), `Card\Html2Image` (hcti.io client, key injected), and
 `Card\OgImage` (card → cached image URL).

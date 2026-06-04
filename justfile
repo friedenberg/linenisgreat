@@ -416,9 +416,15 @@ reveal-secrets:
   ' "$tmp/github-readme-token" "$tmp/html2image-api-key"
   echo "revealed: api/protected/lib/GithubToken.php api/protected/lib/Html2ImageApiKey.php"
 
+# --copy-unsafe-links materializes the vendor/linenisgreat/card-render symlink
+# (a composer path-repo symlink pointing outside each tree to ../../shared) into
+# a real copy on each host, which has no shared/ dir. The symlink keeps the local
+# devShell/CI vendor always in sync with the package source (a symlink:false copy
+# silently goes stale because composer never re-mirrors a fixed-version path pkg).
 [group("operational")]
 deploy-prod: build-php-composer build
   rsync -r \
+    --copy-unsafe-links \
     --include ".htaccess" \
     --delete \
     --exclude ".*" \
@@ -426,6 +432,7 @@ deploy-prod: build-php-composer build
     linenisgreat.com:../
 
   rsync -r \
+    --copy-unsafe-links \
     --include ".htaccess" \
     --delete \
     --exclude ".*" \
