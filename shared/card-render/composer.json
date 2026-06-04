@@ -1,6 +1,7 @@
 {
   "name": "linenisgreat/card-render",
   "type": "library",
+  "version": "0.1.0",
   "require": {
     "mustache/mustache": "^3.0"
   },
