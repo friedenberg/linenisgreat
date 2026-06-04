@@ -72,7 +72,10 @@ lists available formats. The hcti key is materialized to
 `api/protected/lib/Html2ImageApiKey.php` by `just reveal-secrets`; without it the
 route returns a guarded 503. Detail pages emit `<meta property="og:image">`
 pointing at this endpoint (see `RouteObject::setOgImage`). Package unit tests run
-via `just test-card-render`; the endpoint via `just test-formats`.
+via `just test-card-render`; the endpoint (formats listing + 503 guard) via
+`just test-formats`; and a live, key-gated 302→hcti smoke via
+`just test-og-image-live` (skips without the key; networked, not in the hook
+gate).
 
 ### Frontend Rendering Pipeline
 

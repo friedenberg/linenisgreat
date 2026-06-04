@@ -720,6 +720,65 @@ test-readme-live PORT="2293" API_PORT="2292" PROJECT="dodder" MARKER="Zettelkast
 
   exit $fail
 
+# Networked end-to-end check of the live og-image format. With the api-side hcti
+# key present (api/protected/lib/Html2ImageApiKey.php, via reveal-secrets) it
+# starts the API and asserts <type>/<id>/blob/formats/og-image 302-redirects to a
+# real hcti.io image URL, and that the content-hash cache serves an identical URL
+# on the second hit. Skips cleanly with no key. Networked + key-gated, so NOT in
+# the `test` gate — this is the coverage the hook-safe test-formats can't give (it
+# only ever sees the 503 guard). Run before a deploy that touches card rendering.
+[group("post-build")]
+test-og-image-live API_PORT="2291" TYPE="code" ID="chrest": build-php-composer
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  echo "TAP version 14"
+  echo "1..3"
+
+  if [ ! -f api/protected/lib/Html2ImageApiKey.php ]; then
+    echo "ok 1 - SKIP no Html2ImageApiKey.php (run 'just reveal-secrets' first)"
+    echo "ok 2 - SKIP no key"
+    echo "ok 3 - SKIP no key"
+    exit 0
+  fi
+
+  php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT}} \
+      -t api/public/ &
+  API_PID=$!
+  trap "kill $API_PID 2>/dev/null || true" EXIT
+  sleep 1
+
+  url="http://localhost:{{API_PORT}}/{{TYPE}}/{{ID}}/blob/formats/og-image"
+  fail=0
+
+  # 1. The og-image format redirects (cache miss → renders the card + calls hcti).
+  code=$(curl -s -o /dev/null -w '%{http_code}' "$url")
+  if [ "$code" = "302" ]; then
+    echo "ok 1 - {{TYPE}}/{{ID}}/blob/formats/og-image is 302"
+  else
+    echo "not ok 1 - og-image returned $code (expected 302)"; fail=1
+  fi
+
+  # 2. The redirect target is a real hcti.io image URL.
+  loc=$(curl -s -o /dev/null -D - "$url" | sed -n 's/^[Ll]ocation: //p' | tr -d '\r')
+  if printf '%s' "$loc" | grep -q '^https://hcti\.io/'; then
+    echo "ok 2 - redirects to an hcti.io image ($loc)"
+  else
+    echo "not ok 2 - location is not an hcti.io url: $loc"; fail=1
+  fi
+
+  # 3. Second hit serves the content-hash cache: identical Location.
+  loc2=$(curl -s -o /dev/null -D - "$url" | sed -n 's/^[Ll]ocation: //p' | tr -d '\r')
+  if [ -n "$loc" ] && [ "$loc" = "$loc2" ]; then
+    echo "ok 3 - cache hit returns the identical url"
+  else
+    echo "not ok 3 - cache mismatch ($loc vs $loc2)"; fail=1
+  fi
+
+  exit $fail
+
 [group("operational")]
 deploy-local PORT="2222" API_PORT="2223": build-php-composer build
   #!/usr/bin/env bash
