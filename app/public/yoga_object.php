@@ -21,6 +21,7 @@ if (!is_null($path)) {
 }
 
 $route = new RouteObject($tab, $objectId);
+$route->setOgImage('yoga-objects');
 
 header("Referrer-Policy: no-referrer");
 

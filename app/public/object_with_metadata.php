@@ -24,6 +24,7 @@ if (!is_null($path)) {
 }
 
 $route = new RouteObject($tab, $objectId);
+$route->setOgImage('objects');
 
 $api = new ApiClient('objects');
 $objectContents = $api->getHtmlPartial($objectId);

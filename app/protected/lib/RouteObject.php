@@ -12,6 +12,9 @@ class RouteObject
     private $object;
     private $objectId;
 
+    /** API collection name for the og:image format URL, set only on detail pages. */
+    private ?string $ogImageType = null;
+
     /**
      * @param ApiClient $parser
      */
@@ -82,12 +85,49 @@ class RouteObject
     }
 
     /**
+     * Activate the absolute og:image meta for this single-card detail page,
+     * pointing at the API's request-time format endpoint. $apiType is the API
+     * collection name (e.g. 'objects', 'yoga-objects'); the host matches the
+     * API the app talks to (API_BASE_URL).
+     *
+     * @param string $apiType
+     */
+    public function setOgImage(string $apiType): void
+    {
+        $this->ogImageType = $apiType;
+    }
+
+    /**
+     * Build the absolute og:image URL from the configured API base, or null
+     * when this isn't an og:image-bearing detail page.
+     */
+    private function getOgImageUrl(): ?string
+    {
+        if (is_null($this->ogImageType) || is_null($this->objectId)) {
+            return null;
+        }
+
+        $base = rtrim(
+            getenv('API_BASE_URL') ?: 'https://api.linenisgreat.com',
+            '/',
+        );
+
+        return "{$base}/{$this->ogImageType}/{$this->objectId}/blob/formats/og-image";
+    }
+
+    /**
      * @return array<string,string>
      */
     public function getMeta(): array
     {
         $meta = $this->getSiteData();
         $meta['raw'] = $this->getCodeMetaRaw($this->mustache);
+
+        $ogImageUrl = $this->getOgImageUrl();
+        if (!is_null($ogImageUrl)) {
+            $meta['image'] = true;
+            $meta['og_image_url'] = $ogImageUrl;
+        }
 
         return $meta;
     }

@@ -47,12 +47,52 @@ test_route() {
   fi
 }
 
+# Assert the response body for a path does (or does NOT) contain a substring.
+# mode is "contains" or "absent".
+test_body() {
+  local path="$1"
+  local mode="$2"
+  local needle="$3"
+  local description="$4"
+
+  ((++TEST_NUM))
+
+  local body
+  body=$(curl -s "${BASE_URL}${path}")
+
+  local hit=0
+  if [[ $body == *"$needle"* ]]; then
+    hit=1
+  fi
+
+  local pass=0
+  case "$mode" in
+  contains) [[ $hit -eq 1 ]] && pass=1 ;;
+  absent) [[ $hit -eq 0 ]] && pass=1 ;;
+  esac
+
+  if [[ $pass -eq 1 ]]; then
+    echo "ok ${TEST_NUM} - ${description}"
+  else
+    echo "not ok ${TEST_NUM} - ${description}"
+    echo "  ---"
+    echo "  path: ${path}"
+    echo "  mode: ${mode}"
+    echo "  needle: ${needle}"
+    echo "  ..."
+    ((++FAILED))
+  fi
+}
+
 gum style --border normal --padding "0 1" --border-foreground 212 \
   "Testing router at ${BASE_URL}"
 
+# 3 extra body assertions beyond the status-code TESTS plan.
+PLAN=$((${#TESTS[@]} + 3))
+
 # TAP header
 echo "TAP version 14"
-echo "1..${#TESTS[@]}"
+echo "1..${PLAN}"
 
 # Run tests
 for test in "${TESTS[@]}"; do
@@ -60,12 +100,25 @@ for test in "${TESTS[@]}"; do
   test_route "$path" "$expected" "$description"
 done
 
+# Detail pages emit an absolute og:image meta pointing at the API format
+# endpoint; index pages must not. (Host is the test API_BASE_URL locally, so we
+# assert the path suffix, not the host.)
+test_body "/code/testproject" "contains" \
+  'property="og:image"' \
+  "Detail page emits og:image meta: /code/testproject"
+test_body "/code/testproject" "contains" \
+  '/blob/formats/og-image' \
+  "og:image content points at format endpoint: /code/testproject"
+test_body "/code" "absent" \
+  'og:image' \
+  "Index page omits og:image meta: /code"
+
 # Summary
 echo
 if [[ $FAILED -eq 0 ]]; then
-  gum style --foreground 212 "All ${#TESTS[@]} tests passed"
+  gum style --foreground 212 "All ${PLAN} tests passed"
   exit 0
 else
-  gum style --foreground 196 "${FAILED} of ${#TESTS[@]} tests failed"
+  gum style --foreground 196 "${FAILED} of ${PLAN} tests failed"
   exit 1
 fi

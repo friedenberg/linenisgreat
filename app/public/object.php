@@ -22,6 +22,10 @@ if (!is_null($path)) {
 
 $route = new RouteObject($tab, $objectId);
 
+if (!is_null($objectId)) {
+    $route->setOgImage('objects');
+}
+
 $api = new ApiClient('objects');
 
 try {

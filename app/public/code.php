@@ -16,6 +16,8 @@ $route = new RouteObjectOrObjectsIndex('code', $objectId);
 if (is_null($objectId)) {
     $route->renderIndex('common', 'CodeProject', '/code/');
 } else {
+    $route->setOgImage('code');
+
     $api = new ApiClient('code');
 
     try {
