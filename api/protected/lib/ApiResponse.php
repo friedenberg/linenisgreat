@@ -36,6 +36,13 @@ class ApiResponse
         echo $html;
     }
 
+    public function sendRedirect(string $url, int $statusCode = 302): void
+    {
+        $this->setCorsHeaders();
+        http_response_code($statusCode);
+        header("Location: {$url}");
+    }
+
     public function sendNotFound(string $message = 'Not found'): void
     {
         $this->setCorsHeaders();
