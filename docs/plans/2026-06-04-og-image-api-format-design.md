@@ -1,7 +1,7 @@
 # Design: OG-image-per-card as a dodder-style API format
 
 Date: 2026-06-04
-Status: Approved (brainstorm) — implementation plan to follow
+Status: Implemented (2026-06-04) — see 2026-06-04-og-image-api-format-implementation.md
 
 ## Context
 

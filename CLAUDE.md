@@ -51,6 +51,26 @@ HTML partials for individual objects live at
 `api/protected/data/objects/{id}/index.html` and are built from dodder via
 `just build`.
 
+### Shared Card Rendering & OG Images
+
+Card rendering lives in a local Composer path package, `shared/card-render`
+(PSR-4 namespace `Card\`), required by **both** `app/protected` and
+`api/protected` with `"options": {"symlink": false}` so each `vendor/` holds a
+self-contained copy that survives the deploy rsync. It owns the card mustache
+templates, `card.css`, `Card\CardRenderer` (data → card HTML, data-driven across
+all card types), `Card\Html2Image` (hcti.io client, key injected), and
+`Card\OgImage` (card → cached image URL).
+
+The API serves an object's Open Graph image as a **dodder-style format**:
+`GET <type>/<id>/blob/formats/og-image` builds the card via `Card\CardRenderer`,
+rasterizes it through hcti.io (`Card\OgImage`, request-time, cached by content
+hash in `api/tmp/`), and 302-redirects to the image. `GET <type>/<id>/blob/formats`
+lists available formats. The hcti key is materialized to
+`api/protected/lib/Html2ImageApiKey.php` by `just reveal-secrets`; without it the
+route returns a guarded 503. Detail pages emit `<meta property="og:image">`
+pointing at this endpoint (see `RouteObject::setOgImage`). Package unit tests run
+via `just test-card-render`; the endpoint via `just test-formats`.
+
 ### Frontend Rendering Pipeline
 
 1. `ApiClient` fetches JSON from the API
@@ -74,8 +94,10 @@ editing routes, regenerate with `just build-htaccess`.
 ### PHP Autoloading
 
 Both apps use PSR-4 autoloading from their `lib/` directories, loaded via
-`auto_prepend_file` in `conf/php.ini`. No namespace prefixes — classes are in
-the root namespace.
+`auto_prepend_file` in `conf/php.ini`. No namespace prefixes — app/api classes
+are in the root namespace. The exception is the shared `shared/card-render`
+package, which is namespaced `Card\` and reached via each app's Composer
+`vendor/autoload.php`.
 
 ### Data Pipeline
 
