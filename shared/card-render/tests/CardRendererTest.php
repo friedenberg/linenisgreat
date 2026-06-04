@@ -43,8 +43,12 @@ $code = $renderer->renderCard('code', [
     ],
 ]);
 
-// A generic object: no recipe, no code type — the default note/object card.
+// A generic object: no recipe, no code type. Mirrors Zettel's switch, whose
+// default arm is cocktail_card — so a recipe-less generic object renders the
+// cocktail body (just the title, no recipe/glass/garnish rows), NOT the
+// code-project body. This is the regression this case guards.
 $object = $renderer->renderCard('objects', [
+    'bezeichnung' => 'Some Note',
     'object-id' => 'some-note',
     'description' => 'A plain note with no recipe and no code type.',
 ]);
@@ -84,8 +88,8 @@ $tests[] = [
     str_contains($code, 'conformist'),
 ];
 $tests[] = [
-    'object card shows the description',
-    str_contains($object, 'A plain note'),
+    'object card shows the name in the title',
+    str_contains($object, 'Some Note'),
 ];
 
 // --- correct body template per type ---
@@ -100,9 +104,16 @@ $tests[] = [
     'code card uses the card_code_project body (no cocktail recipe markup)',
     !str_contains($code, 'tdleft small-caps'),
 ];
+// Zettel's switch default is cocktail_card, so a generic recipe-less object
+// renders the cocktail body: the live (uncommented) icon div is present, and
+// with no recipe there are no ingredient rows. card_code_project, by contrast,
+// keeps the icon div HTML-commented — that distinguishes the two bodies even
+// when both lack recipe markup.
 $tests[] = [
-    'generic object card uses the card_code_project body (no recipe markup)',
-    !str_contains($object, 'tdleft small-caps'),
+    'generic object card uses the cocktail_card body (live icon div, no recipe rows)',
+    str_contains($object, '<div class="icon icon-')
+        && !str_contains($object, '<!-- <div class="icon')
+        && !str_contains($object, 'tdleft small-caps'),
 ];
 
 echo "TAP version 14\n";

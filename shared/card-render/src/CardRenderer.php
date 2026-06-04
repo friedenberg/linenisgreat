@@ -61,7 +61,7 @@ class CardRenderer
      */
     public function cardCss(): string
     {
-        return file_get_contents(__DIR__ . '/../assets/card.css');
+        return (string) file_get_contents(__DIR__ . '/../assets/card.css');
     }
 
     /**
@@ -106,7 +106,7 @@ class CardRenderer
         $kind = $payloadFields['kind'] ?? '';
 
         $objectType = $this->normalizeType($data);
-        $template = $this->selectBodyTemplate($type, $objectType, $recipe);
+        $template = $this->selectBodyTemplate($type, $objectType);
 
         return [
             'card_body_template' => $template,
@@ -140,23 +140,19 @@ class CardRenderer
     }
 
     /**
-     * Pick the body template, mirroring Zettel::__construct's switch: code-like
-     * types render as a code-project card, cocktails (anything with a recipe,
-     * or the cocktails collection) render the recipe card, and everything else
-     * falls back to the minimal identifier+description code-project card.
-     *
-     * @param array<int,mixed> $recipe
+     * Pick the body template, mirroring Zettel::__construct's switch exactly:
+     * code-like types (`toml-project-code`/`md`, or the `code` collection)
+     * render as a code-project card; everything else falls through to the
+     * default `cocktail_card`. The switch has no cocktail-specific case — the
+     * cocktail card *is* the default — so a generic, recipe-less object renders
+     * the same `cocktail_card` body the app gives it.
      */
-    private function selectBodyTemplate(string $collection, string $objectType, array $recipe): string
+    private function selectBodyTemplate(string $collection, string $objectType): string
     {
         if ($objectType === 'toml-project-code' || $objectType === 'md' || $collection === 'code') {
             return 'card_code_project';
         }
 
-        if ($collection === 'cocktails' || $objectType === 'toml-cocktail' || $recipe !== []) {
-            return 'cocktail_card';
-        }
-
-        return 'card_code_project';
+        return 'cocktail_card';
     }
 }
