@@ -485,6 +485,17 @@ test: test-htaccess test-router test-readme-absolutize
 test-readme-absolutize:
   php api/private/test-readme-absolutize.php
 
+# Run the shared card-render package's standalone unit tests. Serves the
+# card-render dev loop (Card\Html2Image, CardRenderer, OgImage). eng:tdd.
+[group("post-build")]
+test-card-render:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  for t in shared/card-render/tests/*.php; do
+    echo "# $t"
+    php "$t"
+  done
+
 # Verify the /code tab + /code/<project> README pages end to end. Starts app+api
 # locally (API with the explicit autoload the recipes otherwise omit) and asserts
 # CONTENT, not just status — so an API autoload fatal can't masquerade as a 200
