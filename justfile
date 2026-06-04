@@ -32,6 +32,59 @@ update-php-composer:
   composer update -d app/protected
   composer update -d api/protected
 
+# --- eng-versioning(7): single version source of truth in ./version.env ---
+# This repo's flake ships no binary, so there is no ldflags/version embedding;
+# version.env exists for tag/release bookkeeping and as the canonical version
+# other artifacts (e.g. shared/card-render's composer.json) should track.
+
+# Rewrite LINENISGREAT_VERSION in version.env. Pure mutation — staging/committing
+# is `release`'s job, so this composes. eng-versioning(7).
+[group("maintenance")]
+bump-version new:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  sed -i "s/^export LINENISGREAT_VERSION=.*/export LINENISGREAT_VERSION={{new}}/" version.env
+  gum log --level info "version.env -> {{new}}"
+
+# Create a signed, annotated v<sem> tag from version.env, push it, and verify the
+# signature. Root-level package, so the tag is `v<sem>` (no path prefix).
+# eng-versioning(7).
+[group("maintenance")]
+tag message:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source version.env
+  t="v${LINENISGREAT_VERSION}"
+  git tag -s "$t" -m "{{message}}"
+  git push origin "$t"
+  git tag -v "$t"
+  gum log --level info "tagged $t"
+
+# Full release flow (operational; run from the default branch — in this
+# spinclass repo that means after merging your work to master). Generates the
+# changelog BEFORE the bump so the release commit is excluded, bumps + commits
+# version.env, tags with the changelog, and creates the GitHub release.
+# eng-versioning(7).
+[group("maintenance")]
+release new:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  branch=$(git rev-parse --abbrev-ref HEAD)
+  if [ "$branch" != "master" ]; then
+    gum log --level error "release must run on master (currently on $branch)"
+    exit 1
+  fi
+  last=$(git describe --tags --abbrev=0 2>/dev/null || true)
+  range="${last:+$last..}HEAD"
+  changelog=$(git log --no-merges --pretty=format:'- %s' "$range")
+  body=$(printf 'release v%s\n\n%s\n' "{{new}}" "$changelog")
+  just bump-version {{new}}
+  git add version.env
+  git commit -S -m "release v{{new}}"
+  just tag "$body"
+  printf '%s' "$body" | gh release create "v{{new}}" --notes-file -
+  gum log --level info "released v{{new}}"
+
 # Repair the whole tree via treelint (repair mode), configured by the repo-local
 # ./treelint.toml. treelint runs every formatter/linter from this flake's
 # devShell, applying formatter fixes and `[linter.*]` repair-commands.
