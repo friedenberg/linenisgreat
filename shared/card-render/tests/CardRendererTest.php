@@ -3,9 +3,12 @@
 declare(strict_types=1);
 
 // Hermetic TAP check for Card\CardRenderer: feeds representative object data
-// (a cocktail, a code project, a generic object) and asserts the data-driven
-// renderer reproduces the per-type card markup using the package's own
-// templates. Network-free and deterministic — no hcti.io, no API.
+// for every live card type (a cocktail, a code project, a generic object, a
+// yoga class, a slide) and asserts the data-driven renderer reproduces the
+// per-type card markup using the package's own templates, picking the SAME
+// body template the live model class would (cocktails→cocktail_card,
+// objects/notes→card_object, code→card_common, yoga→card_object_new,
+// slides→card_common). Network-free and deterministic — no hcti.io, no API.
 //
 // The package ships no vendor of its own, so Mustache (the only third-party
 // dependency CardRenderer needs) is loaded from the app's vendor; the package
@@ -43,34 +46,70 @@ $code = $renderer->renderCard('code', [
     ],
 ]);
 
-// A generic object: no recipe, no code type. Mirrors Zettel's switch, whose
-// default arm is cocktail_card — so a recipe-less generic object renders the
-// cocktail body (just the title, no recipe/glass/garnish rows), NOT the
-// code-project body. This is the regression this case guards.
+// A generic object (objects collection): keyed shape with type/object-id/
+// description/date/tags, rendered via the Objekt model → card_object.
 $object = $renderer->renderCard('objects', [
-    'bezeichnung' => 'Some Note',
+    'type' => 'note',
     'object-id' => 'some-note',
     'description' => 'A plain note with no recipe and no code type.',
+    'date' => '2025-01-01',
+    'tags' => ['alpha', 'beta'],
+]);
+
+// A note (notes collection): same Objekt model / card_object as objects.
+$note = $renderer->renderCard('notes', [
+    'type' => 'note',
+    'object-id' => 'a-note',
+    'description' => 'A note from the notes collection.',
+    'date' => '2025-02-02',
+]);
+
+// A yoga class: array shape (title/type/id/description/date/duration/tags),
+// rendered via the Yoga model → card_object_new. level/intensity present in
+// the JSON must NOT appear in the card.
+$yoga = $renderer->renderCard('yoga', [
+    'title' => 'Quiet Mental Chatter Hatha',
+    'type' => 'class',
+    'id' => '22021',
+    'description' => 'A practice to quiet your mind.',
+    'date' => '2025-01-28T20:15:27.763Z',
+    'duration' => 45,
+    'intensity' => '2',
+    'level' => '2',
+    'tags' => ['calm', 'breath'],
+]);
+
+// A slide: array shape (title/subtitle/description/tags/objectId), rendered
+// via the Zettel2 model → card_common.
+$slide = $renderer->renderCard('slides', [
+    'title' => 'How Etsy Ships Apps',
+    'subtitle' => '2025-02-23',
+    'description' => 'In which Etsy transforms its app release process.',
+    'tags' => '',
+    'objectId' => 'anterior/nauru',
 ]);
 
 /** @var array<array{0:string,1:bool}> $tests */
 $tests = [];
 
 // --- table_card wrapper is always present (two-phase render reached phase 2) ---
-$tests[] = [
-    'cocktail card is wrapped in the table_card container',
-    str_contains($cocktail, 'class="card"') && str_contains($cocktail, 'card-contents'),
-];
-$tests[] = [
-    'code card is wrapped in the table_card container',
-    str_contains($code, 'class="card"') && str_contains($code, 'card-contents'),
-];
-$tests[] = [
-    'object card is wrapped in the table_card container',
-    str_contains($object, 'class="card"') && str_contains($object, 'card-contents'),
-];
+foreach (
+    [
+        'cocktail' => $cocktail,
+        'code' => $code,
+        'object' => $object,
+        'note' => $note,
+        'yoga' => $yoga,
+        'slide' => $slide,
+    ] as $label => $html
+) {
+    $tests[] = [
+        "{$label} card is wrapped in the table_card container",
+        str_contains($html, 'class="card"') && str_contains($html, 'card-contents'),
+    ];
+}
 
-// --- title / name surfaced from the data ---
+// --- cocktails → cocktail_card (recipe rows + glass/garnish + live icon div) ---
 $tests[] = [
     'cocktail card shows the cocktail name',
     str_contains($cocktail, 'Navigation'),
@@ -80,40 +119,77 @@ $tests[] = [
     str_contains($cocktail, 'oxygen/hypno'),
 ];
 $tests[] = [
-    'code card shows the identifier (object-id)',
-    str_contains($code, 'project-and-so-can-you'),
+    'cocktail card uses the cocktail_card body (recipe ingredients + glass + live icon)',
+    str_contains($cocktail, 'gin') && str_contains($cocktail, '8 parts')
+        && str_contains($cocktail, 'coupe')
+        && str_contains($cocktail, '<div class="icon icon-')
+        && !str_contains($cocktail, '<!-- <div class="icon'),
+];
+
+// --- code → card_common (title from blob.name, description), NOT card_code_project ---
+$tests[] = [
+    'code card shows the title from blob.name',
+    str_contains($code, 'and-so-can-you'),
 ];
 $tests[] = [
     'code card shows the description',
     str_contains($code, 'conformist'),
 ];
+// card_common's head has a `text-center i` subtitle div; card_code_project does
+// not. This is the key fidelity fix (code renders card_common, not the code
+// project card), so assert the card_common marker is present and the
+// card_code_project marker (commented icon div) is absent.
 $tests[] = [
-    'object card shows the name in the title',
-    str_contains($object, 'Some Note'),
+    'code card uses card_common (subtitle div present), NOT card_code_project',
+    str_contains($code, 'class="text-center i"')
+        && !str_contains($code, '<!-- <div class="icon'),
 ];
 
-// --- correct body template per type ---
-// cocktail_card renders the recipe rows + glass/garnish; card_code_project does not.
+// --- objects/notes → card_object (description in head AND body, type/objectId/date) ---
+// card_object puts {{description}} in both the head title and the body, and
+// renders {{type}} and {{objectId}} in the head plus {{date}} in the body.
 $tests[] = [
-    'cocktail card uses the cocktail_card body (recipe ingredients rendered)',
-    str_contains($cocktail, 'gin') && str_contains($cocktail, '8 parts')
-        && str_contains($cocktail, 'glass') && str_contains($cocktail, 'coupe'),
+    'object card uses card_object (description in head+body, type/objectId/date)',
+    substr_count($object, 'A plain note with no recipe and no code type.') >= 2
+        && str_contains($object, '<div class="text-center">note</div>')
+        && str_contains($object, 'some-note')
+        && str_contains($object, '2025-01-01'),
 ];
-// card_code_project shows the identifier in a title div and has no recipe table rows.
 $tests[] = [
-    'code card uses the card_code_project body (no cocktail recipe markup)',
-    !str_contains($code, 'tdleft small-caps'),
+    'notes collection also renders card_object (description in head+body)',
+    substr_count($note, 'A note from the notes collection.') >= 2
+        && str_contains($note, 'a-note'),
 ];
-// Zettel's switch default is cocktail_card, so a generic recipe-less object
-// renders the cocktail body: the live (uncommented) icon div is present, and
-// with no recipe there are no ingredient rows. card_code_project, by contrast,
-// keeps the icon div HTML-commented — that distinguishes the two bodies even
-// when both lack recipe markup.
+
+// --- yoga → card_object_new (headers with title + "id:", duration/tags fields) ---
+// card_object_new is the only body with the "id: " header row and a fields
+// table carrying duration/tags. level/intensity must NOT leak into the card.
 $tests[] = [
-    'generic object card uses the cocktail_card body (live icon div, no recipe rows)',
-    str_contains($object, '<div class="icon icon-')
-        && !str_contains($object, '<!-- <div class="icon')
-        && !str_contains($object, 'tdleft small-caps'),
+    'yoga card uses card_object_new (title header + "id:" header)',
+    str_contains($yoga, 'Quiet Mental Chatter Hatha')
+        && str_contains($yoga, 'id: 22021'),
+];
+$tests[] = [
+    'yoga card renders duration and tags fields',
+    str_contains($yoga, 'duration') && str_contains($yoga, '45')
+        && str_contains($yoga, 'tags') && str_contains($yoga, 'calm, breath'),
+];
+$tests[] = [
+    'yoga card does NOT render level/intensity (model never surfaces them)',
+    !str_contains($yoga, '>level<') && !str_contains($yoga, '>intensity<'),
+];
+
+// --- slides → card_common (title/subtitle/description) ---
+$tests[] = [
+    'slide card uses card_common (title + subtitle + description)',
+    str_contains($slide, 'How Etsy Ships Apps')
+        && str_contains($slide, '2025-02-23')
+        && str_contains($slide, 'Etsy transforms its app release process')
+        && str_contains($slide, 'class="text-center i"'),
+];
+$tests[] = [
+    'slide card shows the objectId in the table_card id attribute',
+    str_contains($slide, 'anterior/nauru'),
 ];
 
 echo "TAP version 14\n";

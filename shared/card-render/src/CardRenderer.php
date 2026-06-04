@@ -17,6 +17,15 @@ namespace Card;
  * into their root-namespace classes, so the minimal mapping a *card* needs is
  * lifted here. Search/URL/page concerns beyond what the templates reference are
  * deliberately omitted (YAGNI).
+ *
+ * Collection → model → body template (per the live index path,
+ * RouteObjectOrObjectsIndex::renderIndex):
+ *   - cocktails        → Zettel      → cocktail_card (or card_code_project for
+ *                                       typ toml-project-code/md)
+ *   - objects, notes   → Objekt      → card_object
+ *   - code             → CodeProject → card_common
+ *   - yoga, yoga-objects → Yoga      → card_object_new
+ *   - slides           → Zettel2     → card_common
  */
 class CardRenderer
 {
@@ -43,8 +52,9 @@ class CardRenderer
      * Render one object's card.
      *
      * @param string $type API collection name (e.g. cocktails, code, objects,
-     *                      notes, yoga-objects, slides). Used alongside the
-     *                      data's own typ/type field to pick the body template.
+     *                      notes, yoga, yoga-objects, slides). Used alongside
+     *                      the data's own typ/type field to pick the body
+     *                      template and field mapping.
      * @param array<string,mixed> $data The item data as the API serves it.
      */
     public function renderCard(string $type, array $data): string
@@ -65,64 +75,240 @@ class CardRenderer
     }
 
     /**
-     * Collapse a type's heterogeneous data shape onto the variables the card
-     * templates reference, and choose the body template.
+     * Collapse a type's heterogeneous data shape onto the variables the chosen
+     * card template references, and choose that template.
      *
-     * Two data shapes coexist (see FileDataSource): the dodder cocktail shape
-     * (`typ`/`bezeichnung`/`kennung`/`akte`) and the keyed-object shape
-     * (`type`/`object-id`/`description`/`blob`). Both are folded into one
-     * `$card` array here.
+     * The body template is collection-driven, mirroring which model class the
+     * live route instantiates for each collection (see class docblock); the
+     * cocktail collection additionally branches on the dodder `typ` exactly as
+     * Zettel::__construct does. Each branch populates *only* the variables its
+     * template reads (verified against the template sources) plus the
+     * table_card wrapper's id/url/search_string.
      *
      * @param array<string,mixed> $data
      * @return array<string,mixed>
      */
-    private function mapToCard(string $type, array $data): array
+    private function mapToCard(string $collection, array $data): array
     {
-        // The inner payload lives under `akte` (cocktails) or `blob` (objects);
-        // either may be a string (a plain description) or a nested array.
-        $payload = $data['akte'] ?? $data['blob'] ?? [];
-        $payloadFields = is_array($payload) ? $payload : [];
-
-        $name = $data['bezeichnung']
-            ?? $payloadFields['name']
-            ?? $data['title']
-            ?? $data['description']
-            ?? '';
-
-        $identifier = $payloadFields['kennung']
-            ?? $data['kennung']
-            ?? $data['object-id']
-            ?? $data['id']
-            ?? $data['objectId']
-            ?? '';
-
-        $description = is_string($payload)
-            ? $payload
-            : ($data['description'] ?? $data['bezeichnung'] ?? '');
-
-        $recipe = $payloadFields['recipe'] ?? [];
-        $glass = $payloadFields['glass'] ?? '';
-        $garnish = $payloadFields['garnish'] ?? '';
-        $kind = $payloadFields['kind'] ?? '';
-
         $objectType = $this->normalizeType($data);
-        $template = $this->selectBodyTemplate($type, $objectType);
+        $template = $this->selectBodyTemplate($collection, $objectType);
+
+        return match ($template) {
+            'card_object' => $this->mapObjekt($data),
+            'card_common' => $collection === 'code'
+                ? $this->mapCodeProject($data)
+                : $this->mapZettel2($data),
+            'card_object_new' => $this->mapYoga($data),
+            'card_code_project' => $this->mapCodeZettel($data),
+            default => $this->mapCocktail($data),
+        };
+    }
+
+    /**
+     * Objekt (objects/notes collections) → card_object. Keyed-object shape:
+     * type / object-id / description (or duration) / date / tags. card_object
+     * uses {{description}} for both the head title and the body — intentional.
+     *
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
+    private function mapObjekt(array $data): array
+    {
+        $description = $data['description'] ?? $data['duration'] ?? '';
+        $objectId = $this->extractObjectId($data);
 
         return [
-            'card_body_template' => $template,
-            'name' => $name,
-            'identifier' => $identifier,
+            'card_body_template' => 'card_object',
+            'type' => $data['type'] ?? '',
             'description' => $description,
-            'recipe' => $recipe,
+            'date' => $data['date'] ?? '',
+            'objectId' => $objectId,
+            'tags' => $this->normalizeTags($data['tags'] ?? []),
+            'identifier' => $objectId,
+            'url' => $objectId,
+            'search_string' => trim("{$description} {$objectId}"),
+        ];
+    }
+
+    /**
+     * CodeProject (code collection) → card_common. Keyed-object shape with a
+     * `blob` payload: title ← blob.name ?? object-id; subtitle is always blank
+     * (CodeProject never sets it); description ← blob-as-string ?? description.
+     *
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
+    private function mapCodeProject(array $data): array
+    {
+        $blob = $data['blob'] ?? [];
+        $blobFields = is_array($blob) ? $blob : [];
+
+        $title = $blobFields['name'] ?? $data['object-id'] ?? '';
+        $description = is_string($blob) ? $blob : ($data['description'] ?? '');
+
+        return [
+            'card_body_template' => 'card_common',
+            'title' => $title,
+            'subtitle' => '',
+            'description' => $description,
+            'identifier' => $title,
+            'url' => $title,
+            'search_string' => trim("{$title}"),
+        ];
+    }
+
+    /**
+     * Zettel2 (slides collection) → card_common. Array shape:
+     * title / subtitle / description / tags / objectId.
+     *
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
+    private function mapZettel2(array $data): array
+    {
+        $title = $data['title'] ?? '';
+        $objectId = $this->extractObjectId($data);
+
+        return [
+            'card_body_template' => 'card_common',
+            'title' => $title,
+            'subtitle' => $data['subtitle'] ?? '',
+            'description' => $data['description'] ?? '',
+            'identifier' => $objectId,
+            'url' => $objectId,
+            'search_string' => trim("{$title} {$objectId}"),
+        ];
+    }
+
+    /**
+     * Yoga (yoga/yoga-objects collections) → card_object_new. Array shape:
+     * title / type / id / description / date / duration / tags. The model
+     * builds a two-row header (title + "id: …") and a fields table of
+     * duration then tags — level/intensity exist in the JSON but the model
+     * never renders them into the card, so they are deliberately omitted.
+     *
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
+    private function mapYoga(array $data): array
+    {
+        $title = $data['title'] ?? '';
+        $objectId = $this->extractObjectId($data);
+        $tags = $this->normalizeTags($data['tags'] ?? []);
+
+        $fields = [];
+        if (isset($data['duration'])) {
+            $fields[] = ['key' => 'duration', 'value' => $data['duration']];
+        }
+        if ($tags !== '') {
+            $fields[] = ['key' => 'tags', 'value' => $tags];
+        }
+
+        return [
+            'card_body_template' => 'card_object_new',
+            'headers' => [
+                [
+                    'classes' => 'text-center title uppercase',
+                    'value' => $title,
+                ],
+                [
+                    'classes' => 'text-center small-caps text-small',
+                    'value' => "id: {$objectId}",
+                ],
+            ],
+            'fields' => $fields,
+            'description' => $data['description'] ?? '',
+            'date' => $data['date'] ?? '',
+            'objectId' => $objectId,
+            'identifier' => $objectId,
+            'url' => $objectId,
+            'search_string' => trim("{$title} {$objectId}"),
+        ];
+    }
+
+    /**
+     * Zettel cocktail branch (cocktails collection, default typ) →
+     * cocktail_card. Dodder shape: bezeichnung / kennung / akte (nested or
+     * string). akte.kennung overrides the top-level kennung; an akte string is
+     * the description.
+     *
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
+    private function mapCocktail(array $data): array
+    {
+        $akte = $data['akte'] ?? [];
+        $akteFields = is_array($akte) ? $akte : [];
+
+        $name = $data['bezeichnung'] ?? '';
+        $identifier = $akteFields['kennung'] ?? $data['kennung'] ?? '';
+        $description = is_string($akte) ? $akte : ($data['bezeichnung'] ?? '');
+        $glass = $akteFields['glass'] ?? '';
+
+        return [
+            'card_body_template' => 'cocktail_card',
+            'name' => $name,
+            'kind' => $akteFields['kind'] ?? '',
+            'recipe' => $akteFields['recipe'] ?? [],
             'glass' => $glass,
-            'garnish' => $garnish,
-            'kind' => $kind,
+            'garnish' => $akteFields['garnish'] ?? '',
+            'description' => $description,
             'icon_css_class' => $glass !== '' ? "toml-cocktail-{$glass}" : '',
-            // table_card references these; cards rendered for OG images are not
-            // interactive, but the wrapper still wants a stable href + id.
+            'identifier' => $identifier,
             'url' => $identifier,
             'search_string' => trim("{$name} {$identifier}"),
         ];
+    }
+
+    /**
+     * Zettel code branch (cocktails collection, typ toml-project-code/md) →
+     * card_code_project. The dodder code-zettel renders its identifier as the
+     * title and akte-as-string (or bezeichnung) as the description.
+     *
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
+    private function mapCodeZettel(array $data): array
+    {
+        $akte = $data['akte'] ?? [];
+        $akteFields = is_array($akte) ? $akte : [];
+
+        $identifier = $akteFields['kennung'] ?? $data['kennung'] ?? '';
+        $description = is_string($akte) ? $akte : ($data['bezeichnung'] ?? '');
+
+        return [
+            'card_body_template' => 'card_code_project',
+            'identifier' => $identifier,
+            'description' => $description,
+            'icon_css_class' => '',
+            'url' => $identifier,
+            'search_string' => trim("{$description} {$identifier}"),
+        ];
+    }
+
+    /**
+     * Object-id with the same fallback chain as FieldMappingTrait::
+     * extractObjectId (object-id → id → objectId).
+     *
+     * @param array<string,mixed> $data
+     */
+    private function extractObjectId(array $data): string
+    {
+        return (string) ($data['object-id'] ?? $data['id'] ?? $data['objectId'] ?? '');
+    }
+
+    /**
+     * Comma-join a tags array, mirroring FieldMappingTrait::normalizeTags.
+     *
+     * @param mixed $tags
+     */
+    private function normalizeTags(mixed $tags): string
+    {
+        if (is_array($tags)) {
+            return implode(', ', $tags);
+        }
+
+        return (string) ($tags ?? '');
     }
 
     /**
@@ -140,19 +326,27 @@ class CardRenderer
     }
 
     /**
-     * Pick the body template, mirroring Zettel::__construct's switch exactly:
-     * code-like types (`toml-project-code`/`md`, or the `code` collection)
-     * render as a code-project card; everything else falls through to the
-     * default `cocktail_card`. The switch has no cocktail-specific case — the
-     * cocktail card *is* the default — so a generic, recipe-less object renders
-     * the same `cocktail_card` body the app gives it.
+     * Pick the body template from the collection, mirroring which model class
+     * the live route instantiates for each collection (RouteObjectOrObjects
+     * Index plus the public/*.php entrypoints):
+     *   - code                       → card_common   (CodeProject)
+     *   - objects, notes             → card_object   (Objekt)
+     *   - yoga, yoga-objects         → card_object_new (Yoga)
+     *   - slides                     → card_common   (Zettel2)
+     *   - cocktails / anything else  → Zettel's typ switch (toml-project-code
+     *                                   or md → card_code_project; else the
+     *                                   default cocktail_card)
      */
     private function selectBodyTemplate(string $collection, string $objectType): string
     {
-        if ($objectType === 'toml-project-code' || $objectType === 'md' || $collection === 'code') {
-            return 'card_code_project';
-        }
-
-        return 'cocktail_card';
+        return match ($collection) {
+            'code' => 'card_common',
+            'objects', 'notes' => 'card_object',
+            'yoga', 'yoga-objects' => 'card_object_new',
+            'slides' => 'card_common',
+            default => ($objectType === 'toml-project-code' || $objectType === 'md')
+                ? 'card_code_project'
+                : 'cocktail_card',
+        };
     }
 }
