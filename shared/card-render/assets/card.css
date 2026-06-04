@@ -1,0 +1,287 @@
+/*
+ * card.css — the card-scoped subset of the app stylesheet.
+ *
+ * Extracted (copied) from app/public/assets/stylesheet.css and
+ * app/public/assets/fonts.css, narrowed to the rules a single card needs to
+ * look like the on-site card: the @font-face declarations the card text uses,
+ * the base body box-model / CSS custom properties cards read, and the card
+ * structural / typographic / table / icon rules.
+ *
+ * Kept self-contained (fonts inlined as @font-face, no @import to app paths)
+ * because the API host that renders the OG image via hcti.io does not serve the
+ * app's /assets/* tree. This is a TUNING LEVER: it deliberately starts from the
+ * minimal card-relevant set; over-inclusion is fine, under-inclusion is not.
+ * When a card type needs more styling, copy the relevant rule from the app
+ * stylesheet into here.
+ */
+
+/* --- Fonts (from app/public/assets/fonts.css) ---------------------------- */
+@font-face {
+  font-family: "Montserrat";
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/montserrat/v29/JTUFjIg1_i6t8kCHKm459Wx7xQYXK0vOoz6jqw16aX8.ttf)
+    format("truetype");
+}
+@font-face {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-.ttf)
+    format("truetype");
+}
+@font-face {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCvC70w-.ttf)
+    format("truetype");
+}
+@font-face {
+  font-family: "Spectral";
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spectral/v14/rnCs-xNNww_2s0amA9v2s13G.ttf)
+    format("truetype");
+}
+@font-face {
+  font-family: "Spectral";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spectral/v14/rnCr-xNNww_2s0amA-M-.ttf)
+    format("truetype");
+}
+@font-face {
+  font-family: "Spectral";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spectral/v14/rnCs-xNNww_2s0amA9vKsV3G.ttf)
+    format("truetype");
+}
+@font-face {
+  font-family: "Spectral SC";
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spectralsc/v14/Ktk2ALCRZonmalTgyPmRfsWg25DUN4M.ttf)
+    format("truetype");
+}
+@font-face {
+  font-family: "Spectral SC";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spectralsc/v14/Ktk0ALCRZonmalTgyPmRfs0OwUTX.ttf)
+    format("truetype");
+}
+@font-face {
+  font-family: "Spectral SC";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spectralsc/v14/Ktk0ALCRZonmalTgyPmRfs0CxUTX.ttf)
+    format("truetype");
+}
+
+/* --- Base body box-model + custom properties cards read ------------------ */
+/* Cards inherit the body font and read the --padding / --card-width /
+   --stroke custom properties defined here. */
+body {
+  --padding: 8px;
+  --card-width: 304px;
+  --border-stroke-width: 2px;
+  --stroke: solid var(--border-stroke-width) black;
+  margin: 0;
+  font-family: Spectral;
+  font-size: 20px;
+}
+
+img,
+video {
+  object-fit: contain;
+  width: 100%;
+}
+
+/* --- Card shell --------------------------------------------------------- */
+.card > a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.card {
+  position: relative;
+  --actual-card-width: calc(
+    var(--card-width) - calc(var(--padding) * 2) -
+      calc(var(--border-stroke-width) * 2)
+  );
+  width: var(--actual-card-width);
+  border: var(--stroke);
+  border-radius: 7px;
+  padding: var(--padding);
+  break-inside: avoid;
+  background-color: white;
+}
+
+.card > div {
+  padding-left: var(--padding);
+  padding-right: var(--padding);
+}
+
+.card > table + div {
+  padding-top: var(--padding);
+}
+
+.card.nightMode {
+  border-color: white;
+}
+
+.card-contents > * {
+  width: 100%;
+}
+
+/* --- Card head / body --------------------------------------------------- */
+th,
+.card-head {
+  padding-bottom: var(--padding);
+  border-bottom: var(--stroke);
+}
+
+.card-head > div,
+.card-body > div {
+  margin-left: var(--padding);
+  margin-right: var(--padding);
+  width: calc(100% - (var(--padding) * 2));
+}
+
+.card-body {
+  padding-top: var(--padding);
+}
+
+.card-body > div + div {
+  padding-top: var(--padding);
+}
+
+.card-body div {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.card-body tr {
+  line-height: 1.1;
+}
+
+tr:first-child td {
+  padding-top: var(--padding);
+}
+
+tr:last-child td {
+  padding-bottom: var(--padding);
+}
+
+/* --- Typographic helpers used inside card bodies ------------------------ */
+.text-center {
+  text-align: center;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nightMode th {
+  border-color: white;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.text-small {
+  font-size: 10pt;
+}
+
+.small-caps {
+  font-family: "Spectral SC";
+  font-variant: small-caps;
+}
+
+.i {
+  font-style: italic;
+}
+
+/* --- Cocktail-recipe two-column table ----------------------------------- */
+.tdleft,
+.tdright {
+  vertical-align: top;
+}
+
+.tdleft {
+  min-width: 4em;
+  text-align: right;
+}
+
+.tdright {
+  text-align: left;
+}
+
+/* --- Card glyph stroke (SVG icons) -------------------------------------- */
+.icon-stroke {
+  stroke: black;
+  stroke-width: 35px;
+  stroke-linecap: round;
+}
+
+.nightMode .icon-stroke {
+  stroke: white;
+}
+
+/* --- Cocktail glass icons ----------------------------------------------- */
+/* TODO separate into icon common and icon specific */
+.icon {
+  visibility: hidden;
+  width: 60px;
+  height: 60px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.icon-toml-cocktail {
+  visibility: visible;
+  background-image: url("/assets/icon_glass_martini.svg");
+}
+
+.icon-toml-cocktail-martini,
+.icon-toml-cocktail-cocktail {
+  visibility: visible;
+  background-image: url("/assets/icon_glass_martini.svg");
+}
+
+.icon-toml-cocktail-coupe {
+  visibility: visible;
+  background-image: url("/assets/icon_glass_coupe.svg");
+}
+
+.icon-toml-cocktail-highball {
+  visibility: visible;
+  background-image: url("/assets/icon_glass_highball.svg");
+}
+
+.icon-toml-cocktail-lowball,
+.icon-toml-cocktail-rocks {
+  visibility: visible;
+  background-image: url("/assets/icon_glass_lowball.svg");
+}
+
+.icon-toml-cocktail-flute {
+  visibility: visible;
+  background-image: url("/assets/icon_glass_flute.svg");
+}
