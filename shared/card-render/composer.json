@@ -1,0 +1,12 @@
+{
+  "name": "linenisgreat/card-render",
+  "type": "library",
+  "require": {
+    "mustache/mustache": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Card\\": "src/"
+    }
+  }
+}
