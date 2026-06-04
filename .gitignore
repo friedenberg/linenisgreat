@@ -23,4 +23,5 @@ api/protected/data/code/
 # Secrets materialized from the piggy store by `just reveal-secrets` (plaintext;
 # never committed). The encrypted .ebox sources live under secrets/.
 app/protected/lib/Html2ImageApiKey.php
+api/protected/lib/Html2ImageApiKey.php
 api/protected/lib/GithubToken.php
