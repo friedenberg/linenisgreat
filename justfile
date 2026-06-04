@@ -586,6 +586,63 @@ test-code PORT="2297" API_PORT="2296": build-php-composer
 
   exit $fail
 
+# Verify the dodder-style API blob/formats endpoints (ApiRouter): the formats
+# listing, the og-image format's redirect/503-guard, and that neither shadows
+# the plain item route. Standalone (not in `test`): the og-image format only
+# reaches hcti.io when an Html2ImageApiKey is present — in CI/gate it's absent,
+# so the network is never touched (the 503 guard short-circuits). Serves the
+# blob/formats dev loop. Mirrors test-code's api-server boilerplate.
+[group("post-build")]
+test-formats API_PORT="2291": build-php-composer
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT}} \
+      -t api/public/ &
+  API_PID=$!
+
+  trap "kill $API_PID 2>/dev/null || true" EXIT
+
+  sleep 1
+
+  api="http://localhost:{{API_PORT}}"
+  id="chrest"   # known key in api/protected/data/code.json (collection+item+html)
+  fail=0
+  echo "TAP version 14"
+  echo "1..3"
+
+  # 1. The formats listing is 200 JSON and advertises the og-image format.
+  if curl -sf "$api/code/$id/blob/formats" \
+       | jq -e 'any(.data[]; .format_id == "og-image")' >/dev/null 2>&1; then
+    echo "ok 1 - /code/$id/blob/formats lists og-image"
+  else
+    echo "not ok 1 - formats listing missing og-image"; fail=1
+  fi
+
+  # 2. The og-image format is 302 (key present) OR 503 (key absent, CI/gate) —
+  #    crucially neither 404 (route shadowed/unmatched) nor 500 (leaked fatal).
+  code=$(curl -s -o /dev/null -w '%{http_code}' "$api/code/$id/blob/formats/og-image")
+  if [ "$code" = "302" ] || [ "$code" = "503" ]; then
+    echo "ok 2 - /code/$id/blob/formats/og-image is $code (not 404/500)"
+  else
+    echo "not ok 2 - og-image returned $code (expected 302 or 503)"; fail=1
+  fi
+
+  # 3. The plain item route is NOT shadowed by the formats routes: the bare item
+  #    is still 200 JSON, and the formats path is treated as formats (200), not
+  #    as an item with id "$id/blob/formats" (which would 404).
+  item_code=$(curl -s -o /dev/null -w '%{http_code}' "$api/code/$id")
+  formats_code=$(curl -s -o /dev/null -w '%{http_code}' "$api/code/$id/blob/formats")
+  if [ "$item_code" = "200" ] && [ "$formats_code" = "200" ]; then
+    echo "ok 3 - item route ($item_code) and formats route ($formats_code) both resolve"
+  else
+    echo "not ok 3 - item=$item_code formats=$formats_code (expected 200/200)"; fail=1
+  fi
+
+  exit $fail
+
 # Networked end-to-end check of the live README read-through. With a piggy-
 # revealed token present (api/protected/lib/GithubToken.php) it starts app+api
 # and asserts /code/<PROJECT> serves live GitHub README content — the MARKER
