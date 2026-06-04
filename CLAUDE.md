@@ -51,6 +51,34 @@ HTML partials for individual objects live at
 `api/protected/data/objects/{id}/index.html` and are built from dodder via
 `just build`.
 
+### Live dodder backend (DodderHttpDataSource)
+
+The API can serve objects and blobs **live from dodder + madder** instead of
+the pre-exported flat files. `DodderHttpDataSource` (api/protected/lib)
+implements the same `DataSource` interface against a `dodder serve -public`
+HTTP backend:
+
+- collections → `GET /query/<list_type>/<query>` with `Accept: application/json`
+  (dodder content-negotiates JSON — an array of `show -format json` objects —
+  instead of the binary inventory-list wire format; the `<list_type>` segment
+  is ignored for JSON), re-keyed by `object-id` to mirror `objects.json`.
+- single item → `GET /objects/<object-id>?blob_string=true` (blob body embedded).
+- HTML partial → the object's markdown blob rendered via `league/commonmark`
+  (non-markdown blobs fall back to an escaped `<pre>`).
+- raw blob → `GET /blobs/<blob-id>` (served straight from madder).
+
+Set `DODDER_API_URL` to switch `api/public/index.php` from `FileDataSource` to
+`DodderHttpDataSource` (opt-in per deploy; unset keeps the build-time files).
+`DODDER_PUBLIC_QUERY` tunes which objects are public (default `public !md`).
+`dodder serve -public` relaxes the challenge-nonce auth so a plain-HTTP client
+can read it; the og-image and card rendering paths work unchanged because the
+dodder JSON shape **is** the item shape `Card\CardRenderer` already consumes.
+
+Run the whole stack (dodder serve + API + app) with `just deploy-local-dodder`
+— this is the dodder.net tracer bullet, the site rendered straight from a live
+dodder repo. Hermetic mapping tests: `just test-dodder-datasource` (in the
+`test` gate).
+
 ### Shared Card Rendering & OG Images
 
 Card rendering lives in a local Composer path package, `shared/card-render`
