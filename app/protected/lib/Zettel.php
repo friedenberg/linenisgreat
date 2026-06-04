@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 class Zettel
 {
-    public static function fromPath($path)
-    {
-        $c = unserialize(file_get_contents($path));
-        return $c;
-    }
-
     public $typ;
     public $meta;
     public $card_body_template;
@@ -90,11 +84,6 @@ class Zettel
         return count(array_intersect($query, $this->search_array)) > 0;
     }
 
-    public function image_id($mustache)
-    {
-        return $this->getId($mustache);
-    }
-
     public function getHtml($mustache)
     {
         if (!isset($this->html)) {
@@ -112,40 +101,5 @@ class Zettel
         }
 
         return $this->css;
-    }
-
-    public function getId($mustache)
-    {
-        return md5($this->getHtml($mustache) . $this->getCss());
-    }
-
-    public function getLocalPath($mustache)
-    {
-        return __DIR__ . "/../../tmp/cocktail-{$this->getId($mustache)}";
-    }
-
-    public function getImageUrl($mustache)
-    {
-        $html = $this->getHtml($mustache);
-        $css = $this->getCss();
-        $md5 = $this->getId($mustache);
-
-        $path = __DIR__ . "/../../tmp/cocktail-image-$md5";
-
-        if (file_exists($path)) {
-            return file_get_contents($path);
-        }
-
-        $html2image = new Html2Image($html, $css);
-        $url = $html2image->getImage();
-
-        file_put_contents($path, $url);
-
-        return $url;
-    }
-
-    public function writeToPath($path)
-    {
-        file_put_contents($path, serialize($this));
     }
 }

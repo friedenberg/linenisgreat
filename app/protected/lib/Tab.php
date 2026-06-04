@@ -106,7 +106,13 @@ class Tab
         }
     }
     /**
-     * @return <missing>|array@param mixed $mustache
+     * Parse the endpoint's zettels and pre-render each card's HTML. Card images
+     * are produced API-side (Card\OgImage at <type>/<id>/blob/formats/og-image),
+     * so there is no longer any tmp-file serialization here — getHtml() hydrates
+     * $z->html, which cocktails.php reads directly.
+     *
+     * @param mixed $mustache
+     * @return array<int, Zettel>
      */
     public function getZettels($mustache): array
     {
@@ -116,71 +122,13 @@ class Tab
 
         $this->zettels = $this->parser->parse();
 
-        foreach ($this->zettels as $someCocktail) {
-            $path = $someCocktail->getLocalPath($mustache);
-
-            if (file_exists($path)) {
-                continue;
-            }
-
-            $someCocktail->writeToPath($path);
+        foreach ($this->zettels as $zettel) {
+            $zettel->getHtml($mustache);
         }
 
         $this->zettels = array_values($this->zettels);
 
         return $this->zettels;
-    }
-    /**
-     * @param mixed $query
-     */
-    public function getCocktailForQuery($query): array
-    {
-        $matches = explode(",", $query);
-        $matches = array_combine($matches, $matches);
-
-        return array_values(array_filter(
-            $this->getZettels(),
-            function ($c) use ($matches) {
-                return $c->matches($matches);
-            }
-        ));
-    }
-
-    /**
-     * @param mixed $id
-     * @return <missing>|null
-     */
-    public function getCocktailWithId($id)
-    {
-        $path = __DIR__ . "/../../tmp/cocktail-$id";
-
-        if (file_exists($path)) {
-            return Cocktail::fromPath($path);
-        }
-
-        return null;
-    }
-
-    public function getRandomCocktail()
-    {
-        $zettels = $this->getZettels();
-        $selected = $zettels[rand(0, count($zettels) - 1)];
-        return $selected;
-    }
-
-    public function getTodayCocktail()
-    {
-        $date = date("Y-m-d");
-        $path = __DIR__ . "/../../tmp/cocktail-$date";
-
-        if (file_exists($path)) {
-            return Cocktail::fromPath($path);
-        }
-
-        $selected = $this->getRandomCocktail();
-        $selected->writeToPath($selected->getLocalPath());
-        symlink($other_path, $path);
-        return $selected;
     }
 
     public function render($template, $args): void

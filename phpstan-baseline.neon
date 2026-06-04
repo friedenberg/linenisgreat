@@ -13,24 +13,6 @@ parameters:
 			path: .php-cs-fixer.dist.php
 
 		-
-			message: '#^Access to an undefined property Html2Image\:\:\$css\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/protected/lib/Html2Image.php
-
-		-
-			message: '#^Access to an undefined property Html2Image\:\:\$html\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/protected/lib/Html2Image.php
-
-		-
-			message: '#^Access to constant KEY on an unknown class Html2ImageApiKey\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/protected/lib/Html2Image.php
-
-		-
 			message: '#^Access to an undefined property \$this\(Route\)\:\:\$parser\.$#'
 			identifier: property.notFound
 			count: 1
@@ -103,12 +85,6 @@ parameters:
 			path: app/protected/lib/RouteObjectOrObjectsIndex.php
 
 		-
-			message: '#^Call to static method fromPath\(\) on an unknown class Cocktail\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/protected/lib/Tab.php
-
-		-
 			message: '#^Instantiated class Mustache\\Engine not found\.$#'
 			identifier: class.notFound
 			count: 1
@@ -117,18 +93,6 @@ parameters:
 		-
 			message: '#^Instantiated class Mustache\\Loader\\FilesystemLoader not found\.$#'
 			identifier: class.notFound
-			count: 1
-			path: app/protected/lib/Tab.php
-
-		-
-			message: '#^Method Tab\:\:getZettels\(\) invoked with 0 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 2
-			path: app/protected/lib/Tab.php
-
-		-
-			message: '#^Undefined variable\: \$other_path$#'
-			identifier: variable.undefined
 			count: 1
 			path: app/protected/lib/Tab.php
 
@@ -143,24 +107,6 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: app/public/cocktails.php
-
-		-
-			message: '#^Instantiated class Cocktails not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/public/image.php
-
-		-
-			message: '#^Instantiated class Mustache\\Engine not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/public/image.php
-
-		-
-			message: '#^Instantiated class Mustache\\Loader\\FilesystemLoader not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/public/image.php
 
 		-
 			message: '#^Instantiated class Mustache\\Engine not found\.$#'

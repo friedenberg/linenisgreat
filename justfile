@@ -377,12 +377,12 @@ PIGGY_STORE_DIR := justfile_directory() / "secrets"
 
 # Materialize the plaintext secret PHP classes from the committed piggy store in
 # a single PIN/touch (pass show-batch). Replaces the old `git secret reveal`:
-# writes the three gitignored files the apps load — api/.../GithubToken.php (the
-# README read-through PAT), app/.../Html2ImageApiKey.php (the hcti.io key, app
-# side), and api/.../Html2ImageApiKey.php (the SAME hcti.io key, api side: the
-# API renders OG-card images via Card\OgImage on request). Run before deploy-prod
-# whenever a secret changes; the plaintext is never committed. Serves the deploy
-# dev loop.
+# writes the two gitignored files the apps load — api/.../GithubToken.php (the
+# README read-through PAT) and api/.../Html2ImageApiKey.php (the hcti.io key: the
+# API renders OG-card images via Card\OgImage on request; the key lives api-side
+# only now that the app's dead cocktail image machinery is gone). Run before
+# deploy-prod whenever a secret changes; the plaintext is never committed. Serves
+# the deploy dev loop.
 [group("operational")]
 reveal-secrets:
   #!/usr/bin/env bash
@@ -405,7 +405,6 @@ reveal-secrets:
   php -r '
     $targets = [
       ["api/protected/lib/GithubToken.php",      "GithubToken",      "TOKEN", $argv[1]],
-      ["app/protected/lib/Html2ImageApiKey.php", "Html2ImageApiKey", "KEY",   $argv[2]],
       ["api/protected/lib/Html2ImageApiKey.php", "Html2ImageApiKey", "KEY",   $argv[2]],
     ];
     foreach ($targets as [$path, $class, $const, $plaintextFile]) {
@@ -415,7 +414,7 @@ reveal-secrets:
         . var_export($value, true) . ";\n}\n");
     }
   ' "$tmp/github-readme-token" "$tmp/html2image-api-key"
-  echo "revealed: api/protected/lib/GithubToken.php app/protected/lib/Html2ImageApiKey.php api/protected/lib/Html2ImageApiKey.php"
+  echo "revealed: api/protected/lib/GithubToken.php api/protected/lib/Html2ImageApiKey.php"
 
 [group("operational")]
 deploy-prod: build-php-composer build

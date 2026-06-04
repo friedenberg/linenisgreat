@@ -27,8 +27,8 @@ class ApiClient
     }
 
     /**
-     * Opaquely cache an API GET to the writable tmp dir (the cocktail-image
-     * pattern; see Zettel::getImageUrl), keyed by the request URL with a TTL.
+     * Opaquely cache an API GET to the writable tmp dir, keyed by the request
+     * URL with a TTL.
      * The cache is agnostic to what backs the API — static files today, dodder
      * later — so it carries across that swap unchanged. On an upstream failure a
      * stale cached copy is served if one exists; returns false only when there's
