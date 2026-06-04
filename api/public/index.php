@@ -23,7 +23,18 @@ $readmeClient = new GithubReadmeClient(
     new ReadmeLinkAbsolutizer(),
 );
 
-$dataSource = new CodeReadmeDataSource(new FileDataSource($dataDir), $readmeClient);
+// When DODDER_API_URL is set, serve objects and blobs live from a
+// `dodder serve -public` HTTP backend (dodder + madder) instead of the
+// pre-exported flat files. Code-project READMEs still read through to
+// GitHub via the same decorator. Unset, the site stays on the
+// build-time FileDataSource — so the switch is opt-in per deploy.
+$dodderApiUrl = getenv('DODDER_API_URL');
+
+$baseDataSource = ($dodderApiUrl !== false && $dodderApiUrl !== '')
+    ? new DodderHttpDataSource($dodderApiUrl)
+    : new FileDataSource($dataDir);
+
+$dataSource = new CodeReadmeDataSource($baseDataSource, $readmeClient);
 $response = new ApiResponse($allowedOrigin);
 $router = new ApiRouter($dataSource, $response);
 

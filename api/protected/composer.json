@@ -11,7 +11,8 @@
     }
   ],
   "require": {
-    "linenisgreat/card-render": "*"
+    "linenisgreat/card-render": "*",
+    "league/commonmark": "^2.8"
   },
   "authors": [
     {

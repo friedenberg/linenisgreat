@@ -111,6 +111,10 @@ build-der_object objectId:
 bin_der := "der"
 der_query_public := "public !md"
 
+# `dodder` drives the live dodder-backed stack (deploy-local-dodder). Same
+# plain-string rationale as bin_der above: never require() at load time.
+bin_dodder := "dodder"
+
 [group("build")]
 build-der_objects:
   #! /usr/bin/env -S bash -e
@@ -484,7 +488,17 @@ test-router PORT="2299" API_PORT="2298": build-php-composer
   app/private/test-router.sh {{PORT}}
 
 [group("post-build")]
-test: test-htaccess test-router test-readme-absolutize
+test: test-htaccess test-router test-readme-absolutize test-dodder-datasource
+
+# Hermetic TAP check of DodderHttpDataSource (the live dodder+madder API
+# backend): overrides the HTTP seam with canned `show -format json`
+# responses and asserts collection re-keying, one-element /objects
+# unwrapping, slash-id percent-encoding, markdown rendering, and graceful
+# empties. No `dodder serve`, no network. In the `test` gate. Needs the
+# api vendor (league/commonmark) hence build-php-composer.
+[group("post-build")]
+test-dodder-datasource: build-php-composer
+  php api/protected/tests/DodderHttpDataSourceTest.php
 
 # Hermetic unit check of the README link absolutizer (no network, no composer):
 # asserts the request-time DOMDocument rewrite matches the build-time ast-grep
@@ -774,6 +788,48 @@ deploy-local-fast PORT="2222" API_PORT="2223": build-php-composer
   API_PID=$!
 
   trap "kill $API_PID 2>/dev/null || true" EXIT
+
+  API_BASE_URL="http://localhost:{{API_PORT}}" \
+  SERVER_NAME="linenisgreat.com" php \
+      -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
+      -S localhost:{{PORT}} \
+      -c app/conf/php.ini \
+      -t app/public/ \
+      app/private/router.php
+
+# Run the full dodder-backed stack locally: a `dodder serve -public` HTTP
+# backend, the API wired to it via DODDER_API_URL (live objects + blobs
+# from dodder+madder, no build-time objects.json), and the frontend. This
+# is the dodder.net tracer bullet — the site rendered straight from a live
+# dodder repo. Requires `dodder` on PATH and a dodder repo reachable from
+# the current directory (or DODDER override env). DODDER_PUBLIC_QUERY tunes
+# which objects are public (default: "public !md").
+[group("operational")]
+deploy-local-dodder PORT="2222" API_PORT="2223" DODDER_PORT="2224": build-php-composer
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  # Live dodder+madder backend. -public relaxes the challenge-nonce auth so
+  # the plain-HTTP API can read it; tcp on a fixed local port.
+  {{bin_dodder}} serve -public tcp 127.0.0.1:{{DODDER_PORT}} &
+  DODDER_PID=$!
+  trap "kill $DODDER_PID 2>/dev/null || true" EXIT
+
+  # Wait for the serve healthz before bringing up the API.
+  for i in $(seq 1 50); do
+    if curl -fsS "http://127.0.0.1:{{DODDER_PORT}}/healthz" >/dev/null 2>&1; then
+      break
+    fi
+    sleep 0.1
+  done
+
+  DODDER_API_URL="http://127.0.0.1:{{DODDER_PORT}}" \
+  CORS_ORIGIN="http://localhost:{{PORT}}" php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT}} \
+      -t api/public/ &
+  API_PID=$!
+  trap "kill $DODDER_PID $API_PID 2>/dev/null || true" EXIT
 
   API_BASE_URL="http://localhost:{{API_PORT}}" \
   SERVER_NAME="linenisgreat.com" php \
