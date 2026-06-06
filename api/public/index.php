@@ -23,9 +23,14 @@ $readmeClient = new GithubReadmeClient(
     new ReadmeLinkAbsolutizer(),
 );
 
+// /blobs/<digest> reverse-proxies to a `madder serve` HTTP backend. Unset
+// (CI, prod-without-madder) cleanly disables the route via a guarded 503; the
+// local-deploy recipe points it at a localhost madder serve.
+$madderBaseUrl = getenv('MADDER_BASE_URL') ?: null;
+
 $dataSource = new CodeReadmeDataSource(new FileDataSource($dataDir), $readmeClient);
 $response = new ApiResponse($allowedOrigin);
-$router = new ApiRouter($dataSource, $response);
+$router = new ApiRouter($dataSource, $response, new MadderClient($madderBaseUrl));
 
 $router->dispatch(
     $_SERVER['REQUEST_METHOD'],

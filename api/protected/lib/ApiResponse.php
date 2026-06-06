@@ -45,8 +45,27 @@ class ApiResponse
 
     public function sendNotFound(string $message = 'Not found'): void
     {
+        $this->sendError($message, 404);
+    }
+
+    /**
+     * Relay blob bytes from a backend (e.g. madder serve) verbatim. Content-
+     * addressed, so the bytes for a digest never change — mark them immutable
+     * so callers and caches can keep them forever.
+     */
+    public function sendBlob(string $body, string $contentType, int $statusCode = 200): void
+    {
         $this->setCorsHeaders();
-        http_response_code(404);
+        http_response_code($statusCode);
+        header("Content-Type: {$contentType}");
+        header('Cache-Control: public, max-age=31536000, immutable');
+        echo $body;
+    }
+
+    public function sendError(string $message, int $statusCode): void
+    {
+        $this->setCorsHeaders();
+        http_response_code($statusCode);
         header('Content-Type: application/json; charset=utf-8');
 
         echo json_encode([

@@ -6,14 +6,21 @@ class ApiRouter
 {
     private DataSource $dataSource;
     private ApiResponse $response;
+    private MadderClient $madder;
 
     /** @var array<array{method: string, pattern: string, handler: callable}> */
     private array $routes = [];
 
-    public function __construct(DataSource $dataSource, ApiResponse $response)
-    {
+    public function __construct(
+        DataSource $dataSource,
+        ApiResponse $response,
+        ?MadderClient $madder = null
+    ) {
         $this->dataSource = $dataSource;
         $this->response = $response;
+        // No backend configured → an unconfigured client whose route answers
+        // 503 (genuinely unavailable), keeping the handler total.
+        $this->madder = $madder ?? new MadderClient(null);
         $this->registerRoutes();
     }
 
@@ -145,6 +152,48 @@ class ApiRouter
                 header('Content-Type: application/json; charset=utf-8');
                 echo json_encode(['error' => 'og-image render failed']);
             }
+        });
+
+        // Content-addressed blob passthrough. Reverse-proxy GET /blobs/<digest>
+        // to a `madder serve` backend (MADDER_BASE_URL), relaying its
+        // clear-text bytes. Two segments only, so it can't collide with the
+        // three-segment blob/formats routes above or the item routes below.
+        $madder = $this->madder;
+        $this->get('blobs/([^/]+)', function (string $digest) use ($madder, $res) {
+            // No backend wired up: unavailable, not missing — answer 503 so
+            // callers/caches don't treat it as a permanent absence (mirrors the
+            // og-image guard).
+            if (!$madder->isConfigured()) {
+                $res->sendError('blobs unavailable: MADDER_BASE_URL not configured', 503);
+                return;
+            }
+
+            // Reject junk before touching the network.
+            if (!MadderClient::isValidDigest($digest)) {
+                $res->sendError("invalid blob digest: {$digest}", 400);
+                return;
+            }
+
+            $result = $madder->fetchBlob($digest);
+
+            if ($result === null) {
+                $res->sendError('blob backend unreachable', 502);
+                return;
+            }
+
+            if ($result['status'] === 200) {
+                $res->sendBlob($result['body'], $result['contentType']);
+                return;
+            }
+
+            if ($result['status'] === 404) {
+                $res->sendNotFound("blob not found: {$digest}");
+                return;
+            }
+
+            // Any other upstream status is a backend failure from the caller's
+            // perspective; surface it as a bad gateway with the code noted.
+            $res->sendError("blob backend error (upstream {$result['status']})", 502);
         });
 
         // Item endpoints

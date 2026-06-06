@@ -19,6 +19,7 @@ just test-router         # Start both servers, test HTTP routes (15 TAP tests)
 just build-php-composer  # composer install in both app/ and api/
 just build               # Build object data from dodder (requires `der` binary)
 just deploy-local        # Run both servers locally (app:2222, api:2223)
+just deploy-local-madder # Local app+api+`madder serve`, API proxies /blobs (madder:2224)
 just deploy-local-prod-api  # Run app locally against production API
 just deploy-prod         # rsync to production + web-kick (requires SSH access)
 just build-htaccess   # Regenerate app/public/.htaccess from router.php
@@ -50,6 +51,33 @@ arrays (`yoga.json`). All responses are wrapped in `{"data": ..., "meta":
 HTML partials for individual objects live at
 `api/protected/data/objects/{id}/index.html` and are built from dodder via
 `just build`.
+
+### Madder Blob Reverse Proxy (`/blobs`)
+
+`GET <api>/blobs/<markl-digest>` reverse-proxies to a
+[madder](https://github.com/amarbel-llc/madder) `serve` HTTP backend, which
+streams a blob's **clear-text** (decompressed, decrypted) bytes by content
+address. The proxy is stateless: `MadderClient`
+(`api/protected/lib/MadderClient.php`) forwards the request to
+`MADDER_BASE_URL` and `ApiResponse::sendBlob` relays the upstream
+status/content-type/body, adding CORS and an immutable `Cache-Control` (a
+content address never changes). Guards mirror the og-image route: `503` when
+`MADDER_BASE_URL` is unset (unavailable, not missing), `400` on a malformed
+digest (validated before any network call), `502` when the backend is
+unreachable, and a passthrough `404` when madder doesn't hold the blob. The
+route is two segments, so it never shadows the three-segment
+`<type>/<id>/blob/formats` routes or the item routes.
+
+The backend is `madder serve` (HTTP), the sibling of `madder-mcp serve` (MCP
+over stdio); on the madder side it streams `MakeBlobReader` output, so bytes
+leave the wire already decompressed. NFSN hosts only PHP, so madder runs
+elsewhere — `MADDER_BASE_URL` points at it (a localhost `madder serve` under
+`just deploy-local-madder`). Serving **clear text is the first milestone**;
+serving ebox/age ciphertext for client-side (wasm) decryption — piggy to
+decrypt, madder to decompress — is a planned next step. Guard branches are
+covered hermetically by `just test-blobs` (in the `test` gate); the live
+round-trip against a real `madder serve` is `just test-blobs-live`
+(madder-gated, skips without the binary).
 
 ### Shared Card Rendering & OG Images
 

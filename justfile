@@ -111,6 +111,12 @@ build-der_object objectId:
 bin_der := "der"
 der_query_public := "public !md"
 
+# `madder` powers the /blobs/<digest> reverse proxy (see deploy-local-madder /
+# test-blobs-live). Plain string, not require("madder"): require is eager at
+# justfile LOAD, which would break `nix develop -c just` anywhere madder isn't
+# on PATH (the gate, CI). The madder recipes fail clearly at runtime if absent.
+bin_madder := "madder"
+
 [group("build")]
 build-der_objects:
   #! /usr/bin/env -S bash -e
@@ -484,7 +490,7 @@ test-router PORT="2299" API_PORT="2298": build-php-composer
   app/private/test-router.sh {{PORT}}
 
 [group("post-build")]
-test: test-htaccess test-router test-readme-absolutize
+test: test-htaccess test-router test-readme-absolutize test-blobs
 
 # Hermetic unit check of the README link absolutizer (no network, no composer):
 # asserts the request-time DOMDocument rewrite matches the build-time ast-grep
@@ -652,6 +658,160 @@ test-formats API_PORT="2291": build-php-composer
 
   exit $fail
 
+# Verify the /blobs/<digest> reverse-proxy guards (ApiRouter + MadderClient)
+# WITHOUT a madder binary: hermetic and hook-safe, so it sits in the `test`
+# gate. Drives two API servers — one with no MADDER_BASE_URL, one pointed at a
+# dead port — to exercise every guard branch (503 unconfigured, 400 bad digest,
+# 502 unreachable) plus non-shadowing of the item routes. The live round-trip
+# (real madder) is the separate, gated test-blobs-live below.
+[group("post-build")]
+test-blobs API_PORT="2285" API_PORT_DEAD="2286" DEAD_MADDER_PORT="2280": build-php-composer
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  # Server A: madder NOT configured -> /blobs/* must answer 503.
+  php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT}} \
+      -t api/public/ &
+  A_PID=$!
+
+  # Server B: madder configured but pointed at a dead port -> exercises the
+  # digest-validation and reachability branches without a real backend.
+  MADDER_BASE_URL="http://127.0.0.1:{{DEAD_MADDER_PORT}}" php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT_DEAD}} \
+      -t api/public/ &
+  B_PID=$!
+
+  trap "kill $A_PID $B_PID 2>/dev/null || true" EXIT
+  sleep 1
+
+  a="http://localhost:{{API_PORT}}"
+  b="http://localhost:{{API_PORT_DEAD}}"
+  digest="blake2b256-c5xgv9eyuv6g49mcwqks24gd3dh39w8220l0kl60qxt60rnt60lsc8fqv0"
+  fail=0
+  echo "TAP version 14"
+  echo "1..4"
+
+  # 1. Unconfigured backend -> 503 (unavailable, not a 404/500).
+  code=$(curl -s -o /dev/null -w '%{http_code}' "$a/blobs/$digest")
+  if [ "$code" = "503" ]; then
+    echo "ok 1 - unconfigured /blobs is 503"
+  else
+    echo "not ok 1 - unconfigured /blobs returned $code (expected 503)"; fail=1
+  fi
+
+  # 2. Configured backend, malformed digest -> 400 before any network call.
+  code=$(curl -s -o /dev/null -w '%{http_code}' "$b/blobs/nope")
+  if [ "$code" = "400" ]; then
+    echo "ok 2 - malformed digest is 400"
+  else
+    echo "not ok 2 - malformed digest returned $code (expected 400)"; fail=1
+  fi
+
+  # 3. Configured backend, well-formed digest, backend down -> 502.
+  code=$(curl -s -o /dev/null -w '%{http_code}' "$b/blobs/$digest")
+  if [ "$code" = "502" ]; then
+    echo "ok 3 - unreachable backend is 502"
+  else
+    echo "not ok 3 - unreachable backend returned $code (expected 502)"; fail=1
+  fi
+
+  # 4. The blobs route does not shadow item routes: /code/<id> is still 200.
+  code=$(curl -s -o /dev/null -w '%{http_code}' "$a/code/chrest")
+  if [ "$code" = "200" ]; then
+    echo "ok 4 - /code/<id> item route intact"
+  else
+    echo "not ok 4 - /code/chrest returned $code (expected 200)"; fail=1
+  fi
+
+  exit $fail
+
+# Networked end-to-end proof of the /blobs/<digest> reverse proxy against a real
+# `madder serve`. Spins up an isolated madder store (never touches the user's
+# blobs), writes a known clear-text blob, serves it, and asserts the API relays
+# the exact bytes with CORS added and proxies madder's 404 for an absent digest.
+# Skips cleanly with no madder on PATH. NOT in the `test` gate (needs the madder
+# binary); run before a deploy that touches the proxy. Mirrors deploy-local-madder.
+[group("post-build")]
+test-blobs-live API_PORT="2284" MADDER_PORT="2283": build-php-composer
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  echo "TAP version 14"
+  echo "1..4"
+
+  if ! command -v {{bin_madder}} >/dev/null 2>&1; then
+    echo "ok 1 - SKIP no madder on PATH"
+    echo "ok 2 - SKIP no madder"
+    echo "ok 3 - SKIP no madder"
+    echo "ok 4 - SKIP no madder"
+    exit 0
+  fi
+
+  # Isolated store + XDG roots so the test neither reads nor writes real blobs.
+  store=$(mktemp -d)
+  export HOME="$store"
+  export XDG_DATA_HOME="$store/data" XDG_CACHE_HOME="$store/cache" \
+         XDG_CONFIG_HOME="$store/config" XDG_STATE_HOME="$store/state"
+  export MADDER_XDG_USER_LOCATION_ONLY=1 MADDER_INVENTORY_LOG=0
+
+  {{bin_madder}} init default >/dev/null 2>&1
+  body="clear text via madder serve $(date +%s)"
+  digest=$(printf '%s' "$body" | {{bin_madder}} write -format json - \
+    | sed -n 's/.*"id":"\([^"]*\)".*/\1/p')
+
+  {{bin_madder}} serve -addr "localhost:{{MADDER_PORT}}" >/dev/null 2>&1 &
+  MADDER_PID=$!
+
+  MADDER_BASE_URL="http://localhost:{{MADDER_PORT}}" \
+  CORS_ORIGIN="http://localhost:9999" php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT}} \
+      -t api/public/ >/dev/null 2>&1 &
+  API_PID=$!
+
+  trap "kill $MADDER_PID $API_PID 2>/dev/null || true; rm -rf $store" EXIT
+  sleep 1
+
+  api="http://localhost:{{API_PORT}}"
+  fail=0
+
+  # 1. The proxied blob is 200.
+  code=$(curl -s -o /dev/null -w '%{http_code}' "$api/blobs/$digest")
+  if [ "$code" = "200" ]; then
+    echo "ok 1 - /blobs/<digest> is 200"
+  else
+    echo "not ok 1 - /blobs/<digest> returned $code (expected 200)"; fail=1
+  fi
+
+  # 2. The body is the exact clear text madder stored.
+  got=$(curl -s "$api/blobs/$digest")
+  if [ "$got" = "$body" ]; then
+    echo "ok 2 - body matches stored clear text"
+  else
+    echo "not ok 2 - body mismatch (got: $got)"; fail=1
+  fi
+
+  # 3. CORS header is added by the API even though madder sets none.
+  if curl -s -D - -o /dev/null "$api/blobs/$digest" | grep -qi '^access-control-allow-origin:'; then
+    echo "ok 3 - API adds Access-Control-Allow-Origin"
+  else
+    echo "not ok 3 - missing CORS header"; fail=1
+  fi
+
+  # 4. A well-formed but absent digest proxies madder's 404.
+  missing="blake2b256-c5xgv9eyuv6g49mcwqks24gd3dh39w8220l0kl60qxt60rnt60lsc8fqv0"
+  code=$(curl -s -o /dev/null -w '%{http_code}' "$api/blobs/$missing")
+  if [ "$code" = "404" ]; then
+    echo "ok 4 - absent blob proxies madder's 404"
+  else
+    echo "not ok 4 - absent blob returned $code (expected 404)"; fail=1
+  fi
+
+  exit $fail
+
 # Networked end-to-end check of the live README read-through. With a piggy-
 # revealed token present (api/protected/lib/GithubToken.php) it starts app+api
 # and asserts /code/<PROJECT> serves live GitHub README content — the MARKER
@@ -796,6 +956,41 @@ deploy-local PORT="2222" API_PORT="2223": build-php-composer build
   trap "kill $API_PID 2>/dev/null || true" EXIT
 
   # Start frontend server in foreground
+  API_BASE_URL="http://localhost:{{API_PORT}}" \
+  SERVER_NAME="linenisgreat.com" php \
+      -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
+      -S localhost:{{PORT}} \
+      -c app/conf/php.ini \
+      -t app/public/ \
+      app/private/router.php
+
+# Local deploy WITH the madder /blobs reverse proxy: runs `madder serve`, the
+# API (pointed at it via MADDER_BASE_URL), and the frontend. Proves the
+# clear-text blob passthrough end to end against your real madder blob store —
+# `GET http://localhost:{{API_PORT}}/blobs/<markl-digest>` returns the blob's
+# clear text. Requires `madder` on PATH with a populated store (`madder write
+# ...`). Skips the dodder `build` step (like deploy-local-fast), so no dodder
+# repo is needed.
+[group("operational")]
+deploy-local-madder PORT="2222" API_PORT="2223" MADDER_PORT="2224": build-php-composer
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  {{bin_madder}} serve -addr "localhost:{{MADDER_PORT}}" &
+  MADDER_PID=$!
+
+  # The API autoloads via auto_prepend_file, whose api/conf/php.ini path is
+  # prod-layout-only, so pass the worktree autoload explicitly or it 500s.
+  CORS_ORIGIN="http://localhost:{{PORT}}" \
+  MADDER_BASE_URL="http://localhost:{{MADDER_PORT}}" php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT}} \
+      -t api/public/ &
+  API_PID=$!
+
+  trap "kill $MADDER_PID $API_PID 2>/dev/null || true" EXIT
+
+  # Frontend in the foreground.
   API_BASE_URL="http://localhost:{{API_PORT}}" \
   SERVER_NAME="linenisgreat.com" php \
       -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
