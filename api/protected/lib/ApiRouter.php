@@ -58,7 +58,7 @@ class ApiRouter
         $res = $this->response;
 
         // Collection endpoints (notes is an alias for objects)
-        foreach (['objects', 'notes', 'yoga', 'yoga-objects', 'code', 'cocktails', 'slides'] as $type) {
+        foreach (['objects', 'notes', 'yoga', 'yoga-objects', 'code', 'cocktails', 'slides', 'events'] as $type) {
             $this->get($type, function () use ($ds, $res, $type) {
                 $data = $ds->getCollection($type);
                 $res->sendJson($data, $type);
@@ -109,7 +109,32 @@ class ApiRouter
                 ];
             }
 
+            // Events additionally expose an `ics` format (the VEVENT this
+            // `!event` is a flat representation of).
+            if ($type === 'events') {
+                $formats[] = [
+                    'format_id' => 'ics',
+                    'uri' => "{$type}/{$id}/blob/formats/ics",
+                ];
+            }
+
             $res->sendJson($formats, $type);
+        });
+
+        // Serve an event's iCalendar (VEVENT) as a format. The `ics` footer link
+        // hits this over https (downloads via Content-Disposition); the "add to
+        // cal" link hits the same path over webcal:// so the OS opens the
+        // default calendar app.
+        $this->get('events/([^/]+)/blob/formats/ics', function (string $id) use ($ds, $res) {
+            $item = $ds->getItem('events', $id);
+
+            if ($item === null) {
+                $res->sendNotFound("events item not found: {$id}");
+                return;
+            }
+
+            $ics = (new IcsBuilder())->build($item, $id);
+            $res->sendCalendar($ics, "{$id}.ics");
         });
 
         // Serve the OG image as a format: build the card, rasterize+cache via
@@ -148,7 +173,7 @@ class ApiRouter
         });
 
         // Item endpoints
-        foreach (['objects', 'yoga-objects', 'code'] as $type) {
+        foreach (['objects', 'yoga-objects', 'code', 'events'] as $type) {
             $this->get("{$type}/([^/]+)", function (string $id) use ($ds, $res, $type) {
                 $item = $ds->getItem($type, $id);
 

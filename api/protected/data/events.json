@@ -1,0 +1,39 @@
+{
+  "summer-solstice-group-ride": {
+    "object-id": "summer-solstice-group-ride",
+    "type": "!event",
+    "summary": "Summer Solstice Group Ride",
+    "description": "A relaxed dawn ride along the creek path to watch the longest day of the year start. Coffee and pastries after at the trailhead.",
+    "location": "Boulder Creek Path Trailhead, Boulder, CO",
+    "dtstart": "2026-06-20T06:30:00-06:00",
+    "dtend": "2026-06-20T09:00:00-06:00",
+    "url": "https://linenisgreat.com/events/summer-solstice-group-ride",
+    "organizer": "mailto:exes.puzzling425@icantbelieveitsnotgmail.com",
+    "tags": ["cycling", "community", "outdoors"],
+    "date": "2026-05-15T10:00:00-06:00"
+  },
+  "zettelkasten-workshop": {
+    "object-id": "zettelkasten-workshop",
+    "type": "!event",
+    "summary": "Zettelkasten & Plain-Text Notes Workshop",
+    "description": "Hands-on session on building a durable note system with flat files and dodder. Bring a laptop.",
+    "location": "Online (link sent on RSVP)",
+    "dtstart": "2026-07-08T18:00:00-04:00",
+    "dtend": "2026-07-08T20:00:00-04:00",
+    "url": "https://linenisgreat.com/events/zettelkasten-workshop",
+    "tags": ["notes", "workshop", "dodder"],
+    "date": "2026-06-01T12:30:00-04:00"
+  },
+  "cocktails-and-code-meetup": {
+    "object-id": "cocktails-and-code-meetup",
+    "type": "!event",
+    "summary": "Cocktails & Code Meetup",
+    "description": "An evening of small batch cocktails and lightning talks on side projects. All skill levels welcome.",
+    "location": "Amarbel HQ, 123 Example St",
+    "dtstart": "2026-08-14T19:00:00-04:00",
+    "dtend": "2026-08-14T22:00:00-04:00",
+    "url": "https://linenisgreat.com/events/cocktails-and-code-meetup",
+    "tags": ["cocktails", "code", "social"],
+    "date": "2026-07-20T09:15:00-04:00"
+  }
+}

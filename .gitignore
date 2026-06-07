@@ -4,6 +4,9 @@ app/tmp/
 api/protected/vendor/
 api/tmp/
 
+atom/protected/vendor/
+atom/tmp/
+
 app/public/objects.json
 app/public/notes.json
 app/public/objects/

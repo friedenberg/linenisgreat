@@ -36,6 +36,22 @@ class ApiResponse
         echo $html;
     }
 
+    /**
+     * Serve an iCalendar document. `Content-Disposition: attachment` forces a
+     * download for the plain `ics` link (the HTML `download` attribute is
+     * ignored cross-origin, so the header is what makes it save rather than
+     * render); calendar clients reaching the same resource over `webcal://`
+     * ignore the disposition and subscribe/import as usual.
+     */
+    public function sendCalendar(string $ics, string $filename, int $statusCode = 200): void
+    {
+        $this->setCorsHeaders();
+        http_response_code($statusCode);
+        header('Content-Type: text/calendar; charset=utf-8');
+        header("Content-Disposition: attachment; filename=\"{$filename}\"");
+        echo $ics;
+    }
+
     public function sendRedirect(string $url, int $statusCode = 302): void
     {
         $this->setCorsHeaders();

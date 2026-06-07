@@ -17,6 +17,8 @@ TESTS=(
   "/notes|200|Notes index"
   "/slides|200|Slides index"
   "/cocktails|200|Cocktails index"
+  "/events|200|Events index"
+  "/events/summer-solstice-group-ride|200|Event object"
   "/resume|200|Resume"
   "/meet|200|Meet"
   "/yoga/test-pose|200|Yoga object"
@@ -87,8 +89,8 @@ test_body() {
 gum style --border normal --padding "0 1" --border-foreground 212 \
   "Testing router at ${BASE_URL}"
 
-# 3 extra body assertions beyond the status-code TESTS plan.
-PLAN=$((${#TESTS[@]} + 3))
+# 7 extra body assertions beyond the status-code TESTS plan.
+PLAN=$((${#TESTS[@]} + 7))
 
 # TAP header
 echo "TAP version 14"
@@ -112,6 +114,22 @@ test_body "/code/testproject" "contains" \
 test_body "/code" "absent" \
   'og:image' \
   "Index page omits og:image meta: /code"
+
+# The events index auto-includes Atom/RSS alternate links (framework feed) and a
+# visible feed footer; the event detail page carries the framework object footer
+# (ics | add to cal) and an og:image.
+test_body "/events" "contains" \
+  'type="application/atom+xml"' \
+  "Events index emits Atom alternate link: /events"
+test_body "/events" "contains" \
+  'class="feed-link"' \
+  "Events index emits visible feed links: /events"
+test_body "/events/summer-solstice-group-ride" "contains" \
+  'add to cal' \
+  "Event detail emits ics | add to cal footer"
+test_body "/events/summer-solstice-group-ride" "contains" \
+  '/blob/formats/og-image' \
+  "Event detail emits og:image meta"
 
 # Summary
 echo

@@ -161,6 +161,10 @@ function updateResults() {
   let searchResultCount = document.getElementById("search-result-count");
   searchResultCount.textContent = count;
 
+  // Feed links inherit the active query: the atom/rss hrefs gain a ?q= so the
+  // feed (served from atom.linenisgreat.com) is filtered to the same search.
+  updateFeedLinks(value);
+
   // TODO reintroduce-url syncing
   // if (window.history.replaceState) {
   //   const joined = value.trim().split(" ").join(",");
@@ -170,6 +174,24 @@ function updateResults() {
   //     `${window.origin}/${joined}`
   //   );
   // }
+}
+
+// Rewrite every .feed-link href to its base (data-feed-base) plus the current
+// query as ?q=, so opening the feed inherits the active search filter. An empty
+// query restores the bare base.
+function updateFeedLinks(value) {
+  let query = value.trim();
+  let feedLinks = document.getElementsByClassName("feed-link");
+
+  for (const link of feedLinks) {
+    let base = link.getAttribute("data-feed-base");
+
+    if (base === null) {
+      continue;
+    }
+
+    link.href = query === "" ? base : `${base}?q=${encodeURIComponent(query)}`;
+  }
 }
 
 window.addEventListener("load", function () {

@@ -17,6 +17,14 @@
           {{{.}}}
           {{/objects}}
         </div>
+
+        {{#feed}}
+        <footer class="collection-footer">
+          <a class="feed-link" data-feed-base="{{atom}}" href="{{atom}}">atom</a>
+          <span> | </span>
+          <a class="feed-link" data-feed-base="{{rss}}" href="{{rss}}">rss</a>
+        </footer>
+        {{/feed}}
       </main>
 
     </div>

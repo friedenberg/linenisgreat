@@ -24,6 +24,7 @@ install-revealjs: (install-revealjs-mkdir)
 build-php-composer:
   composer install -d app/protected
   composer install -d api/protected
+  composer install -d atom/protected
 
 # Update composer dependencies to the latest allowed by each composer.json and
 # refresh composer.lock. Run after bumping a constraint (e.g. mustache ^2 -> ^3).
@@ -31,6 +32,7 @@ build-php-composer:
 update-php-composer:
   composer update -d app/protected
   composer update -d api/protected
+  composer update -d atom/protected
 
 # --- eng-versioning(7): single version source of truth in ./version.env ---
 # This repo's flake ships no binary, so there is no ldflags/version embedding;
@@ -439,13 +441,23 @@ deploy-prod: build-php-composer build
     api/public api/protected api/private api/conf \
     api.linenisgreat.com:../
 
+  rsync -r \
+    --copy-unsafe-links \
+    --include ".htaccess" \
+    --delete \
+    --exclude ".*" \
+    atom/public atom/protected atom/private atom/conf \
+    atom.linenisgreat.com:../
+
   ssh linenisgreat.com ../private/deploy.sh
   ssh api.linenisgreat.com ../private/deploy.sh
+  ssh atom.linenisgreat.com ../private/deploy.sh
 
-# Regenerate app/public/.htaccess from the unified router definition.
+# Regenerate the .htaccess files from each app's unified router definition.
 [group("build")]
 build-htaccess:
   php app/private/router.php --generate-htaccess > app/public/.htaccess
+  php atom/private/router.php --generate-htaccess > atom/public/.htaccess
 
 [group("post-build")]
 test-htaccess:
@@ -484,7 +496,103 @@ test-router PORT="2299" API_PORT="2298": build-php-composer
   app/private/test-router.sh {{PORT}}
 
 [group("post-build")]
-test: test-htaccess test-router test-readme-absolutize
+test: test-htaccess test-router test-readme-absolutize test-feeds
+
+# Verify the standalone feed app (atom.linenisgreat.com) end to end: starts the
+# API + atom servers locally and asserts the Atom/RSS feeds are well-formed,
+# carry one entry per event, link back at the site, and honor the inherited
+# ?q= search filter. In the `test` gate (hermetic — only the local API).
+[group("post-build")]
+test-feeds API_PORT="2289" ATOM_PORT="2288": build-php-composer
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  php \
+      -d "auto_prepend_file={{absolute_path("api/protected/vendor/autoload.php")}}" \
+      -S localhost:{{API_PORT}} \
+      -t api/public/ &
+  API_PID=$!
+
+  API_BASE_URL="http://localhost:{{API_PORT}}" \
+  SITE_BASE_URL="https://linenisgreat.com" php \
+      -d "auto_prepend_file={{absolute_path("atom/protected/vendor/autoload.php")}}" \
+      -S localhost:{{ATOM_PORT}} \
+      -t atom/public/ \
+      atom/private/router.php &
+  ATOM_PID=$!
+
+  trap "kill $API_PID $ATOM_PID 2>/dev/null || true" EXIT
+
+  sleep 1
+
+  atom="http://localhost:{{ATOM_PORT}}"
+  events=$(jq 'length' api/protected/data/events.json)
+  fail=0
+  echo "TAP version 14"
+  echo "1..8"
+
+  # 1. Atom feed is served with the right content type.
+  ct=$(curl -s -o /dev/null -w '%{content_type}' "$atom/events/feed.atom")
+  if [[ $ct == application/atom+xml* ]]; then
+    echo "ok 1 - /events/feed.atom is application/atom+xml"
+  else
+    echo "not ok 1 - /events/feed.atom content-type was '$ct'"; fail=1
+  fi
+
+  # 2. Atom feed is well-formed XML.
+  if curl -s "$atom/events/feed.atom" | php -r '$d=new DOMDocument(); exit($d->loadXML(stream_get_contents(STDIN))?0:1);'; then
+    echo "ok 2 - Atom feed is well-formed XML"
+  else
+    echo "not ok 2 - Atom feed is not well-formed XML"; fail=1
+  fi
+
+  # 3. One <entry> per event.
+  entries=$(curl -s "$atom/events/feed.atom" | grep -c '<entry>' || true)
+  if [ "$entries" -eq "$events" ]; then
+    echo "ok 3 - Atom feed has $entries entries (one per event)"
+  else
+    echo "not ok 3 - Atom feed had $entries entries (expected $events)"; fail=1
+  fi
+
+  # 4. Entries link back at the human site, not the API/atom host.
+  if curl -s "$atom/events/feed.atom" | grep -q 'href="https://linenisgreat.com/events/'; then
+    echo "ok 4 - Atom entries link back at linenisgreat.com"
+  else
+    echo "not ok 4 - Atom entries do not link at the site"; fail=1
+  fi
+
+  # 5. RSS feed is served with the right content type.
+  ct=$(curl -s -o /dev/null -w '%{content_type}' "$atom/events/feed.rss")
+  if [[ $ct == application/rss+xml* ]]; then
+    echo "ok 5 - /events/feed.rss is application/rss+xml"
+  else
+    echo "not ok 5 - /events/feed.rss content-type was '$ct'"; fail=1
+  fi
+
+  # 6. RSS feed is well-formed XML.
+  if curl -s "$atom/events/feed.rss" | php -r '$d=new DOMDocument(); exit($d->loadXML(stream_get_contents(STDIN))?0:1);'; then
+    echo "ok 6 - RSS feed is well-formed XML"
+  else
+    echo "not ok 6 - RSS feed is not well-formed XML"; fail=1
+  fi
+
+  # 7. ?q= inherits the search query (workshop matches exactly one event).
+  q=$(curl -s "$atom/events/feed.atom?q=workshop" | grep -c '<entry>' || true)
+  if [ "$q" -eq 1 ]; then
+    echo "ok 7 - ?q=workshop filters the feed to 1 entry"
+  else
+    echo "not ok 7 - ?q=workshop returned $q entries (expected 1)"; fail=1
+  fi
+
+  # 8. not/or grammar mirrors the frontend search (not workshop -> all but one).
+  q=$(curl -s "$atom/events/feed.atom?q=not%20workshop" | grep -c '<entry>' || true)
+  if [ "$q" -eq "$((events - 1))" ]; then
+    echo "ok 8 - ?q=not+workshop excludes the workshop event"
+  else
+    echo "not ok 8 - ?q=not+workshop returned $q entries (expected $((events - 1)))"; fail=1
+  fi
+
+  exit $fail
 
 # Hermetic unit check of the README link absolutizer (no network, no composer):
 # asserts the request-time DOMDocument rewrite matches the build-time ast-grep
@@ -780,7 +888,7 @@ test-og-image-live API_PORT="2291" TYPE="code" ID="chrest": build-php-composer
   exit $fail
 
 [group("operational")]
-deploy-local PORT="2222" API_PORT="2223": build-php-composer build
+deploy-local PORT="2222" API_PORT="2223" ATOM_PORT="2224": build-php-composer build
   #!/usr/bin/env bash
   set -euo pipefail
 
@@ -793,10 +901,21 @@ deploy-local PORT="2222" API_PORT="2223": build-php-composer build
       -t api/public/ &
   API_PID=$!
 
-  trap "kill $API_PID 2>/dev/null || true" EXIT
+  # Start the feed app (atom.linenisgreat.com) in background. Fetches collection
+  # data from the local API and links items back at the local frontend.
+  API_BASE_URL="http://localhost:{{API_PORT}}" \
+  SITE_BASE_URL="http://localhost:{{PORT}}" php \
+      -d "auto_prepend_file={{absolute_path("atom/protected/vendor/autoload.php")}}" \
+      -S localhost:{{ATOM_PORT}} \
+      -t atom/public/ \
+      atom/private/router.php &
+  ATOM_PID=$!
+
+  trap "kill $API_PID $ATOM_PID 2>/dev/null || true" EXIT
 
   # Start frontend server in foreground
   API_BASE_URL="http://localhost:{{API_PORT}}" \
+  ATOM_BASE_URL="http://localhost:{{ATOM_PORT}}" \
   SERVER_NAME="linenisgreat.com" php \
       -d "auto_prepend_file={{absolute_path("app/protected/vendor/autoload.php")}}" \
       -S localhost:{{PORT}} \

@@ -408,12 +408,13 @@ div.object-head {
   flex-direction: column;
 }
 
-/* Per-repo footer on /code/<repo> pages: github/license links + last-updated.
-   Mirrors the résumé tab footer (centered, x-small) — see app/public/resume.css
-   `.resume footer`. */
-.code-footer {
+/* Framework object footer on full object views: a last-updated line above a
+   pipe-separated row of format/links (github | license on /code/<repo>; ics |
+   add to cal on /events/<id>). Mirrors the résumé tab footer (centered,
+   x-small) — see app/public/resume.css `.resume footer`. */
+.object-footer {
   /* Shrink-wrap and center in the flex-column .object-container, so the links
-     center as a group regardless of the (possibly wide) README content width —
+     center as a group regardless of the (possibly wide) body content width —
      text-align alone would center within the full stretched width. */
   align-self: center;
   padding-top: var(--padding);
@@ -421,8 +422,17 @@ div.object-head {
   text-align: center;
 }
 
-.code-footer-date {
+.object-footer-date {
   margin-bottom: 0.5em;
+}
+
+/* Atom/RSS feed links at the bottom of a collection index (framework-level;
+   JS rewrites the hrefs to inherit the active search query). */
+.collection-footer {
+  padding-top: var(--padding);
+  padding-bottom: var(--padding);
+  font-size: x-small;
+  text-align: center;
 }
 
 i.rc-scout__logo {

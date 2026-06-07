@@ -15,6 +15,9 @@ class RouteObjectOrObjectsIndex
     /** API collection name for the og:image format URL, set only on detail pages. */
     private ?string $ogImageType = null;
 
+    /** Collection type whose Atom/RSS feeds this index links, or null. */
+    private ?string $feedType = null;
+
     /**
      * @param ApiClient $parser
      */
@@ -93,7 +96,8 @@ class RouteObjectOrObjectsIndex
 
     /**
      * Render the per-repo footer (github/license links + last-updated) for a
-     * single code-project page; "" everywhere else.
+     * single code-project page; "" everywhere else. Built on the framework
+     * object_footer (ObjectFooter) so code and events share one footer concept.
      */
     public function getCodeFooter(): string
     {
@@ -103,7 +107,56 @@ class RouteObjectOrObjectsIndex
             return "";
         }
 
-        return $this->mustache->render('code_footer', $code);
+        $links = [];
+        if (!empty($code['url'])) {
+            $links[] = ['label' => 'github', 'href' => $code['url']];
+        }
+        if (!empty($code['license_url'])) {
+            $links[] = ['label' => 'license', 'href' => $code['license_url']];
+        }
+
+        return $this->mustache->render(
+            'object_footer',
+            ObjectFooter::build($code['readme_updated'] ?? null, $links),
+        );
+    }
+
+    /**
+     * Advertise this index's Atom/RSS feeds (framework-level): adds the
+     * alternate <link>s in <head> and the visible feed links at the bottom of
+     * the collection page, both pointing at the atom.* host. $type is the API
+     * collection name the feed host serves (e.g. 'events').
+     *
+     * @param string $type
+     */
+    public function setFeed(string $type): void
+    {
+        $this->feedType = $type;
+    }
+
+    /**
+     * Feed URLs for the configured type, or null when no feed is set. The host
+     * is the standalone feed app (ATOM_BASE_URL, default
+     * https://atom.linenisgreat.com).
+     *
+     * @return array<string,string>|null
+     */
+    private function getFeed(): ?array
+    {
+        if (is_null($this->feedType)) {
+            return null;
+        }
+
+        $base = rtrim(
+            getenv('ATOM_BASE_URL') ?: 'https://atom.linenisgreat.com',
+            '/',
+        );
+
+        return [
+            'type' => $this->feedType,
+            'atom' => "{$base}/{$this->feedType}/feed.atom",
+            'rss' => "{$base}/{$this->feedType}/feed.rss",
+        ];
     }
 
     /**
@@ -152,6 +205,12 @@ class RouteObjectOrObjectsIndex
             $meta['og_image_url'] = $ogImageUrl;
         }
 
+        $feed = $this->getFeed();
+        if (!is_null($feed)) {
+            $meta['feed_atom'] = $feed['atom'];
+            $meta['feed_rss'] = $feed['rss'];
+        }
+
         return $meta;
     }
     /**
@@ -191,6 +250,7 @@ class RouteObjectOrObjectsIndex
             [
                 'nav' => array_values($this->nav->tiles),
                 'meta' => $this->getMeta(),
+                'feed' => $this->getFeed(),
                 'stylesheets' => [
                     "stylesheet",
                     "zettels",

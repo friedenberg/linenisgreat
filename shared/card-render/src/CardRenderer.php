@@ -25,6 +25,7 @@ namespace Card;
  *   - objects, notes   → Objekt      → card_object
  *   - code             → CodeProject → card_common
  *   - yoga, yoga-objects → Yoga      → card_object_new
+ *   - events           → Event       → card_event
  *   - slides           → Zettel2     → card_common
  */
 class CardRenderer
@@ -99,6 +100,7 @@ class CardRenderer
                 ? $this->mapCodeProject($data)
                 : $this->mapZettel2($data),
             'card_object_new' => $this->mapYoga($data),
+            'card_event' => $this->mapEvent($data),
             'card_code_project' => $this->mapCodeZettel($data),
             default => $this->mapCocktail($data),
         };
@@ -227,6 +229,82 @@ class CardRenderer
     }
 
     /**
+     * Event (events collection) → card_event. The `!event` dodder type is a
+     * flat representation of a CalDAV VEVENT: summary / description / location /
+     * dtstart / dtend / tags. The card shows the summary, a human time range,
+     * and a where/tags fields table — mirroring app/protected/lib/Event.
+     *
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
+    private function mapEvent(array $data): array
+    {
+        $summary = $data['summary'] ?? $data['title'] ?? '';
+        $objectId = $this->extractObjectId($data);
+        $tags = $this->normalizeTags($data['tags'] ?? []);
+
+        $fields = [];
+        if (!empty($data['location'])) {
+            $fields[] = ['key' => 'where', 'value' => $data['location']];
+        }
+        if ($tags !== '') {
+            $fields[] = ['key' => 'tags', 'value' => $tags];
+        }
+
+        return [
+            'card_body_template' => 'card_event',
+            'summary' => $summary,
+            'when' => $this->formatWhen($data['dtstart'] ?? null, $data['dtend'] ?? null),
+            'fields' => $fields,
+            'description' => $data['description'] ?? '',
+            'objectId' => $objectId,
+            'identifier' => $objectId,
+            'url' => $objectId,
+            'search_string' => trim("{$summary} {$objectId}"),
+        ];
+    }
+
+    /**
+     * Format a dtstart/dtend pair (ISO-8601 with offset) into a compact human
+     * range, e.g. "Sat Jun 20, 2026, 6:30–9:00 AM". Same logic as
+     * app/protected/lib/Event::formatWhen so the card and og-image match the
+     * live page. Unparseable / missing input degrades to the raw start string.
+     */
+    private function formatWhen(?string $start, ?string $end): string
+    {
+        if ($start === null || $start === '') {
+            return '';
+        }
+
+        try {
+            $startDt = new \DateTimeImmutable($start);
+        } catch (\Exception $e) {
+            return $start;
+        }
+
+        $day = $startDt->format('D M j, Y');
+        $startTime = $startDt->format('g:i A');
+
+        if ($end === null || $end === '') {
+            return "{$day}, {$startTime}";
+        }
+
+        try {
+            $endDt = new \DateTimeImmutable($end);
+        } catch (\Exception $e) {
+            return "{$day}, {$startTime}";
+        }
+
+        $endTime = $endDt->format('g:i A');
+
+        if ($startDt->format('Y-m-d') === $endDt->format('Y-m-d')) {
+            return "{$day}, {$startTime} – {$endTime}";
+        }
+
+        return "{$day}, {$startTime} – " . $endDt->format('D M j, Y') . ", {$endTime}";
+    }
+
+    /**
      * Zettel cocktail branch (cocktails collection, default typ) →
      * cocktail_card. Dodder shape: bezeichnung / kennung / akte (nested or
      * string). akte.kennung overrides the top-level kennung; an akte string is
@@ -343,6 +421,7 @@ class CardRenderer
             'code' => 'card_common',
             'objects', 'notes' => 'card_object',
             'yoga', 'yoga-objects' => 'card_object_new',
+            'events' => 'card_event',
             'slides' => 'card_common',
             default => ($objectType === 'toml-project-code' || $objectType === 'md')
                 ? 'card_code_project'

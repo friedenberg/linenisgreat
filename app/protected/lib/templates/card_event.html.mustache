@@ -1,0 +1,23 @@
+<div class="card-head">
+  <div class="text-center title uppercase">{{summary}}</div>
+  <div class="text-center small-caps text-small">{{when}}</div>
+</div>
+<div class="card-body">
+  <table>
+    <colgroup>
+      <col class="tdleft">
+      <col class="tdright">
+    </colgroup>
+    <tbody>
+      {{#fields}}
+      <tr>
+        <td class="tdleft small-caps">{{key}}</td>
+        <td class="tdright">{{value}}</td>
+      </tr>
+      {{/fields}}
+    </tbody>
+  </table>
+  <div>
+    {{description}}
+  </div>
+</div>
