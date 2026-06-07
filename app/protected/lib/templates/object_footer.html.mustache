@@ -1,0 +1,10 @@
+<footer class="object-footer">
+  {{#updated}}
+  <div class="object-footer-date">last updated {{updated}}</div>
+  {{/updated}}
+  {{#has_links}}
+  <div class="object-footer-links">
+    {{#links}}{{#sep}} | {{/sep}}<a href="{{href}}"{{#download}} download{{/download}}>{{label}}</a>{{/links}}
+  </div>
+  {{/has_links}}
+</footer>

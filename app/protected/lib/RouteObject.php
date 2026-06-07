@@ -15,6 +15,9 @@ class RouteObject
     /** API collection name for the og:image format URL, set only on detail pages. */
     private ?string $ogImageType = null;
 
+    /** Framework object footer (last-updated + format/links), or null. */
+    private ?array $footer = null;
+
     /**
      * @param ApiClient $parser
      */
@@ -23,15 +26,19 @@ class RouteObject
     /**
      * @param string $title
      * @param string $objectId
+     * @param string $apiEndpoint API collection the data is fetched from
+     *                            (defaults to 'objects'; notes aliases it, so
+     *                            its detail pages keep using 'objects').
      */
     public function __construct(
         $title,
         $objectId = null,
+        $apiEndpoint = 'objects',
     ) {
         $this->nav = new Nav($title);
         $this->title = $title;
         $this->objectId = $objectId;
-        $this->parser = new ApiClient('objects');
+        $this->parser = new ApiClient($apiEndpoint);
 
         $options = array('extension' => '.html.mustache');
 
@@ -98,6 +105,17 @@ class RouteObject
     }
 
     /**
+     * Attach a framework object footer (rendered into meta.footer below the
+     * object body). Pass pre-built ObjectFooter::build() output.
+     *
+     * @param array<string,mixed> $footer
+     */
+    public function setFooter(array $footer): void
+    {
+        $this->footer = $footer;
+    }
+
+    /**
      * Build the absolute og:image URL from the configured API base, or null
      * when this isn't an og:image-bearing detail page.
      */
@@ -122,6 +140,10 @@ class RouteObject
     {
         $meta = $this->getSiteData();
         $meta['raw'] = $this->getCodeMetaRaw($this->mustache);
+
+        if (!is_null($this->footer)) {
+            $meta['footer'] = $this->mustache->render('object_footer', $this->footer);
+        }
 
         $ogImageUrl = $this->getOgImageUrl();
         if (!is_null($ogImageUrl)) {

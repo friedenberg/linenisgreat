@@ -21,6 +21,13 @@
 
   <meta property="og:site_name" content="{{meta.title}}"/>
 
+  {{#meta.feed_atom}}
+  <link rel="alternate" type="application/atom+xml" title="{{meta.title}} (Atom)" href="{{meta.feed_atom}}"/>
+  {{/meta.feed_atom}}
+  {{#meta.feed_rss}}
+  <link rel="alternate" type="application/rss+xml" title="{{meta.title}} (RSS)" href="{{meta.feed_rss}}"/>
+  {{/meta.feed_rss}}
+
   <link rel="alternate" hreflang="en-us"
                         href="{{meta.url}}" />
 

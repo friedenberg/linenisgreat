@@ -18,8 +18,15 @@ $routes = [
 
     // Simple section index pages
     [
-        'pattern' => '^(yoga|code|objects|notes|slides|cocktails|resume|meet)/?$',
+        'pattern' => '^(yoga|code|objects|notes|slides|cocktails|resume|meet|events)/?$',
         'file' => '$1.php',
+    ],
+
+    // Individual event (full object view)
+    [
+        'pattern' => '^events/(.+)$',
+        'file' => 'events.php',
+        'params' => ['args' => '$1'],
     ],
 
     // Objects with metadata

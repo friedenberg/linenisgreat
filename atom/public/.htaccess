@@ -1,0 +1,5 @@
+Options +FollowSymLinks -Indexes
+RewriteEngine On
+
+RewriteRule "^([\w-]+)/feed\.atom$" "feed.php?type=$1&format=atom" [L,PT,B,QSA]
+RewriteRule "^([\w-]+)/feed\.rss$" "feed.php?type=$1&format=rss" [L,PT,B,QSA]

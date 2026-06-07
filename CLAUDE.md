@@ -4,9 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Personal portfolio site (linenisgreat.com) split into two independently deployed
-PHP applications: a Mustache-templated frontend (`app/`) and a JSON REST API
-(`api/`). Both deploy to separate NearlyFreeSpeech.NET SSH hosts via rsync.
+Personal portfolio site (linenisgreat.com) split into three independently
+deployed PHP applications: a Mustache-templated frontend (`app/`), a JSON REST
+API (`api/`), and a stateless feed app (`atom/`). Each deploys to its own
+NearlyFreeSpeech.NET SSH host via rsync.
 
 ## Commands
 
@@ -15,29 +16,58 @@ All commands require the Nix devShell: `nix develop -c just <recipe>`
 ```sh
 just test                # Run all tests (htaccess + router integration)
 just test-htaccess       # Validate generated .htaccess rules (11 TAP tests)
-just test-router         # Start both servers, test HTTP routes (15 TAP tests)
-just build-php-composer  # composer install in both app/ and api/
+just test-router         # Start app + API servers, test HTTP routes (24 TAP tests)
+just build-php-composer  # composer install in app/, api/, and atom/
 just build               # Build object data from dodder (requires `der` binary)
-just deploy-local        # Run both servers locally (app:2222, api:2223)
+just deploy-local        # Run all three servers locally (app:2222, api:2223, atom:2224)
 just deploy-local-prod-api  # Run app locally against production API
 just deploy-prod         # rsync to production + web-kick (requires SSH access)
-just build-htaccess   # Regenerate app/public/.htaccess from router.php
+just build-htaccess      # Regenerate app/ and atom/ .htaccess from their routers
+just test-feeds          # Start API + atom, assert Atom/RSS feeds (8 TAP tests)
 ```
 
 ## Architecture
 
-### Two-Application Split
+### Three-Application Split
 
-Both applications share the same `{public,protected,private,conf}` directory
-convention expected by NFSN. The `app/` or `api/` prefix is stripped by rsync
-during deploy — production sees a flat layout.
+All applications share the same `{public,protected,private,conf}` directory
+convention expected by NFSN. The `app/`, `api/`, or `atom/` prefix is stripped by
+rsync during deploy — production sees a flat layout.
 
 - **`app/`** → `linenisgreat.com` — PHP frontend with Mustache templates
 - **`api/`** → `api.linenisgreat.com` — stateless JSON API backed by flat files
+- **`atom/`** → `atom.linenisgreat.com` — stateless feed app: renders any
+  collection as Atom/RSS (see Feeds below)
 
 The frontend connects to the API via `API_BASE_URL` env var (default:
-`https://api.linenisgreat.com`). The API accepts `CORS_ORIGIN` env var (default:
-`https://linenisgreat.com`).
+`https://api.linenisgreat.com`) and links to feeds via `ATOM_BASE_URL` (default:
+`https://atom.linenisgreat.com`). The API accepts `CORS_ORIGIN` env var (default:
+`https://linenisgreat.com`). The atom app reads `API_BASE_URL` (data source) and
+`SITE_BASE_URL` (default `https://linenisgreat.com`, for item links).
+
+### Events, Framework Object Footer, Feeds (ADR-0004)
+
+The **events** tab filters the `!event` dodder type (a TOML/human form of a
+CalDAV `VEVENT`). Events render as cards (`card_event`) and as full object views
+(`app/public/events.php`). Three pieces are **framework-level**, with events as
+their first consumer:
+
+- **Object footer** — `ObjectFooter::build($updated, $links)` +
+  `object_footer.html.mustache` render a "last updated" line above a
+  pipe-separated row of `{label, href, download}` links, surfaced via
+  `meta.footer`. Code's footer (github | license) and events' footer
+  (ics | add to cal) both use it.
+- **ICS format** — `GET events/<id>/blob/formats/ics` (`IcsBuilder`,
+  `text/calendar`) is a dodder-style format next to `og-image`. `ics` downloads
+  it (https + `Content-Disposition: attachment`); "add to cal" points at the
+  same resource over `webcal://` so the OS opens the default calendar app.
+- **Feeds** — the `atom/` app serves `GET <type>/feed.atom` and `<type>/feed.rss`
+  for any collection (`FeedClient` fetches from the API, `FeedBuilder` emits the
+  XML, items link back at `SITE_BASE_URL`). `?q=` filters via `FeedQuery` (a
+  server-side port of the frontend search grammar), so feeds inherit the active
+  search. Collection pages auto-include `<link rel="alternate">` for both
+  formats and a visible feed footer; JS rewrites the feed hrefs with the live
+  `?q=`.
 
 ### API Data Flow
 
@@ -113,8 +143,9 @@ data files (yoga, cocktails, slides) are committed directly.
 
 ## Testing
 
-Tests use TAP v14 format via bash scripts with curl. `test-router` spins up
-both PHP built-in servers, runs 15 HTTP assertions, then tears them down.
+Tests use TAP v14 format via bash scripts with curl. `test-router` spins up the
+app + API PHP built-in servers, runs 24 HTTP assertions, then tears them down.
+`test-feeds` spins up the API + atom servers and asserts the Atom/RSS feeds.
 `test-htaccess` validates the generated `.htaccess` against regex patterns
 without needing a server.
 

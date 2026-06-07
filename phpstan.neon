@@ -33,6 +33,9 @@ parameters:
     - api/protected/lib
     - api/public
     - api/private
+    - atom/protected/lib
+    - atom/public
+    - atom/private
   scanDirectories:
     - app/protected/lib
     - app/public
@@ -40,4 +43,7 @@ parameters:
     - api/protected/lib
     - api/public
     - api/private
+    - atom/protected/lib
+    - atom/public
+    - atom/private
   reportUnmatchedIgnoredErrors: false

@@ -1,0 +1,16 @@
+{
+  "name": "friedenberg/linenisgreat-atom",
+  "type": "project",
+  "require": {},
+  "authors": [
+    {
+      "name": "Sasha Friedenberg",
+      "email": "sashafriedenberg@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "": "lib/"
+    }
+  }
+}
