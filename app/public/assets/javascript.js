@@ -128,6 +128,13 @@ function updateResults() {
 
   let searchBox = document.getElementById("search-box");
 
+  // Detail pages (object/meet) have no search box. The script now loads on
+  // every page so nav.js can boost from them, so no-op when there's nothing
+  // to filter.
+  if (searchBox === null) {
+    return;
+  }
+
   let value = searchBox.value.toLowerCase();
   var rule = null;
 
